@@ -1,0 +1,37 @@
+Antipatterns
+Jaywalking
+Using delimited values in a string field to avoid using an intersection table. 
+With a many -> many relationship, use a separate third table to manage those records. 
+Naive Trees
+Using standard parent-node-leaf tree for hierarchical data. 
+The book provides three alternatives to managing this structure: 
+Path enumeration, like working path in terminal. The information about each nodes hierarchy is contained within the record. 
+Nested sets, complex method where each record is given two records, the upper and lower bounds of the Id’s of its children. Id’s between these bounds are it’s children. The bounds need to be calculated and changed for the records each time a change is made.
+Closure table. A separate relationship table where for each node, a record of all of the children / grand children and so on of that node are referenced directly to it. This also allows nodes to belong to multiple trees. 
+ Personal Opinion: ORM’s (at least EF) allow decent control over this. They would also gel well with a Closure table, and LINQ would make navigation of this fairly quick.
+ID Required
+Using the auto generated Unique Key only.
+Failing to recognize an actually relevant unique key already in the data. 
+Simply and ID field isn’t sufficient enough to force records to be unique. 
+Even when using an ORM, if possible, or reasonable, set the ID to be something with valuable information. Eg  organization_id, EF especially this allows the ORM to compare relationships without having to express the connection. 
+Keyless Entry
+Not utilizing foreign key constraints. 
+The solution is to use foreign key constraints to maintain data integrity.
+Cascading is a benefit. 
+Entity Attribute Value
+Keys and Values are stored in the same column. In an effort to make records flexible and dynamically extensible.
+id | key | value
+1 | first_name | corey
+2 | last_name | lloyd
+3 | age | 35
+as compared to
+id | first_name | last_name | age
+1  | corey          | lloyd           | 35 
+EAV suffers from data integrity and consistency issues. Values don't have type enforcement, attribute keys can't be inconsistent.
+This can be mitigated by thinking of a relational database like OOP. Using a composition paradigm with records, and creating tables that represent an idea of attributes containing a foreign key reference to their relevant associated record. This maintains the advantages and data integrity of a traditional relationship database, and the extensibility, albeit less dynamic, of an EAV table. 
+
+[   TODO: add a diagram explaining this ]
+If the format seems unavoidable, create a table containing all the possible attributes instead, allowing nulls for unneeded values.
+Another fix is to create tables representing the attribute sets, and setting a foreign key to the primary record. 
+If the attributes are fairly unpredictable create a large object that contains JSON or XML of the attributes. This maintains relationships and is more predictably parsed. 
+Polymorphic Associations
