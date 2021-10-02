@@ -1,0 +1,64 @@
+{
+    "Name": "Corey Lloyd",
+    "Current Title": "Senior Software Developer",
+    "Languages": ["C#", "Python", "Javascript"],
+    "Frameworks and Libraries": [".NET", ".NET Core", "Node.js"],
+    "Data Streaming": ["Kafka", "Azure Event Hub"],
+    "Architecture and Design": ["API", "MVC / MVVM", "Unified Modeling Language (UML)", "Entity Relationship Diagrams (ERD)", "SOLID Design", "Dependency Injection", "Loosely Coupled Design", "Microservices"],
+    "Project Management": ["Lead Developer", "Agile / Scrum", "Waterfall", "Jira", "Basecamp", "Confluence", "Azure DevOps"],
+    "Utilities": ["Microsoft SQL Server", "Visual Studio", "Unix Terminal (BASH)", "VS Code"],
+    "Version Control Clients": ["Git", "Git CLI", "Bitbucket", "Sourcetree", "Visual Studio Teams"],
+    "Cloud": ["AWS (EC3, EFS, S3, DynamoDb, RDS)", "Azure (Functions, App Insights, Cosmos Db, Dashboards, AKS, DevOps)"],
+    "Soft Skills": ["Employee Management", "Customer Resource Management"],
+    "Work History": [
+        {
+            "Title": "API Engineer",
+            "Company": "C.H. Robinson",
+            "Company Description": "Third Party Logistics Company",
+            "Start Date": "12/19",
+            "End Date": "Present",
+            "Description of Work": [
+                "Worked in the centralized core API for a Fortune 200 3PL  Logistics Company.",
+                "Utilized my multi language experience to coordinate lifting and shifting APIs from on-prem Node. applications to AKS, and Azure functions cloud applications.",
+                "Frequent shifting between .NET Core and Node for new work and maintenance.",
+                "Constructed APIs as microservices, using message queues and streams for internal cross application communication, and REST for external facing APIs.",
+                "Integrated stream processing services into microservices, including Kafka and Azure EventHub."
+            ]
+        },
+        {
+            "Title": "Back End Developer",
+            "Company": "fjorge Digital",
+            "Company Description": "Multi-Language Development Firm",
+            "Start Date": "01/19",
+            "End Date": "12/19",
+            "Description of Work": [
+                "Served as lead developer, and architect for the full product cycle, from concept to deployment, for multiple projects in multiple languages.",
+                "As lead developer I delegated programming tasks to a 2 person team, identifying which tasks can be parallelized and which must be done sequentially to meet client deadlines.",
+                "Worked with team members to develop services with extensibility and modularity in mind.",
+                "Served in a Solutions Engineer role to ﬁnd appropriate solutions working directly with clients.",
+                "Continued to develop back end resources and infrastructure for web applications and services.",
+                "On boarded and created a development environment for inherited legacy applications.",
+                "Identifying requirements to host and comprehensive plans add features on older architectures.",
+                "Frequently communicated directly with clients to identify project scope, manage expectations and convey team progress."
+            ]
+        },
+        {
+            "Title": "Software Developer, E-Commerce Manager",
+            "Company": "Motors Management Corp",
+            "Company Description": "Multi-Language Development Firm",
+            "Start Date": "04/15",
+            "End Date": "01/19",
+            "Description of Work": [
+                "Designed and implemented C# accounting applications using .NET.",
+                "Created and maintained forms applications for the IT department.",
+                "Using MVC structured web applications, I maintained and created web based applications for use by management for record keeping and performance evaluation across more than 35 dealerships.",
+                "Created several one-oﬀ applications for data manipulation, or conditioning.",
+                "Built the infrastructure for DirectGm.com, an entirely new E-commerce operation, starting from an eBay account handling only a few hundred listings, to a large multi-market, 100,000+ SKU operation grossing several million annually.",
+                "Generated product data for over 100,000+ SKUs for use in market place listings, also used MySQL and Flask (Python web framework) for custom browser interfaces to handle data for the General Motors catalog of over 1.1 million SKUs.",
+                "Created all of the daily use automation software for billing and inventory management using the Python programming language. Inventory and sales software communicated with Wal-Mart.com, Amazon, eBay, Revolution Parts, and the SkuVault APIs to maintain inventory parity.",
+                "Created intra-oﬃce GUI software to manage reports, claims and other recurring tasks, also functioned as a front-end for the inventory and SKU database.",
+                "Important, but ancillary tasks, includes customer service of all marketplaces, both email and phone, parts ordering and lookup, handling carrier claims."
+            ]
+        }
+    ]
+}
