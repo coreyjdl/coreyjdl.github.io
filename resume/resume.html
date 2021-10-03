@@ -5,14 +5,31 @@
 		<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 		<link rel="stylesheet" href="https://cdn.rawgit.com/konpa/devicon/df6431e323547add1b4cf45992913f15286456d3/devicon.min.css">
 		<link rel="stylesheet" type="text/css" href="style.css">
+
+		<script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+		<script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+
 		<title>Corey Lloyd</title>
 	</head>
 	<body>
 		<div class="container">
+			<button onclick="getResumeAsync()">Button</button>
 		</div>
 		<hr>
-		<div class="container">
-			
-			</div>
+		<div class="container">			
+		</div>
 	</body>
+
+	<script>
+		function getResumeAsync() {
+			return fetch('resume.json')
+			.then((response) => response.json())
+			.then((responseJson) => {
+				return responseJson;
+			})
+			.catch((error) => {
+				console.error(error);
+			});
+		}
+	</script>
 </html>
