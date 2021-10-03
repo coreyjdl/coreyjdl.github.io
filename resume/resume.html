@@ -25,6 +25,7 @@
 			return fetch('resume.json')
 			.then((response) => response.json())
 			.then((responseJson) => {
+				console.log(responseJson);
 				return responseJson;
 			})
 			.catch((error) => {
