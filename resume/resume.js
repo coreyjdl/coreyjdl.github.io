@@ -4,8 +4,46 @@
 const e = React.createElement;
 
 class Resume extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { resume: null };
+    }
+
+    componentDidMount() {
+        fetch('resume.json')
+            .then(response => response.json())
+            .then(data => this.setState({ resume: data }));
+    }
+
     render() {
-        return "TEST TEST TEST";
+        if (!this.state.resume) {
+            return e('div', null, 'Loading...');
+        }
+
+        const resume = this.state.resume;
+        return e('div', { className: 'container' },
+            e('h1', null, resume.Name),
+            e('h2', null, resume['Current Title']),
+            e('h3', null, 'Skills'),
+            e('ul', null,
+                ...Object.keys(resume).filter(key => Array.isArray(resume[key]) && key !== 'Work History').map(key =>
+                    e('li', null, e('strong', null, key + ': '), resume[key].join(', '))
+                )
+            ),
+            e('h3', null, 'Work History'),
+            e('ul', null,
+                resume['Work History'].map(job =>
+                    e('li', { key: job.Title + job.Company },
+                        e('h4', null, job.Title + ' at ' + job.Company),
+                        e('p', null, job['Company Description']),
+                        e('p', null, job['Start Date'] + ' - ' + job['End Date']),
+                        e('ul', null,
+                            job['Description of Work'].map(desc => e('li', { key: desc }, desc))
+                        )
+                    )
+                )
+            )
+        );
     }
 }
 
