@@ -6,11 +6,29 @@
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@v2.14.0/devicon.min.css">
+		<style>
+			#background-video {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				z-index: -1;
+				object-fit: cover;
+			}
+			body {
+				margin: 0;
+				padding: 0;
+			}
+		</style>
 	<title>Corey Lloyd</title>
 	</head>
 	<body>
+		<video id="background-video" autoplay loop muted>
+			<source src="windy.mp4" type="video/mp4">
+		</video>
 		<nav class="navbar navbar-expand-lg navbar-light bg-light">
-			<a class="navbar-brand" href="#">Corey Lloyd</a>
+			<a class="navbar-brand" href="index.html">Corey Lloyd</a>
 			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
 			</button>
@@ -23,13 +41,13 @@
 						<a class="nav-link" href="resume/resume.html">Resume</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" href="careers.html">Careers</a>
-					</li>
-					<li class="nav-item">
 						<a class="nav-link" href="travels.html">Travels</a>
 					</li>
 					<li class="nav-item">
 						<a class="nav-link" href="books.html">Books</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="contact.html">Contact</a>
 					</li>
 				</ul>
 			</div>
@@ -37,7 +55,7 @@
 		<div class="container">
 			<h1>Corey Lloyd</h1>
 			<h2>Senior Software Developer</h2>
-			<p>Welcome to my personal website. Here you can find my resume, career information, travel stories, and book reviews.</p>
+			<p>Welcome to my personal website. Here you can find my resume, travel stories, and book reviews.</p>
 		</div>
 	</body>
 </html
