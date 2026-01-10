@@ -36,10 +36,13 @@
 		</nav>
 		<div class="container" id="app">
 			<h1>Travel Blog</h1>
-			<p>Coming soon: Stories from my travels around the world.</p>
+			<p>Stories from my travels around the US.</p>
 			<div v-for="post in posts" :key="post.id">
 				<h2>{{ post.title }}</h2>
 				<p>{{ post.date }}</p>
+				<div v-for="img in post.images" :key="img">
+					<img :src="img" class="img-fluid" alt="Travel image" style="max-width: 100%; height: auto; margin-bottom: 10px;">
+				</div>
 				<p>{{ post.summary }}</p>
 			</div>
 		</div>
@@ -49,7 +52,7 @@
 				data: {
 					posts: [
 						// Placeholder posts
-						{ id: 1, title: 'Trip to Japan', date: '2023-01-01', summary: 'An amazing journey through Tokyo and Kyoto.' }
+						{ id: 1, title: 'Rainy Day Burger Run', date: 'Oct 28, 2025', summary: 'Spontaneous trip to the Rock Cafe in Stroud. It was cool, but with my \"Spacesuit\" on I felt fine. The folks at the Rock Cafe were friendly, and eager to help me warm up. I was so well dressed I was actually getting hot in the restaurant. The burger was decent, and I was able to get a few stamps in the Route 66 Passport book on this trip.', images: ['assets/stroud_1.jpg', 'assets/stroud_2.jpg'] }
 					]
 				}
 			});
