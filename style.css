@@ -2,7 +2,36 @@
   font-size: 100%;
 }
 
-container {
-	background-color: grey;
+.container {
+	background-color: rgba(255, 255, 255, 0.95);
+	border-radius: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	padding: 20px;
+	margin-top: 20px;
+	margin-bottom: 20px;
 }
 
+body {
+	background: linear-gradient(135deg, #1b5e20 0%, #4caf50 100%);
+	min-height: 100vh;
+	font-family: 'Arial', sans-serif;
+}
+
+h1, h2, h3 {
+	color: #1b5e20;
+}
+
+.navbar {
+	background-color: rgba(76, 175, 80, 0.9) !important;
+}
+
+.card {
+	border: none;
+	border-radius: 10px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	margin-bottom: 20px;
+}
+
+.card-body {
+	padding: 20px;
+}
