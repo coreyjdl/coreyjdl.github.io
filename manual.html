@@ -1,0 +1,1444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THIEF — Official Game Manual</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+  /* ── reset & base ─────────────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #1a1a2e;
+    --bg-alt:    #16213e;
+    --panel:     #0f3460;
+    --accent:    #e94560;
+    --gold:      #f5c518;
+    --cyan:      #53d8fb;
+    --green:     #39ff14;
+    --cream:     #f0e6d3;
+    --text:      #d4d4d4;
+    --muted:     #888;
+    --border:    #e94560;
+    --pixel:     'Press Start 2P', monospace;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--pixel);
+    font-size: 10px;
+    line-height: 1.8;
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+  }
+
+  /* ── scanline overlay ─────────────────────────────────────────── */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      0deg,
+      rgba(0,0,0,.12) 0px,
+      rgba(0,0,0,.12) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+    z-index: 9999;
+  }
+
+  /* ── layout ───────────────────────────────────────────────────── */
+  .manual {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  /* ── cover ────────────────────────────────────────────────────── */
+  .cover {
+    text-align: center;
+    padding: 60px 20px 40px;
+    border: 4px double var(--accent);
+    background: linear-gradient(180deg, #0f3460 0%, #1a1a2e 100%);
+    margin-bottom: 40px;
+    position: relative;
+  }
+  .cover::before, .cover::after {
+    content: '████████████████████████████████';
+    display: block;
+    color: var(--accent);
+    font-size: 6px;
+    letter-spacing: 2px;
+    overflow: hidden;
+  }
+  .cover::before { margin-bottom: 20px; }
+  .cover::after  { margin-top: 20px; }
+
+  .cover h1 {
+    font-size: 48px;
+    color: var(--accent);
+    text-shadow: 4px 4px 0 #300, 0 0 20px rgba(233,69,96,.4);
+    letter-spacing: 12px;
+    margin: 20px 0 10px;
+  }
+  .cover .subtitle {
+    font-size: 10px;
+    color: var(--gold);
+    letter-spacing: 4px;
+    margin-bottom: 8px;
+  }
+  .cover .tagline {
+    font-size: 8px;
+    color: var(--muted);
+    font-style: italic;
+    letter-spacing: 2px;
+  }
+  .cover .platform {
+    display: inline-block;
+    margin-top: 24px;
+    padding: 6px 18px;
+    border: 2px solid var(--gold);
+    color: var(--gold);
+    font-size: 8px;
+    letter-spacing: 3px;
+  }
+  .cover .age-rating {
+    margin-top: 14px;
+    font-size: 7px;
+    color: var(--muted);
+  }
+
+  /* ── section headers ──────────────────────────────────────────── */
+  .section {
+    margin-bottom: 36px;
+  }
+
+  h2 {
+    font-size: 16px;
+    color: var(--accent);
+    border-bottom: 3px solid var(--accent);
+    padding-bottom: 8px;
+    margin-bottom: 16px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+
+  h3 {
+    font-size: 12px;
+    color: var(--gold);
+    margin: 18px 0 10px;
+    letter-spacing: 2px;
+  }
+
+  h4 {
+    font-size: 10px;
+    color: var(--cyan);
+    margin: 14px 0 8px;
+  }
+
+  /* ── paragraphs & lists ───────────────────────────────────────── */
+  p { margin-bottom: 12px; }
+
+  ul, ol {
+    margin: 8px 0 14px 20px;
+  }
+  li {
+    margin-bottom: 6px;
+  }
+
+  /* ── pixel divider ────────────────────────────────────────────── */
+  .divider {
+    text-align: center;
+    color: var(--accent);
+    font-size: 6px;
+    letter-spacing: 4px;
+    margin: 30px 0;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  /* ── info box (warnings, tips) ────────────────────────────────── */
+  .box {
+    border: 2px solid var(--border);
+    background: var(--bg-alt);
+    padding: 14px 16px;
+    margin: 14px 0;
+  }
+  .box.warning  { border-color: var(--accent); }
+  .box.tip      { border-color: var(--green); }
+  .box.info     { border-color: var(--cyan); }
+  .box .label {
+    display: inline-block;
+    font-size: 8px;
+    padding: 2px 8px;
+    margin-bottom: 8px;
+    letter-spacing: 2px;
+  }
+  .box.warning .label { background: var(--accent); color: #fff; }
+  .box.tip .label     { background: var(--green); color: #000; }
+  .box.info .label    { background: var(--cyan); color: #000; }
+
+  /* ── tables ───────────────────────────────────────────────────── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0;
+    font-size: 8px;
+  }
+  th {
+    background: var(--panel);
+    color: var(--gold);
+    text-align: left;
+    padding: 8px 10px;
+    border: 1px solid #333;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  td {
+    padding: 7px 10px;
+    border: 1px solid #333;
+    vertical-align: top;
+  }
+  tr:nth-child(even) { background: rgba(15,52,96,.3); }
+  tr:hover { background: rgba(233,69,96,.08); }
+
+  .boss-row { color: var(--accent); font-weight: bold; }
+  .quest-item { color: var(--gold); }
+  .weapon-item { color: var(--cyan); }
+
+  /* ── chapter cards ────────────────────────────────────────────── */
+  .chapter-card {
+    border: 2px solid var(--panel);
+    background: var(--bg-alt);
+    padding: 18px 20px;
+    margin: 20px 0;
+    position: relative;
+  }
+  .chapter-card::before {
+    content: attr(data-chapter);
+    position: absolute;
+    top: -10px;
+    left: 16px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 8px;
+    padding: 2px 10px;
+    letter-spacing: 2px;
+  }
+  .chapter-card h3 {
+    margin-top: 6px;
+  }
+
+  /* location tags */
+  .locations {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 10px 0;
+  }
+  .loc-tag {
+    background: var(--panel);
+    color: var(--cyan);
+    padding: 4px 10px;
+    font-size: 7px;
+    border: 1px solid #335;
+    letter-spacing: 1px;
+  }
+  .loc-tag.hub {
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+  .loc-tag.boss-arena {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* npc / enemy inline lists */
+  .entity-list {
+    margin: 8px 0;
+  }
+  .entity {
+    display: inline-block;
+    margin: 3px 4px 3px 0;
+    padding: 3px 8px;
+    font-size: 7px;
+    letter-spacing: 1px;
+  }
+  .entity.enemy  { background: #3a1020; border: 1px solid var(--accent); color: var(--accent); }
+  .entity.npc    { background: #0a2a1a; border: 1px solid var(--green); color: var(--green); }
+  .entity.boss   { background: #4a1030; border: 1px solid var(--gold); color: var(--gold); }
+
+  /* hazard bar */
+  .hazard-bar {
+    background: #2a1a00;
+    border-left: 3px solid var(--gold);
+    padding: 8px 12px;
+    margin: 8px 0;
+    font-size: 8px;
+    color: var(--gold);
+  }
+
+  /* police bar */
+  .police-bar {
+    background: #1a1a30;
+    border-left: 3px solid var(--cyan);
+    padding: 8px 12px;
+    margin: 8px 0;
+    font-size: 8px;
+    color: var(--cyan);
+  }
+
+  /* ── rank badge strip ─────────────────────────────────────────── */
+  .rank-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 14px 0;
+  }
+  .rank-badge {
+    text-align: center;
+    padding: 10px 12px;
+    border: 2px solid #333;
+    background: var(--bg-alt);
+    min-width: 130px;
+    flex: 1;
+  }
+  .rank-badge .rank-name {
+    color: var(--gold);
+    font-size: 8px;
+    margin-bottom: 4px;
+  }
+  .rank-badge .rank-resp {
+    color: var(--muted);
+    font-size: 7px;
+  }
+  .rank-badge .rank-age {
+    color: var(--cyan);
+    font-size: 7px;
+  }
+
+  /* ── weapons chart ────────────────────────────────────────────── */
+  .wpn-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 10px;
+    margin: 14px 0;
+  }
+  .wpn-card {
+    border: 1px solid #335;
+    background: var(--bg-alt);
+    padding: 10px 12px;
+  }
+  .wpn-card .wpn-name {
+    color: var(--cyan);
+    font-size: 9px;
+    margin-bottom: 4px;
+  }
+  .wpn-card .wpn-stat {
+    color: var(--muted);
+    font-size: 7px;
+  }
+  .wpn-card .wpn-ch {
+    color: var(--gold);
+    font-size: 7px;
+    margin-top: 4px;
+  }
+
+  /* ── footer ───────────────────────────────────────────────────── */
+  .footer {
+    text-align: center;
+    padding: 30px 0;
+    color: var(--muted);
+    font-size: 7px;
+    letter-spacing: 2px;
+  }
+
+  /* ── toc ──────────────────────────────────────────────────────── */
+  .toc a {
+    color: var(--cyan);
+    text-decoration: none;
+    display: block;
+    padding: 4px 0;
+    font-size: 9px;
+  }
+  .toc a:hover {
+    color: var(--gold);
+  }
+  .toc .toc-num {
+    color: var(--accent);
+    margin-right: 8px;
+  }
+
+  /* ── blink for retro flair ────────────────────────────────────── */
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0; }
+  }
+  .blink {
+    animation: blink 1.2s step-end infinite;
+  }
+
+  /* ── pixel art decorative borders ─────────────────────────────── */
+  .pixel-border {
+    border-image: repeating-linear-gradient(
+      90deg,
+      var(--accent) 0 4px,
+      transparent 4px 8px
+    ) 4;
+    border-width: 4px;
+    border-style: solid;
+  }
+</style>
+</head>
+<body>
+
+<div class="manual">
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- COVER                                                          -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+<div class="cover">
+  <div class="subtitle">OFFICIAL GAME MANUAL</div>
+  <h1>T H I E F</h1>
+  <div class="tagline">A text-based crime RPG about climbing from nothing.</div>
+  <div class="platform">TERMINAL &bull; PYTHON 3.8+</div>
+  <div class="age-rating">NOT RATED &bull; CONTAINS SIMULATED VIOLENCE &bull; 1 PLAYER</div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- TABLE OF CONTENTS                                              -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+<div class="section" id="toc">
+  <h2>Contents</h2>
+  <div class="toc">
+    <a href="#story"><span class="toc-num">I.</span>The Story</a>
+    <a href="#controls"><span class="toc-num">II.</span>How to Play</a>
+    <a href="#combat"><span class="toc-num">III.</span>Combat</a>
+    <a href="#ranks"><span class="toc-num">IV.</span>Ranks &amp; Progression</a>
+    <a href="#weapons"><span class="toc-num">V.</span>Weapons &amp; Items</a>
+    <a href="#chapters"><span class="toc-num">VI.</span>Chapter Guide</a>
+    <a href="#systems"><span class="toc-num">VII.</span>Game Systems</a>
+    <a href="#tips"><span class="toc-num">VIII.</span>Tips &amp; Secrets</a>
+  </div>
+</div>
+
+<div class="divider">■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■</div>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- THE STORY                                                      -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+<div class="section" id="story">
+  <h2>I. The Story</h2>
+  <p>
+    You're fourteen, small for your age, and at the bottom of every food
+    chain that matters. The block's got a pecking order — and right now
+    you're somewhere below the pigeons.
+  </p>
+  <p>
+    But today's gonna be different.
+  </p>
+  <p>
+    Fight your way up from a nobody kid on a busted block to the Boss
+    Level — running the entire city. Eight chapters. Eight bosses.
+    One long climb from fists to laser launchers.
+  </p>
+  <p>
+    Every choice matters. Every fight has consequences. Some shopkeepers
+    shoot back. The cops don't play fair. And there's always someone
+    bigger waiting at the top.
+  </p>
+</div>
+
+<div class="divider">■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■</div>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- HOW TO PLAY                                                    -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+<div class="section" id="controls">
+  <h2>II. How to Play</h2>
+
+  <h3>Starting the Game</h3>
+  <p>Open a terminal and run:</p>
+  <div class="box info">
+    <div class="label">COMMAND</div>
+    cd src<br>
+    python main.py
+  </div>
+  <p>
+    Requires <strong style="color:var(--cyan)">Python 3.8+</strong>.
+    No external dependencies needed.
+  </p>
+
+  <h3>Navigation</h3>
+  <p>
+    Type a number to select from the menu. You can travel between
+    locations, talk to NPCs, visit shops, pick fights, or use items.
+    Each chapter opens a new hub area with connected locations.
+  </p>
+
+  <h3>Exploration</h3>
+  <p>
+    Moving between locations may trigger random encounters, environmental
+    hazards, police patrols, or ambient events. Stay alert — the streets
+    don't wait for you to get ready.
+  </p>
+
+  <div class="box warning">
+    <div class="label">WARNING</div>
+    There is no save feature. When you die, you start over.<br>
+    Choose your fights carefully.
+  </div>
+</div>
+
+<div class="divider">■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■</div>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- COMBAT                                                         -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+<div class="section" id="combat">
+  <h2>III. Combat</h2>
+
+  <p>
+    Combat is turn-based. You and your opponent trade blows until one
+    of you drops to 0 HP — or you run away.
+  </p>
+
+  <h3>Actions</h3>
+  <table>
+    <tr>
+      <th>Action</th>
+      <th>Damage</th>
+      <th>Requirement</th>
+    </tr>
+    <tr>
+      <td>Weak Punch</td>
+      <td style="color:var(--text)">1–3 + weapon bonus</td>
+      <td>Always available</td>
+    </tr>
+    <tr>
+      <td>Strong Punch</td>
+      <td style="color:var(--cyan)">4–8 + weapon bonus</td>
+      <td>Fighter rank (10+ respect)</td>
+    </tr>
+    <tr>
+      <td>Run Away</td>
+      <td style="color:var(--muted)">—</td>
+      <td>Always available (may fail)</td>
+    </tr>
+  </table>
+
+  <h3>Weapons</h3>
+  <p>
+    Weapons add a flat damage bonus to every attack. Your best weapon
+    auto-equips when picked up. You can't un-equip a weapon — only
+    replace it with a stronger one.
+  </p>
+
+  <h3>Combat Results</h3>
+  <table>
+    <tr><th>Result</th><th>Effect</th></tr>
+    <tr>
+      <td style="color:var(--green)">WIN</td>
+      <td>Earn respect + possible money/item drops.</td>
+    </tr>
+    <tr>
+      <td style="color:var(--accent)">LOSE</td>
+      <td>Lose some HP. Game over if you hit 0.</td>
+    </tr>
+    <tr>
+      <td style="color:var(--muted)">RUN</td>
+      <td>Escape to the hub. No rewards.</td>
+    </tr>
+    <tr>
+      <td style="color:var(--gold)">SCRIPTED LOSS</td>
+      <td>Story-required defeat. You survive but learn a lesson.</td>
+    </tr>
+  </table>
+
+  <div class="box tip">
+    <div class="label">TIP</div>
+    Boss fights often start with a scripted loss. Don't waste healing
+    items — you're supposed to lose the first round. Come back with
+    better gear.
+  </div>
+</div>
+
+<div class="divider">■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■</div>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- RANKS                                                          -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+<div class="section" id="ranks">
+  <h2>IV. Ranks &amp; Progression</h2>
+
+  <p>
+    Respect is everything. Win fights, complete missions, and climb the
+    ranks. Each rank unlocks new combat moves, chapters, and story paths.
+  </p>
+
+  <div class="rank-strip">
+    <div class="rank-badge">
+      <div class="rank-name">PUSH-OVER KID</div>
+      <div class="rank-resp">0 – 9 Respect</div>
+      <div class="rank-age">Age 14</div>
+    </div>
+    <div class="rank-badge">
+      <div class="rank-name">FIGHTER</div>
+      <div class="rank-resp">10 – 24 Respect</div>
+      <div class="rank-age">Age 15</div>
+    </div>
+    <div class="rank-badge">
+      <div class="rank-name">PUNK</div>
+      <div class="rank-resp">25 – 49 Respect</div>
+      <div class="rank-age">Age 16–17</div>
+    </div>
+    <div class="rank-badge">
+      <div class="rank-name">STREET THUG</div>
+      <div class="rank-resp">50 – 99 Respect</div>
+      <div class="rank-age">Age 18–19</div>
+    </div>
+  </div>
+  <div class="rank-strip">
+    <div class="rank-badge">
+      <div class="rank-name">GRIFTER</div>
+      <div class="rank-resp">100 – 199 Respect</div>
+      <div class="rank-age">Age 20–22</div>
+    </div>
+    <div class="rank-badge">
+      <div class="rank-name">CREW MEMBER</div>
+      <div class="rank-resp">200 – 399 Respect</div>
+      <div class="rank-age">Age 25–28</div>
+    </div>
+    <div class="rank-badge">
+      <div class="rank-name">SYNDICATE</div>
+      <div class="rank-resp">400 – 799 Respect</div>
+      <div class="rank-age">Age 30–35</div>
+    </div>
+    <div class="rank-badge">
+      <div class="rank-name">BOSS LEVEL</div>
+      <div class="rank-resp">800+ Respect</div>
+      <div class="rank-age">Age 35+</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider">■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■</div>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- WEAPONS & ITEMS                                                -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+<div class="section" id="weapons">
+  <h2>V. Weapons &amp; Items</h2>
+
+  <h3>Weapon Progression</h3>
+  <div class="wpn-grid">
+    <div class="wpn-card">
+      <div class="wpn-name">Fists</div>
+      <div class="wpn-stat">+0 Damage Bonus</div>
+      <div class="wpn-ch">Ch1 — Default</div>
+    </div>
+    <div class="wpn-card">
+      <div class="wpn-name">Loose Brick</div>
+      <div class="wpn-stat">+2 Damage Bonus</div>
+      <div class="wpn-ch">Ch1 — Found in the Alley</div>
+    </div>
+    <div class="wpn-card">
+      <div class="wpn-name">Brass Knuckles</div>
+      <div class="wpn-stat">+3 Damage Bonus</div>
+      <div class="wpn-ch">Ch2 — Head Shop ($20)</div>
+    </div>
+    <div class="wpn-card">
+      <div class="wpn-name">Crowbar</div>
+      <div class="wpn-stat">+5 Damage Bonus</div>
+      <div class="wpn-ch">Ch3 — Pawn Shop Trade</div>
+    </div>
+    <div class="wpn-card">
+      <div class="wpn-name">Knife</div>
+      <div class="wpn-stat">+7 Damage Bonus</div>
+      <div class="wpn-ch">Ch4 — Pawn Shop Jenny</div>
+    </div>
+    <div class="wpn-card">
+      <div class="wpn-name">Cheap Pistol</div>
+      <div class="wpn-stat">+10 Damage Bonus</div>
+      <div class="wpn-ch">Ch5 — Mack's Pawn ($50)</div>
+    </div>
+    <div class="wpn-card">
+      <div class="wpn-name">SMG</div>
+      <div class="wpn-stat">+12 Damage Bonus</div>
+      <div class="wpn-ch">Ch6 — Van Cargo</div>
+    </div>
+    <div class="wpn-card">
+      <div class="wpn-name">Shotgun</div>
+      <div class="wpn-stat">+14 Damage Bonus</div>
+      <div class="wpn-ch">Ch6 — Fish Market</div>
+    </div>
+    <div class="wpn-card">
+      <div class="wpn-name">Rifle</div>
+      <div class="wpn-stat">+16 Damage Bonus</div>
+      <div class="wpn-ch">Ch7 — Black Market</div>
+    </div>
+    <div class="wpn-card">
+      <div class="wpn-name">Explosives</div>
+      <div class="wpn-stat">+18 Damage Bonus</div>
+      <div class="wpn-ch">Ch7 — Heist Loot</div>
+    </div>
+    <div class="wpn-card pixel-border">
+      <div class="wpn-name">Laser Launcher</div>
+      <div class="wpn-stat">+25 Damage Bonus</div>
+      <div class="wpn-ch">Ch7 — Assembled (3 parts)</div>
+    </div>
+  </div>
+
+  <h3>Healing Items</h3>
+  <table>
+    <tr><th>Item</th><th>HP</th><th>Source</th></tr>
+    <tr><td>Soda Can</td><td style="color:var(--green)">+5</td><td>Ch1 Loot Drop</td></tr>
+    <tr><td>Candy Bar</td><td style="color:var(--green)">+8</td><td>Ch1 Loot Drop</td></tr>
+    <tr><td>Beef Jerky</td><td style="color:var(--green)">+7</td><td>Ch3 Shop</td></tr>
+    <tr><td>Cheap Bandage</td><td style="color:var(--green)">+12</td><td>Ch3 Shop</td></tr>
+    <tr><td>Malt Liquor</td><td style="color:var(--green)">+10</td><td>Ch4 Dive Bar</td></tr>
+    <tr><td>First Aid Kit</td><td style="color:var(--green)">+20</td><td>Ch4 Shop</td></tr>
+    <tr><td>Pain Pills</td><td style="color:var(--green)">+15</td><td>Ch5 Shop</td></tr>
+    <tr><td>Protein Bar</td><td style="color:var(--green)">+8</td><td>Ch5 Shop</td></tr>
+    <tr><td>Canned Food</td><td style="color:var(--green)">+10</td><td>Ch6 Fish Market</td></tr>
+    <tr><td>Field Medkit</td><td style="color:var(--green)">+30</td><td>Ch6 Shop</td></tr>
+    <tr><td>MRE</td><td style="color:var(--green)">+15</td><td>Ch7 Shop</td></tr>
+    <tr><td>Trauma Kit</td><td style="color:var(--green)">+45</td><td>Ch7 Shop</td></tr>
+    <tr><td>Combat Stim</td><td style="color:var(--green)">+50</td><td>Ch8 Loot</td></tr>
+  </table>
+
+  <h3>Quest Items</h3>
+  <table>
+    <tr><th>Item</th><th>Chapter</th><th>Purpose</th></tr>
+    <tr>
+      <td class="quest-item">Mom's $20</td><td>Ch1</td>
+      <td>Stolen from Mom — used to buy brass knuckles in Ch2</td>
+    </tr>
+    <tr>
+      <td class="quest-item">Car Stereo</td><td>Ch2</td>
+      <td>Taken from boom car — traded for crowbar in Ch3</td>
+    </tr>
+    <tr>
+      <td class="quest-item">Crate Loot</td><td>Ch3</td>
+      <td>Electronics &amp; parts — traded to Sparks in Ch4</td>
+    </tr>
+    <tr>
+      <td class="quest-item">Hacking Device</td><td>Ch4</td>
+      <td>Built by Sparks — bypasses lab security</td>
+    </tr>
+    <tr>
+      <td class="quest-item">Lab Data</td><td>Ch4</td>
+      <td>Retrieved from the lab — confrontation trigger</td>
+    </tr>
+    <tr>
+      <td class="quest-item">Van Cargo</td><td>Ch6</td>
+      <td>Hijacked goods — cash &amp; components</td>
+    </tr>
+    <tr>
+      <td class="quest-item">Laser Components ×3</td><td>Ch7</td>
+      <td>Power Cell, Focusing Array, Control Module</td>
+    </tr>
+    <tr>
+      <td class="quest-item">Kingpin Intel</td><td>Ch8</td>
+      <td>Dossier from The Prophet — final mission briefing</td>
+    </tr>
+    <tr>
+      <td class="quest-item">Master Key</td><td>Ch8</td>
+      <td>Access to restricted areas of the complex</td>
+    </tr>
+    <tr>
+      <td class="quest-item">Breaching Charge</td><td>Ch8</td>
+      <td>Blow through reinforced doors</td>
+    </tr>
+  </table>
+</div>
+
+<div class="divider">■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■</div>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- CHAPTER GUIDE                                                  -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+<div class="section" id="chapters">
+  <h2>VI. Chapter Guide</h2>
+
+  <!-- ── CHAPTER 1 ─────────────────────────────────────────────── -->
+  <div class="chapter-card" data-chapter="CHAPTER 1">
+    <h3>The Block</h3>
+    <p>
+      <span style="color:var(--muted)">Age 14 &bull; Push-over Kid &bull; 0–10 Respect</span>
+    </p>
+    <p>
+      Earn respect fighting street bullies until Marcus "Kicks" Delano
+      notices you. Step to him, survive his beatdown, find the loose
+      brick in the alley, steal $20 from Mom's purse, and take Marcus
+      down to rank up.
+    </p>
+
+    <h4>Locations</h4>
+    <div class="locations">
+      <span class="loc-tag hub">Home (Hub)</span>
+      <span class="loc-tag">Your Block</span>
+      <span class="loc-tag">The Park</span>
+      <span class="loc-tag">The Schoolyard</span>
+      <span class="loc-tag">The Corner Store</span>
+      <span class="loc-tag">The Alley</span>
+      <span class="loc-tag">The Woods</span>
+      <span class="loc-tag">The Abandoned Lot</span>
+      <span class="loc-tag">The Construction Site</span>
+    </div>
+
+    <h4>Enemies</h4>
+    <div class="entity-list">
+      <span class="entity enemy">Skinny Derek</span>
+      <span class="entity enemy">Big Tommy</span>
+      <span class="entity enemy">Jake the Snake</span>
+      <span class="entity boss">Marcus "Kicks" Delano ★</span>
+    </div>
+
+    <h4>NPCs</h4>
+    <div class="entity-list">
+      <span class="entity npc">Mom</span>
+      <span class="entity npc">Old Earl</span>
+      <span class="entity npc">Kim (fights back!)</span>
+    </div>
+
+    <div class="hazard-bar">
+      ⚠ HAZARDS: Rat bites &amp; rusty nails (alley) · Tree roots &amp; wasp
+      nests (woods) · Broken glass &amp; stray dogs (abandoned lot) · Loose
+      boards &amp; exposed rebar (construction site)
+    </div>
+  </div>
+
+  <!-- ── CHAPTER 2 ─────────────────────────────────────────────── -->
+  <div class="chapter-card" data-chapter="CHAPTER 2">
+    <h3>The Strip</h3>
+    <p>
+      <span style="color:var(--muted)">Age 15 &bull; Fighter &bull; 10–24 Respect</span>
+    </p>
+    <p>
+      A run-down stretch of shops and parking lots. Beat Vinnie "Chrome"
+      Lucca — survive his scripted beatdown, steal a car stereo from
+      the boom car, buy brass knuckles at the Head Shop, then take him
+      down for real.
+    </p>
+
+    <h4>Locations</h4>
+    <div class="locations">
+      <span class="loc-tag hub">The Strip (Hub)</span>
+      <span class="loc-tag">Head Shop</span>
+      <span class="loc-tag">Bodega</span>
+      <span class="loc-tag boss-arena">Parking Lot</span>
+      <span class="loc-tag">Boom Car</span>
+    </div>
+
+    <h4>Enemies</h4>
+    <div class="entity-list">
+      <span class="entity enemy">Rico Blades</span>
+      <span class="entity enemy">Darnell</span>
+      <span class="entity enemy">Cutter Pete</span>
+      <span class="entity enemy">Tony V</span>
+      <span class="entity boss">Vinnie "Chrome" Lucca ★</span>
+    </div>
+
+    <h4>NPCs</h4>
+    <div class="entity-list">
+      <span class="entity npc">Ponytail Guy</span>
+      <span class="entity npc">Mr. Salazar (fights back! ☠)</span>
+      <span class="entity npc">Loose-Lip Larry</span>
+    </div>
+
+    <div class="hazard-bar">
+      ⚠ HAZARDS: Sparking neon signs &amp; skateboarders (the strip) · Oil
+      slicks &amp; airborne bottles (parking lot)
+    </div>
+
+    <div class="police-bar">
+      🚔 POLICE: 12% presence · 30% arrest chance · Lose 50% cash + 5 respect
+    </div>
+  </div>
+
+  <!-- ── CHAPTER 3 ─────────────────────────────────────────────── -->
+  <div class="chapter-card" data-chapter="CHAPTER 3">
+    <h3>The Yard</h3>
+    <p>
+      <span style="color:var(--muted)">Age 16–17 &bull; Punk &bull; 25–49 Respect</span>
+    </p>
+    <p>
+      An industrial rail yard on the wrong side of the tracks. Trade
+      the busted car stereo for a crowbar, locate a warehouse crate full
+      of electronics, and take down Razor — the skinhead boss who runs
+      the yard.
+    </p>
+
+    <h4>Locations</h4>
+    <div class="locations">
+      <span class="loc-tag hub">The Yard (Hub)</span>
+      <span class="loc-tag">Pawn Shop</span>
+      <span class="loc-tag">Boxcar Row</span>
+      <span class="loc-tag">Loading Dock</span>
+      <span class="loc-tag">Warehouse</span>
+      <span class="loc-tag boss-arena">The Hangout</span>
+    </div>
+
+    <h4>Enemies</h4>
+    <div class="entity-list">
+      <span class="entity enemy">Rail Rat</span>
+      <span class="entity enemy">Bolt-Cutter Ben</span>
+      <span class="entity enemy">Grease Monkey</span>
+      <span class="entity enemy">Skinhead Grunt</span>
+      <span class="entity boss">Razor ★</span>
+    </div>
+
+    <h4>NPCs</h4>
+    <div class="entity-list">
+      <span class="entity npc">Shifty (fights back!)</span>
+      <span class="entity npc">Diesel Dave</span>
+      <span class="entity npc">Mute Jenny</span>
+    </div>
+
+    <div class="hazard-bar">
+      ⚠ HAZARDS: Rail spikes &amp; boxcar doors · Rusted nails &amp;
+      coupling snaps · Falling pallets · Chemical fumes &amp; falling chains
+    </div>
+
+    <div class="police-bar">
+      🚔 POLICE: 8% presence · 25% arrest chance · Lose 50% cash + 5 respect
+    </div>
+  </div>
+
+  <!-- ── CHAPTER 4 ─────────────────────────────────────────────── -->
+  <div class="chapter-card" data-chapter="CHAPTER 4">
+    <h3>The Avenue</h3>
+    <p>
+      <span style="color:var(--muted)">Age 18–19 &bull; Street Thug &bull; 50–99 Respect</span>
+    </p>
+    <p>
+      A commercial district with a dice game, dive bars, and a mysterious
+      lab. D-Block's runner delivers the job: infiltrate the lab. You'll
+      need Sparks the tinkerer to build a hacking device from the crate
+      components.
+    </p>
+
+    <h4>Locations</h4>
+    <div class="locations">
+      <span class="loc-tag hub">The Avenue (Hub)</span>
+      <span class="loc-tag">Tinkerer's Workshop</span>
+      <span class="loc-tag">Dive Bar</span>
+      <span class="loc-tag">Dice Alley</span>
+      <span class="loc-tag">D-Block's Corner</span>
+      <span class="loc-tag boss-arena">The Lab</span>
+    </div>
+
+    <h4>Enemies</h4>
+    <div class="entity-list">
+      <span class="entity enemy">Corner Thug</span>
+      <span class="entity enemy">Dice Game Enforcer</span>
+      <span class="entity enemy">Tweaker</span>
+      <span class="entity enemy">Lab Security Guard</span>
+      <span class="entity boss">D-Block ★</span>
+    </div>
+
+    <h4>NPCs</h4>
+    <div class="entity-list">
+      <span class="entity npc">Sparks</span>
+      <span class="entity npc">Barkeep Ray</span>
+      <span class="entity npc">Little Chris</span>
+      <span class="entity npc">Pawn Shop Jenny (fights back! ☠)</span>
+    </div>
+
+    <div class="hazard-bar">
+      ⚠ HAZARDS: Curb-jumping cars &amp; falling bottles · Dirty syringes
+      · UV light bursts &amp; exposed wiring
+    </div>
+
+    <div class="police-bar">
+      🚔 POLICE: 15% presence · 35% arrest chance · Lose 50% cash + 8 respect
+    </div>
+  </div>
+
+  <!-- ── CHAPTER 5 ─────────────────────────────────────────────── -->
+  <div class="chapter-card" data-chapter="CHAPTER 5">
+    <h3>The Row</h3>
+    <p>
+      <span style="color:var(--muted)">Age 20–22 &bull; Grifter &bull; 100–199 Respect</span>
+    </p>
+    <p>
+      Corner stores, pawn shops, gang hangouts. The first chapter where
+      store owners fight back with lethal force. Armed shopkeepers have
+      an 8% chance of killing you instantly. Take down Mr. Fontaine and
+      his bodyguards to go professional.
+    </p>
+
+    <h4>Locations</h4>
+    <div class="locations">
+      <span class="loc-tag hub">The Row (Hub)</span>
+      <span class="loc-tag">Corner Store</span>
+      <span class="loc-tag">Laundromat</span>
+      <span class="loc-tag">Pawn Shop / Arms Contact</span>
+      <span class="loc-tag">Back Office</span>
+      <span class="loc-tag boss-arena">Fontaine's Shop</span>
+    </div>
+
+    <h4>Enemies</h4>
+    <div class="entity-list">
+      <span class="entity enemy">Corner Store Clerk</span>
+      <span class="entity enemy">Armed Shopkeeper ☠</span>
+      <span class="entity enemy">Street Hustler</span>
+      <span class="entity enemy">Bodyguard</span>
+      <span class="entity boss">Mr. Fontaine ★</span>
+    </div>
+
+    <h4>NPCs</h4>
+    <div class="entity-list">
+      <span class="entity npc">Mack (fights back! ☠)</span>
+      <span class="entity npc">Rita</span>
+      <span class="entity npc">Old Sarge</span>
+    </div>
+
+    <div class="hazard-bar">
+      ⚠ HAZARDS: Backfiring cars &amp; lunging pit bulls · Detergent spills
+    </div>
+
+    <div class="police-bar">
+      🚔 POLICE: 18% presence · 40% arrest chance · Lose 60% cash + 10 respect
+    </div>
+
+    <div class="box warning">
+      <div class="label">DANGER</div>
+      Armed shopkeepers have an 8% instant death chance. Mack the pawn
+      dealer also fires back. Rob stores at your own risk.
+    </div>
+  </div>
+
+  <!-- ── CHAPTER 6 ─────────────────────────────────────────────── -->
+  <div class="chapter-card" data-chapter="CHAPTER 6">
+    <h3>The Docks</h3>
+    <p>
+      <span style="color:var(--muted)">Age 25–28 &bull; Crew Member &bull; 200–399 Respect</span>
+    </p>
+    <p>
+      You're running with a crew now. Hijack delivery vans, run multi-step
+      missions with Eddie Books, and take down mob capo Salvatore "The Fish"
+      Moretti to fund your arsenal for Chapter 7.
+    </p>
+
+    <h4>Locations</h4>
+    <div class="locations">
+      <span class="loc-tag hub">The Docks (Hub)</span>
+      <span class="loc-tag">Container Yard</span>
+      <span class="loc-tag">Delivery Depot</span>
+      <span class="loc-tag">Fish Market</span>
+      <span class="loc-tag">The Pier</span>
+      <span class="loc-tag boss-arena">Capo's Warehouse</span>
+    </div>
+
+    <h4>Enemies</h4>
+    <div class="entity-list">
+      <span class="entity enemy">Dock Worker</span>
+      <span class="entity enemy">Smuggler</span>
+      <span class="entity enemy">Van Driver</span>
+      <span class="entity enemy">Capo's Enforcer</span>
+      <span class="entity boss">Salvatore "The Fish" Moretti ★</span>
+    </div>
+
+    <h4>NPCs</h4>
+    <div class="entity-list">
+      <span class="entity npc">Fish Monger Sal</span>
+      <span class="entity npc">Nails</span>
+      <span class="entity npc">Eddie Books</span>
+      <span class="entity npc">Officer Ketch</span>
+    </div>
+
+    <div class="hazard-bar">
+      ⚠ HAZARDS: Crane cables &amp; wet dock slips · Rogue forklifts &amp;
+      falling crates · Reversing vans · Rotting planks &amp; wave surges
+    </div>
+
+    <div class="police-bar">
+      🚔 POLICE: 15% presence (harbour patrol) · 35% arrest · Lose 50% cash + 12 respect
+    </div>
+  </div>
+
+  <!-- ── CHAPTER 7 ─────────────────────────────────────────────── -->
+  <div class="chapter-card" data-chapter="CHAPTER 7">
+    <h3>The Heights</h3>
+    <p>
+      <span style="color:var(--muted)">Age 30–35 &bull; Syndicate &bull; 400–799 Respect</span>
+    </p>
+    <p>
+      Mansions, penthouses, and black-market labs. The lab items from Ch4
+      were for something sinister. Ghost reveals the truth. Assemble the
+      laser launcher from three components and take down Viktor Kessler
+      in his robotic exo-suit on the rooftop.
+    </p>
+
+    <h4>Locations</h4>
+    <div class="locations">
+      <span class="loc-tag hub">The Heights (Hub)</span>
+      <span class="loc-tag">Private Club</span>
+      <span class="loc-tag">Penthouse Tower</span>
+      <span class="loc-tag">Black-Market Lab</span>
+      <span class="loc-tag">The Mansion</span>
+      <span class="loc-tag boss-arena">The Rooftop</span>
+    </div>
+
+    <h4>Enemies</h4>
+    <div class="entity-list">
+      <span class="entity enemy">Private Security</span>
+      <span class="entity enemy">Syndicate Soldier</span>
+      <span class="entity enemy">Mansion Guard</span>
+      <span class="entity enemy">Lab Scientist</span>
+      <span class="entity boss">Viktor Kessler (Exo-Suit) ★</span>
+    </div>
+
+    <h4>NPCs</h4>
+    <div class="entity-list">
+      <span class="entity npc">Ghost</span>
+      <span class="entity npc">Dr. Chen</span>
+      <span class="entity npc">Concierge Marco</span>
+      <span class="entity npc">Sylvia</span>
+    </div>
+
+    <h4>Laser Launcher Assembly</h4>
+    <table>
+      <tr><th>Component</th><th>Source</th></tr>
+      <tr>
+        <td class="quest-item">Power Cell</td>
+        <td>Mansion heist loot</td>
+      </tr>
+      <tr>
+        <td class="quest-item">Focusing Array</td>
+        <td>Black-Market Lab recovery</td>
+      </tr>
+      <tr>
+        <td class="quest-item">Control Module</td>
+        <td>Ch4 lab thread (repurposed)</td>
+      </tr>
+    </table>
+
+    <div class="hazard-bar">
+      ⚠ HAZARDS: Falling window-washer buckets &amp; cracking glass ·
+      Snapping elevator cables &amp; slamming security doors · Chemical
+      spills &amp; electrical arcs · Guard dogs &amp; motion sensors ·
+      Rooftop wind gusts
+    </div>
+
+    <div class="police-bar">
+      🚔 POLICE: 20% presence (tactical unit) · 40% arrest · Lose 60% cash + 15 respect
+    </div>
+  </div>
+
+  <!-- ── CHAPTER 8 ─────────────────────────────────────────────── -->
+  <div class="chapter-card pixel-border" data-chapter="CHAPTER 8 — FINAL">
+    <h3>The Crown</h3>
+    <p>
+      <span style="color:var(--muted)">Age 35+ &bull; Boss Level &bull; 800+ Respect</span>
+    </p>
+    <p>
+      The whole city. Alexander Cross — the Kingpin who's been pulling
+      strings since Chapter 1 — is finally revealed. Every forward-thread
+      item from the entire game has a role in the final battle.
+    </p>
+
+    <h4>Locations</h4>
+    <div class="locations">
+      <span class="loc-tag hub">Syndicate HQ (Hub)</span>
+      <span class="loc-tag">The Old Block</span>
+      <span class="loc-tag">Underground Bunker</span>
+      <span class="loc-tag boss-arena">Kingpin's Stronghold</span>
+      <span class="loc-tag boss-arena">The Helipad</span>
+    </div>
+
+    <h4>Enemies</h4>
+    <div class="entity-list">
+      <span class="entity enemy">Elite Guard</span>
+      <span class="entity enemy">Armoured Mercenary</span>
+      <span class="entity boss">The Ghost Hand (Lieutenant)</span>
+      <span class="entity boss">Alexander Cross — The Kingpin ★</span>
+    </div>
+
+    <h4>Returning NPCs</h4>
+    <div class="entity-list">
+      <span class="entity npc">The Prophet</span>
+      <span class="entity npc">Nails (Ch6)</span>
+      <span class="entity npc">Sparks (Ch4)</span>
+      <span class="entity npc">Ghost (Ch7)</span>
+      <span class="entity npc">Detective Shaw</span>
+    </div>
+
+    <h4>Final Boss — Alexander Cross</h4>
+    <table>
+      <tr><th>Stat</th><th>Value</th></tr>
+      <tr><td>HP</td><td style="color:var(--accent)">250</td></tr>
+      <tr><td>Weapon</td><td>Golden Desert Eagle</td></tr>
+      <tr><td>Abilities</td><td>Detonator, ceiling turrets, electrified floors</td></tr>
+      <tr><td>Phases</td><td>Multi-phase fight (breach → guards → lieutenant → Kingpin)</td></tr>
+    </table>
+
+    <div class="hazard-bar">
+      ⚠ HAZARDS: Motion-sensor doors &amp; gas traps · Automated turrets
+      &amp; blast-door pressure waves · Steam pipe bursts · Rotor wash gusts
+    </div>
+
+    <div class="police-bar">
+      🚔 POLICE: 25% presence (SWAT) · 45% arrest · Lose 70% cash + 20 respect
+    </div>
+
+    <div class="box warning">
+      <div class="label">FINAL WARNING</div>
+      This is it. Bring everything — the laser launcher, the hacking
+      device, every weapon you've collected. Alexander Cross doesn't
+      give second chances.
+    </div>
+  </div>
+</div>
+
+<div class="divider">■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■</div>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- GAME SYSTEMS                                                   -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+<div class="section" id="systems">
+  <h2>VII. Game Systems</h2>
+
+  <h3>🔫 Store Owner Fight-Back</h3>
+  <p>
+    Not every shopkeeper is a pushover. Some fight back when you try to
+    rob them — swinging bats, pulling shotguns, or worse. Each shopkeeper
+    has a fight-back chance and damage range. Some carry lethal weapons
+    with a small instant-death probability.
+  </p>
+  <table>
+    <tr><th>NPC</th><th>Ch</th><th>Weapon</th><th>Chance</th><th>Damage</th><th>☠ Death</th></tr>
+    <tr>
+      <td>Kim</td><td>1</td><td>Bat</td>
+      <td>35%</td><td>3–6</td><td>—</td>
+    </tr>
+    <tr>
+      <td>Mr. Salazar</td><td>2</td><td>Bat</td>
+      <td>40%</td><td>4–8</td><td style="color:var(--accent)">5%</td>
+    </tr>
+    <tr>
+      <td>Shifty</td><td>3</td><td>Pipe</td>
+      <td>25%</td><td>3–7</td><td>—</td>
+    </tr>
+    <tr>
+      <td>Pawn Shop Jenny</td><td>4</td><td>Shotgun</td>
+      <td>45%</td><td>8–15</td><td style="color:var(--accent)">10%</td>
+    </tr>
+    <tr>
+      <td>Mack</td><td>5</td><td>Revolver</td>
+      <td>30%</td><td>6–12</td><td style="color:var(--accent)">8%</td>
+    </tr>
+  </table>
+
+  <div class="box warning">
+    <div class="label">WARNING</div>
+    The ☠ symbol means instant death is possible. If the death roll
+    hits, it's game over — no HP check, no second chance. The risk
+    increases with each chapter.
+  </div>
+
+  <h3>🚔 Police System</h3>
+  <p>
+    Starting in Chapter 2, police patrol the streets. Every time you
+    move between locations, there's a chance of encountering a patrol.
+    If you're caught doing something illegal, you get arrested — losing
+    a percentage of your cash and a chunk of respect.
+  </p>
+
+  <table>
+    <tr><th>Chapter</th><th>Presence</th><th>Arrest %</th><th>Cash Loss</th><th>Respect</th><th>Unit</th></tr>
+    <tr><td>Ch1</td><td>—</td><td>—</td><td>—</td><td>—</td><td style="color:var(--muted)">None</td></tr>
+    <tr><td>Ch2</td><td>12%</td><td>30%</td><td>50%</td><td>-5</td><td>Beat Cops</td></tr>
+    <tr><td>Ch3</td><td>8%</td><td>25%</td><td>50%</td><td>-5</td><td>Railway Security</td></tr>
+    <tr><td>Ch4</td><td>15%</td><td>35%</td><td>50%</td><td>-8</td><td>Street Patrol</td></tr>
+    <tr><td>Ch5</td><td>18%</td><td>40%</td><td>60%</td><td>-10</td><td>Precinct Patrol</td></tr>
+    <tr><td>Ch6</td><td>15%</td><td>35%</td><td>50%</td><td>-12</td><td>Harbour Patrol</td></tr>
+    <tr><td>Ch7</td><td>20%</td><td>40%</td><td>60%</td><td>-15</td><td>Tactical Unit</td></tr>
+    <tr><td>Ch8</td><td>25%</td><td>45%</td><td>70%</td><td>-20</td><td style="color:var(--accent)">SWAT</td></tr>
+  </table>
+
+  <h3>⚠ Environmental Hazards</h3>
+  <p>
+    Every chapter has location-specific hazards that can damage you when
+    you move around. Only one hazard can trigger per move. They can't
+    kill you outright, but they'll chip away at your HP when you least
+    expect it.
+  </p>
+
+  <table>
+    <tr><th>Chapter</th><th># Hazards</th><th>Examples</th></tr>
+    <tr><td>Ch1</td><td>11</td><td>Rat bites, rusty nails, wasp nests, stray dogs</td></tr>
+    <tr><td>Ch2</td><td>6</td><td>Sparking neon, skateboarders, oil slicks</td></tr>
+    <tr><td>Ch3</td><td>9</td><td>Rail spikes, coupling snaps, chemical fumes</td></tr>
+    <tr><td>Ch4</td><td>5</td><td>Curb-jumping cars, dirty syringes, exposed wiring</td></tr>
+    <tr><td>Ch5</td><td>3</td><td>Backfiring cars, pit bulls, detergent spills</td></tr>
+    <tr><td>Ch6</td><td>8</td><td>Crane cables, falling crates, wave surges</td></tr>
+    <tr><td>Ch7</td><td>9</td><td>Cracking glass, elevator cables, guard dogs</td></tr>
+    <tr><td>Ch8</td><td>7</td><td>Gas traps, automated turrets, rotor wash</td></tr>
+  </table>
+</div>
+
+<div class="divider">■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■</div>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- TIPS                                                           -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+<div class="section" id="tips">
+  <h2>VIII. Tips &amp; Secrets</h2>
+
+  <div class="box tip">
+    <div class="label">TIP #1</div>
+    Save your healing items for boss fights. Street enemies drop loot —
+    bosses don't give you a second chance.
+  </div>
+
+  <div class="box tip">
+    <div class="label">TIP #2</div>
+    Talk to every NPC before attempting a boss fight. Info NPCs like
+    Diesel Dave, Barkeep Ray, and Fish Monger Sal give critical intel
+    that makes fights easier.
+  </div>
+
+  <div class="box tip">
+    <div class="label">TIP #3</div>
+    The car stereo from Chapter 2 carries forward through every chapter.
+    Items that seem useless now might be quest-critical later. Don't
+    sell everything.
+  </div>
+
+  <div class="box tip">
+    <div class="label">TIP #4</div>
+    Police get worse every chapter. In Chapters 7 and 8, getting arrested
+    can wipe 60–70% of your cash. Stay low-profile when your wallet's fat.
+  </div>
+
+  <div class="box tip">
+    <div class="label">TIP #5</div>
+    Armed shopkeepers can kill you instantly. In Chapter 5, the armed
+    shopkeeper enemy has an 8% death chance. That's almost 1 in 12.
+    Don't get greedy.
+  </div>
+
+  <div class="box tip">
+    <div class="label">TIP #6</div>
+    The laser launcher in Chapter 7 requires three components from
+    different locations. You absolutely need it for the boss fight — Viktor
+    Kessler's exo-suit is immune to conventional weapons.
+  </div>
+
+  <div class="box tip">
+    <div class="label">TIP #7</div>
+    In Chapter 8, NPCs from previous chapters return to help you. The
+    Prophet, Nails, Sparks, and Ghost all have roles in the final
+    assault on the Kingpin's stronghold.
+  </div>
+
+  <div class="box info">
+    <div class="label">SECRET</div>
+    The Old Block location in Chapter 8 is a callback to Chapter 1.
+    Visit it before the final fight for a moment of reflection —
+    and maybe a hidden item.
+  </div>
+</div>
+
+<div class="divider">■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■</div>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- BOSS GALLERY                                                   -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2>Boss Gallery</h2>
+
+  <table>
+    <tr>
+      <th>Ch</th>
+      <th>Boss</th>
+      <th>HP</th>
+      <th>Weapon / Style</th>
+      <th>Key Mechanic</th>
+    </tr>
+    <tr class="boss-row">
+      <td>1</td>
+      <td>Marcus "Kicks" Delano</td>
+      <td>40</td>
+      <td>Fists &amp; kicks</td>
+      <td>Scripted loss → loose brick</td>
+    </tr>
+    <tr class="boss-row">
+      <td>2</td>
+      <td>Vinnie "Chrome" Lucca</td>
+      <td>55</td>
+      <td>Leather jacket brawler</td>
+      <td>Car stereo quest + brass knuckles</td>
+    </tr>
+    <tr class="boss-row">
+      <td>3</td>
+      <td>Razor</td>
+      <td>65</td>
+      <td>Straight razor, steel boots</td>
+      <td>Crowbar + environmental cover</td>
+    </tr>
+    <tr class="boss-row">
+      <td>4</td>
+      <td>D-Block</td>
+      <td>80</td>
+      <td>Scar-faced brawler</td>
+      <td>Hacking device → lab infiltration</td>
+    </tr>
+    <tr class="boss-row">
+      <td>5</td>
+      <td>Mr. Fontaine</td>
+      <td>95</td>
+      <td>.38 revolver + bodyguards</td>
+      <td>Case his operation first</td>
+    </tr>
+    <tr class="boss-row">
+      <td>6</td>
+      <td>Salvatore "The Fish" Moretti</td>
+      <td>120</td>
+      <td>Gold-plated pistol</td>
+      <td>Dismantle supply chain</td>
+    </tr>
+    <tr class="boss-row">
+      <td>7</td>
+      <td>Viktor Kessler</td>
+      <td>180</td>
+      <td>Robotic exo-suit</td>
+      <td>Laser launcher required</td>
+    </tr>
+    <tr class="boss-row">
+      <td>8</td>
+      <td>Alexander Cross</td>
+      <td style="color:var(--accent)">250</td>
+      <td>Golden Desert Eagle + turrets</td>
+      <td>Multi-phase, all weapons needed</td>
+    </tr>
+  </table>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- FOOTER                                                         -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+<div class="footer">
+  <div class="divider">■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■</div>
+  <p>
+    THIEF &bull; OFFICIAL GAME MANUAL<br><br>
+    TERMINAL ENTERTAINMENT SYSTEMS<br><br>
+    <span style="color:var(--accent)">
+      THIS GAME IS FICTION. ANY RESEMBLANCE TO<br>
+      ACTUAL PERSONS OR EVENTS IS COINCIDENTAL.
+    </span><br><br>
+    &copy; 2025 &bull; ALL RIGHTS RESERVED<br><br>
+    <span class="blink">▌</span>
+  </p>
+</div>
+
+</div><!-- /.manual -->
+</body>
+</html>
