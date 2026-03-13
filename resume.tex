@@ -1,0 +1,90 @@
+\documentclass[11pt]{article}
+\usepackage{amssymb}
+\usepackage{enumitem}
+\usepackage[left=1.5in,right=1.5in,top=1in,bottom=1in]{geometry}
+\usepackage{microtype}
+\usepackage{tabularx}
+\setlist[itemize]{topsep=0pt, partopsep=0pt, leftmargin=*, itemsep=1pt}
+\pagenumbering{gobble}
+\newcommand{\sectionline}{
+  \par\vspace{0.3em}
+  \noindent\rule{\linewidth}{0.4pt}
+  \vspace{0.3em}
+}
+\begin{document}
+% --- Header ---
+\noindent
+\begin{tabularx}{\linewidth}{@{} X r @{}}
+\raisebox{-0.30em}{\LARGE\bfseries\textls[200]{Corey Lloyd}} &
+\begin{minipage}[t]{2.5in}
+\raggedleft
+\textbf{Senior Software Engineer}\\
+(405)\,887\textperiodcentered 2125\,--\,coreyjdl\textsc{@}gmail.com
+\end{minipage}
+\end{tabularx}
+\sectionline
+% --- Summary ---
+\subsection*{PROFESSIONAL SUMMARY}
+Senior developer with 10 plus years designing and optimizing distributed systems across .NET and Node.js. Experienced in modernizing legacy platforms, migrating workloads to Azure and AWS, and implementing scalable microservices with strong observability and CI/CD practices. Skilled at building event driven architectures using Kafka, Azure Event Hub, and asynchronous messaging patterns. Strong background in API platform engineering, containerization, and performance tuning at both the application and database layers. Experienced in improving developer workflows, establishing architecture standards, and delivering reliable systems in production environments.
+\sectionline
+% --- Skills ---
+\subsection*{TECHNICAL SKILLS}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabularx}{\linewidth}{@{} l X @{}}
+\textbf{Languages:} & C\#, Python, JavaScript \\
+\textbf{Frameworks:} & .NET Framework, .NET Core, ASP.NET, Node.js \\
+\textbf{Databases:} & SQL Server, MySQL, PostgreSQL, MongoDB, DynamoDB \\
+\textbf{ORM:} & Entity Framework, NHibernate, Dapper \\
+\textbf{Utilities:} & Visual Studio, VS Code, Unix/Bash, Postman, Swagger \\
+\textbf{Containerization:} & Docker, Kubernetes, Azure AKS \\
+\textbf{Data Streaming:} & Confluent Kafka, Azure Event Hub \\
+\textbf{Architecture:} & RESTful APIs, MVC, UML, SOLID, Microservices, TDD, Event Driven Design \\
+\textbf{DevOps:} & CI/CD, Azure DevOps, Git, Jenkins, Terraform, IAC \\
+\textbf{Cloud Platforms:} & Azure Functions, Azure Cosmos DB, Azure Service Bus, AWS S3, AWS EC2, Lambda \\
+\textbf{Soft Skills:} & Team Leadership, Client Communication, CRM, Agile \\
+\end{tabularx}
+\renewcommand{\arraystretch}{1.0}
+\newpage
+% --- Experience ---
+\subsection*{PROFESSIONAL EXPERIENCE}
+\textbf{Palpabl} \hfill .NET Developer \textbar\ 12/2025 -- Present 
+\begin{itemize}[label=--]
+\item Built out the Kafka producer and consumer systems in a new event-driven product.
+\item Owned the message queue portion of the app, guiding its architecture and standards.
+\item Created CI/CD structure for new internal applications. \\
+\end{itemize}
+\textbf{TCP Software} \hfill Platform Engineer \textbar\ 03/2024 -- 09/2025
+\begin{itemize}[label=--]
+\item Focused on platform engineering, performance, and refactoring within core .NET applications. 
+\item Led containerization and AWS integration for infrastructure migration.
+\item Replaced on-prem components with cloud-native, Docker-friendly solutions (Redis, S3, etc.) using Terraform.
+\item Improved application speed and efficiency by redesigning database calls and refactoring legacy methods. \\
+\end{itemize}
+\textbf{Heartland Payment Systems} \hfill .NET Developer \textbar\ 09/2022 -- 03/2024
+\begin{itemize}[label=--]
+\item Built .NET integrations using Azure Functions, Azure Service Bus, and Queue Storage.
+\item Supported modernization and migration from monolithic to microservice architectures.
+\item Enhanced reliability and scalability through asynchronous processing and API design. \\ 
+\end{itemize}
+\textbf{CH Robinson} \hfill API Engineer \textbar\ 12/2019 -- 09/2022
+\begin{itemize}[label=--]
+\item Supported a centralized API platform in a multi-language (C\# / Node.js) environment.
+\item Migrated on-prem APIs to Azure (AKS, Functions), with event-driven architecture.
+\item Designed internal microservices using Kafka and Azure Event Hub for asynchronous communication.
+\item Built and maintained REST APIs and webhook integrations. \\ 
+\end{itemize}
+\textbf{fjorge Digital} \hfill Backend Developer \textbar\ 01/2019 -- 12/2019
+\begin{itemize}[label=--]
+\item Served as lead developer and architect on full-stack projects in .NET and Node.js.
+\item Managed a three-person development team and delegated sprint tasks.
+\item Modernized legacy applications and implemented modular back-end designs.
+\item Coordinated with clients to align architecture with business requirements. \\
+\end{itemize}
+\textbf{Motors Management Corp} \hfill .NET Developer \textbar\ 04/2015 -- 01/2019
+\begin{itemize}[label=--]
+\item Built internal C\#/.NET tools for accounting and dashboards across 35+ dealerships.
+\item Launched and scaled DirectGM.com into a 100K+ SKU e-commerce platform.
+\item Developed Python (Flask) and SQLite systems for catalog management and automation.
+\item Developed from scratch an ERP solution for handling reporting, billing, and inventory synchronization.
+\end{itemize}
+\end{document}
