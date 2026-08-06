@@ -206,6 +206,9 @@
       .slide {
         grid-template-columns: 1fr;
         grid-template-rows: 44vh 1fr;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-y: contain;
       }
 
       .visual {
@@ -215,6 +218,8 @@
 
       .content {
         padding: 4vh 6vw 4.5vh;
+        grid-template-rows: auto auto auto auto;
+        align-content: start;
       }
 
       h1, h2 {
@@ -272,7 +277,7 @@
         eyebrow: "The hey-band bloom",
         title: "The earnest chorus arrives",
         subtitle: "Handclaps become social policy.",
-        narration: "Then a band comes along, like Mumford and Sons and scales the feeling. What was once a corner sound becomes arena ritual, and everyone learns to clap on command.",
+        narration: "Then a band like Mumford and Sons comes along and scales the feeling. What was once a corner sound becomes arena ritual, and everyone learns to clap on command.",
         image: "assets/hey-band.jpg",
         variant: "soft"
       },
@@ -344,7 +349,7 @@
         eyebrow: "The irony economy",
         title: "From Vice to grievance",
         subtitle: "Snark opens the gate.",
-        narration: "Irony keeps everyone deniable. Richard Spencer smirks, the Joe Rogan translates, and the room pretends this was inevitable.",
+        narration: "Irony keeps everyone deniable. Richard Spencer smirks, Joe Rogan translates, and the room pretends this was inevitable.",
         image: "assets/irony-economy.jpg",
         variant: "alt"
       },
@@ -352,7 +357,7 @@
         eyebrow: "Populism",
         title: "From belonging to hierarchy",
         subtitle: "The stage is set before the speech begins.",
-        narration: "By the time the Trump appears, the audience already knows the lines: insiders pure, outsiders corrupt, grievance eternal.",
+        narration: "By the time Trump appears, the audience already knows the lines: insiders pure, outsiders corrupt, grievance eternal.",
         image: "assets/populism.jpg",
         variant: "soft"
       },
