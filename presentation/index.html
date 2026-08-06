@@ -14,6 +14,7 @@
       --soft: #8d8d8d;
       --line: rgba(255, 255, 255, 0.14);
       --accent: #ffffff;
+      --burns-red: #9d1f1f;
       --shadow: rgba(0, 0, 0, 0.45);
     }
 
@@ -149,6 +150,15 @@
       line-height: 1.55;
     }
 
+    .title-divider {
+      width: min(13rem, 36vw);
+      height: 3px;
+      margin: 0.95rem 0 0.7rem;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(157, 31, 31, 0.96), rgba(157, 31, 31, 0.35));
+      box-shadow: 0 0 18px rgba(157, 31, 31, 0.25);
+    }
+
     .narration {
       align-self: end;
       max-width: 34rem;
@@ -244,6 +254,7 @@
         <div class="eyebrow"></div>
         <div>
           <h1></h1>
+          <div class="title-divider" aria-hidden="true"></div>
           <p class="deck-title"></p>
         </div>
         <div class="narration"></div>
@@ -288,14 +299,6 @@
         narration: "At some point, bacon stopped being just food and became a vibe. People started curing it at home, comparing methods, and treating the kitchen like a statement about how life should work. Kale wasn't really the enemy, but it became a stand-in for the kind of advice people were tired of hearing.",
         image: "assets/bacon.jpg",
         variant: ""
-      },
-      {
-        eyebrow: "The mustache republic",
-        title: "Facial hair grows an argument",
-        subtitle: "The face becomes a flag.",
-        narration: "Once food becomes identity, the body follows. Soon the mustache does the speaking: I arrived early, I know better, and normal was a mistake. The mustache was not grown. It was announced.",
-        image: "assets/hipster.jpg",
-        variant: "alt"
       },
       {
         eyebrow: "The cocktail turn",
@@ -350,7 +353,7 @@
         title: "Authenticity becomes inventory",
         subtitle: "The algorithm discovers a market.",
         narration: "Corporations sell handmade, influencers sell independence, politicians sell outsider status, and algorithms reward outrage. Two product lines scale fastest: MAGA for national grievance, MAHA for biological grievance.",
-        image: "assets/irony-economy.jpg",
+        image: "assets/maga.jpg",
         variant: "alt"
       },
       {
@@ -366,7 +369,7 @@
         title: "From belonging to hierarchy",
         subtitle: "Then Trump, as acceleration not conclusion.",
         narration: "Trump did not invent the desire for authenticity. He industrialized it, with MAGA and MAHA running as twin rails: one about borders and belonging, the other about bodies and contamination, both optimized for repetition. The point is not a single man. The point is a system now tuned for grievance.",
-        image: "assets/populism.jpg",
+        image: "assets/irony-economy.jpg",
         variant: "soft"
       },
       {
@@ -374,16 +377,16 @@
         title: "What the culture leaves behind",
         subtitle: "Trust thins out, then institutions do.",
         narration: "Once grievance becomes a business model, damage moves from screens to systems. Public-health trust collapses, school boards become proxy battlefields, and ordinary civic life is recast as permanent emergency. The consequence is not only who wins office. It is a country that struggles to agree on what is real.",
-        image: "assets/outrage.jpg",
+        image: "assets/populism.jpg",
         variant: "alt"
       },
       {
-        eyebrow: "Closing",
-        title: "Authenticity without evidence is vulnerable",
-        subtitle: "Style first. Consequences later.",
-        narration: "None of this begins as destiny. It begins as taste. But taste can become identity, identity can become doctrine, and doctrine can become power. The empire burns, as Mumford fiddles.",
-        image: "assets/closing.jpg",
-        variant: ""
+        eyebrow: "Finale",
+        title: "The empire burns",
+        subtitle: "Mumford fiddles.",
+        narration: "",
+        image: "assets/empire-burns.jpg",
+        variant: "alt"
       }
     ];
 
