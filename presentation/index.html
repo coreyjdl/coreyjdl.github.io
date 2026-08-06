@@ -285,7 +285,7 @@
         eyebrow: "Bacon becomes worldview",
         title: "When breakfast becomes a position",
         subtitle: "Salt, smoke, and the household as institution.",
-        narration: "Bacon was no longer breakfast. It was a political philosophy that happened to pair well with eggs.",
+        narration: "Bacon was no longer breakfast. It was a worldview: cured at home, argued through technique, and defended like a small rebellion against approved menus. Cast iron replaced consensus, smoke replaced restraint, and somewhere in the background, kale became the symbol of everything flat, polite, and imposed.",
         image: "assets/bacon.jpg",
         variant: ""
       },
@@ -293,7 +293,7 @@
         eyebrow: "The mustache republic",
         title: "Facial hair grows an argument",
         subtitle: "The face becomes a flag.",
-        narration: "Soon the mustache does the speaking. It says: I arrived early, I know better, and normal was a mistake. The mustache was not grown. It was announced.",
+        narration: "Once food becomes identity, the body follows. Soon the mustache does the speaking: I arrived early, I know better, and normal was a mistake. The mustache was not grown. It was announced.",
         image: "assets/hipster.jpg",
         variant: "alt"
       },
@@ -301,25 +301,17 @@
         eyebrow: "The cocktail turn",
         title: "Craft cocktails enter the republic",
         subtitle: "Measure, stir, repeat.",
-        narration: "At the bar, precision becomes morality. The right ice, the correct glass, the approved origin story. Technique stands in for truth. The cocktail menu became a worldview. Every drink had a story. Every story had a provenance. Eventually, even opinions required an origin story.",
+        narration: "At the bar, precision becomes morality. The right ice, the correct glass, the approved origin story. Technique stands in for truth, and eventually even opinions require provenance.",
         image: "assets/cocktail.jpg",
         variant: "soft"
       },
       {
         eyebrow: "The authenticity industrial complex",
         title: "The rejection gets repackaged",
-        subtitle: "The market never misses a mood.",
-        narration: "The movement began as a rejection of consumer culture. Then consumer culture did what it does best: it sold the rejection back.",
+        subtitle: "The market never misses a mood, or a membership signal.",
+        narration: "The movement began as a rejection of consumer culture. Then consumer culture did what it does best: it sold the rejection back at scale, with better branding, nicer packaging, and a higher margin. The beard corridor followed, where local became a credential and taste became social sorting.",
         image: "assets/beard-corridor.jpg",
         variant: "alt"
-      },
-      {
-        eyebrow: "The beard corridor",
-        title: "Made by hand, made to mean something",
-        subtitle: "Local taps, thick glass, inherited certainty.",
-        narration: "What begins as a rejection of mass production hardens into a posture. Local is no longer a choice. It is a credential.",
-        image: "assets/beard-corridor.jpg",
-        variant: ""
       },
       {
         eyebrow: "Self-reliance",
@@ -330,6 +322,14 @@
         variant: ""
       },
       {
+        eyebrow: "Wellness panic",
+        title: "Purity becomes panic",
+        subtitle: "Ingredient lists as prophecy.",
+        narration: "A search for better ingredients becomes a search for hidden enemies. Distrust begins with words on labels people cannot read or pronounce, then expands to medicine, public systems, and finally reality itself.",
+        image: "assets/wellness-panic.jpg",
+        variant: "soft"
+      },
+      {
         eyebrow: "Anti-elite drift",
         title: "Suspicion replaces evidence",
         subtitle: "Everyone is lying, all the time.",
@@ -338,12 +338,12 @@
         variant: "alt"
       },
       {
-        eyebrow: "Wellness panic",
-        title: "Purity becomes panic",
-        subtitle: "Ingredient lists as prophecy.",
-        narration: "A search for better ingredients becomes a search for hidden enemies. Distrust begins with words on labels people cannot read or pronounce, then expands to medicine, public systems, and finally reality itself.",
-        image: "assets/wellness-panic.jpg",
-        variant: "soft"
+        eyebrow: "The acoustic pipeline",
+        title: "Style travels faster than ideology",
+        subtitle: "The soundtrack crosses the border first.",
+        narration: "Years later, the early aesthetic reads like a preamble. The soundtrack entered the room before the argument, followed by nostalgia for European purity myths dressed up as tradition.",
+        image: "assets/acoustic-pipeline.jpg",
+        variant: ""
       },
       {
         eyebrow: "The feed",
@@ -354,28 +354,28 @@
         variant: "alt"
       },
       {
-        eyebrow: "The acoustic pipeline",
-        title: "Style travels faster than ideology",
-        subtitle: "The soundtrack crosses the border first.",
-        narration: "The aesthetic arrived before the politics. The soundtrack entered the room before the argument, followed by nostalgia for European purity myths dressed up as tradition.",
-        image: "assets/acoustic-pipeline.jpg",
-        variant: ""
-      },
-      {
         eyebrow: "The irony economy",
         title: "From Vice to grievance",
         subtitle: "Snark opens the gate.",
-        narration: "The VICE-era internet turns politics into posture. Richard Spencer becomes part of the recurring cast. Irony was supposed to protect people from embarrassment. But a culture that refuses to mean anything eventually becomes vulnerable to people who mean everything.",
+        narration: "The VICE-era internet turns politics into posture. Richard Spencer becomes part of the recurring cast. Irony offers plausible deniability: if challenged, it was just a joke; if rewarded, it was sincere. What looked like clever distance became cover. A culture that refuses to mean anything becomes vulnerable to people who mean everything.",
         image: "assets/outrage.jpg",
         variant: "alt"
       },
       {
         eyebrow: "Populism",
         title: "From belonging to hierarchy",
-        subtitle: "The stage is set before the speech begins.",
-        narration: "Trump did not invent the desire for authenticity. He industrialized it, with MAGA and MAHA running as twin rails: one about borders and belonging, the other about bodies and contamination.",
+        subtitle: "Then Trump, as acceleration not conclusion.",
+        narration: "Trump did not invent the desire for authenticity. He industrialized it, with MAGA and MAHA running as twin rails: one about borders and belonging, the other about bodies and contamination, both optimized for repetition. The point is not a single man. The point is a system now tuned for grievance.",
         image: "assets/populism.jpg",
         variant: "soft"
+      },
+      {
+        eyebrow: "Consequences",
+        title: "What the culture leaves behind",
+        subtitle: "Trust thins out, then institutions do.",
+        narration: "Once grievance becomes a business model, damage moves from screens to systems. Public-health trust collapses, school boards become proxy battlefields, and ordinary civic life is recast as permanent emergency. The consequence is not only who wins office. It is a country that struggles to agree on what is real.",
+        image: "assets/outrage.jpg",
+        variant: "alt"
       },
       {
         eyebrow: "Closing",
@@ -418,13 +418,15 @@
         { fromX: '-1%', fromY: '1%', toX: '2%', toY: '-3%', fromScale: '1.04', toScale: '1.16' }
       ];
       const motion = motionPresets[index % motionPresets.length];
+      const wordCount = data.narration.trim().split(/\s+/).length;
+      const paceSeconds = Math.max(20, Math.min(28, Math.round(wordCount / 3) + 14));
       visual.style.setProperty('--from-x', motion.fromX);
       visual.style.setProperty('--from-y', motion.fromY);
       visual.style.setProperty('--to-x', motion.toX);
       visual.style.setProperty('--to-y', motion.toY);
       visual.style.setProperty('--from-scale', motion.fromScale);
       visual.style.setProperty('--to-scale', motion.toScale);
-      visual.style.setProperty('--kenburns-duration', `${20 + (index % 4) * 2}s`);
+      visual.style.setProperty('--kenburns-duration', `${paceSeconds}s`);
       slide.dataset.index = index;
       return slide;
     }
