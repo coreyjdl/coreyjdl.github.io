@@ -1,0 +1,463 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>From Folk Authenticity to Populist Politics</title>
+  <style>
+    :root {
+      --bg: #090909;
+      --panel: #111111;
+      --panel-2: #151515;
+      --text: #f2f2f2;
+      --muted: #b8b8b8;
+      --soft: #8d8d8d;
+      --line: rgba(255, 255, 255, 0.14);
+      --accent: #ffffff;
+      --shadow: rgba(0, 0, 0, 0.45);
+    }
+
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,255,255,0.05), transparent 28%),
+        radial-gradient(circle at 80% 10%, rgba(255,255,255,0.03), transparent 18%),
+        linear-gradient(180deg, #050505 0%, #0d0d0d 100%);
+      color: var(--text);
+      font-family: Georgia, "Times New Roman", serif;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 100% 4px, 4px 100%;
+      opacity: 0.35;
+      mix-blend-mode: screen;
+    }
+
+    .deck {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 0;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 420ms ease;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent 25%);
+    }
+
+    .slide.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .visual {
+      position: relative;
+      overflow: hidden;
+      border-right: 1px solid var(--line);
+      background: #0b0b0b;
+    }
+
+    .visual::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0,0,0,0.08), rgba(0,0,0,0.38));
+      pointer-events: none;
+    }
+
+    .kenburns {
+      position: absolute;
+      inset: -8%;
+      width: 116%;
+      height: 116%;
+      object-fit: cover;
+      filter: grayscale(1) contrast(1.18) brightness(0.92);
+      transform-origin: center center;
+      transform: translate3d(var(--from-x, 0%), var(--from-y, 0%), 0) scale(var(--from-scale, 1.04));
+      animation: kenburnsMove var(--kenburns-duration, 20s) ease-in-out infinite alternate;
+      opacity: 0.95;
+    }
+
+    .kenburns.alt {
+      animation-duration: 22s;
+    }
+
+    .kenburns.soft {
+      animation-duration: 25s;
+    }
+
+    .content {
+      padding: 7vh 5vw 6vh 4.6vw;
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
+      gap: 2.2vh;
+      background:
+        radial-gradient(circle at top right, rgba(255,255,255,0.08), transparent 30%),
+        linear-gradient(180deg, rgba(255,255,255,0.03), transparent 18%);
+    }
+
+    .eyebrow {
+      font-family: Arial, Helvetica, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.23em;
+      font-size: 12px;
+      color: var(--soft);
+    }
+
+    h1, h2 {
+      margin: 0;
+      font-weight: 600;
+      line-height: 0.96;
+      text-wrap: balance;
+    }
+
+    h1 {
+      font-size: clamp(3rem, 5vw, 5.3rem);
+      max-width: 10ch;
+    }
+
+    h2 {
+      font-size: clamp(2.3rem, 4.1vw, 4.3rem);
+      max-width: 12ch;
+    }
+
+    .deck-title {
+      margin-top: 0.2rem;
+      font-size: clamp(1rem, 1.45vw, 1.2rem);
+      color: var(--muted);
+      max-width: 34rem;
+      line-height: 1.55;
+    }
+
+    .narration {
+      align-self: end;
+      max-width: 34rem;
+      font-size: clamp(1.08rem, 1.35vw, 1.35rem);
+      line-height: 1.7;
+      color: var(--text);
+      text-wrap: pretty;
+    }
+
+
+    .subline {
+      max-width: 32rem;
+      color: var(--muted);
+      font-size: 0.98rem;
+      line-height: 1.65;
+    }
+
+    .footer {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 1rem;
+      color: var(--soft);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.82rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .counter {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 0.5rem 0.82rem;
+      background: rgba(255,255,255,0.03);
+    }
+
+    .hint {
+      opacity: 0.75;
+    }
+
+    .notes {
+      display: none;
+    }
+
+    @keyframes kenburnsMove {
+      0% {
+        transform: translate3d(var(--from-x, 0%), var(--from-y, 0%), 0) scale(var(--from-scale, 1.04));
+      }
+      100% {
+        transform: translate3d(var(--to-x, -4%), var(--to-y, -3%), 0) scale(var(--to-scale, 1.16));
+      }
+    }
+
+    @media (max-width: 920px) {
+      .slide {
+        grid-template-columns: 1fr;
+        grid-template-rows: 44vh 1fr;
+      }
+
+      .visual {
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .content {
+        padding: 4vh 6vw 4.5vh;
+      }
+
+      h1, h2 {
+        max-width: none;
+      }
+
+      .narration, .deck-title, .subline {
+        max-width: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="deck" id="deck"></main>
+
+  <template id="slide-template">
+    <section class="slide">
+      <div class="visual">
+        <img class="kenburns" alt="" />
+      </div>
+      <div class="content">
+        <div class="eyebrow"></div>
+        <div>
+          <h1></h1>
+          <p class="deck-title"></p>
+        </div>
+        <div class="narration"></div>
+        <div class="footer">
+          <div class="hint">Left / right arrows to navigate</div>
+          <div class="counter"></div>
+        </div>
+      </div>
+    </section>
+  </template>
+
+  <script>
+    const slides = [
+      {
+        eyebrow: "Opening",
+        title: "Authenticity has a political life",
+        subtitle: "It starts with a mood nobody thinks is political.",
+        narration: "At first it looks harmless: a style, a playlist, a feeling that the old world was fake and this one is finally honest.",
+        image: "assets/opening.jpg",
+        variant: ""
+      },
+      {
+        eyebrow: "The folk ideal",
+        title: "The promise of sincerity",
+        subtitle: "Wood, wire, and a room that sings in unison.",
+        narration: "The revival sells intimacy as a cure. Close mics, old chords, plain clothes, and the quiet claim that simpler always means truer.",
+        image: "assets/folk-ideal.jpg",
+        variant: "alt"
+      },
+      {
+        eyebrow: "The hey-band bloom",
+        title: "The earnest chorus arrives",
+        subtitle: "Handclaps become social policy.",
+        narration: "Then a band comes along, like Mumford and Sons and scales the feeling. What was once a corner sound becomes arena ritual, and everyone learns to clap on command.",
+        image: "assets/hey-band.jpg",
+        variant: "soft"
+      },
+      {
+        eyebrow: "Bacon becomes worldview",
+        title: "When breakfast becomes a position",
+        subtitle: "Salt, smoke, and the household as institution.",
+        narration: "Bacon stops being a plate and becomes doctrine: cured at home, sourced by trust, defended as evidence that the kitchen can out-govern the supermarket.",
+        image: "assets/bacon.jpg",
+        variant: ""
+      },
+      {
+        eyebrow: "The mustache republic",
+        title: "Facial hair grows an argument",
+        subtitle: "The face becomes a flag.",
+        narration: "Soon the mustache does the speaking. It says: I arrived early, I know better, and normal was a mistake.",
+        image: "assets/hipster.jpg",
+        variant: "alt"
+      },
+      {
+        eyebrow: "The cocktail turn",
+        title: "Craft cocktails enter the republic",
+        subtitle: "Measure, stir, repeat.",
+        narration: "At the bar, precision becomes morality. The right ice, the correct glass, the approved origin story. Technique stands in for truth.",
+        image: "assets/cocktail.jpg",
+        variant: "soft"
+      },
+      {
+        eyebrow: "The beard corridor",
+        title: "Made by hand, made to mean something",
+        subtitle: "Local taps, thick glass, inherited certainty.",
+        narration: "What begins as a rejection of mass production hardens into a posture. Local is no longer a choice. It is a credential.",
+        image: "assets/beard-corridor.jpg",
+        variant: ""
+      },
+      {
+        eyebrow: "Self-reliance",
+        title: "Trust yourself, trust less else",
+        subtitle: "Pantry, toolkit, perimeter.",
+        narration: "Self-reliance is practical until it becomes theology. Then institutions are suspect, expertise is theater, and complexity looks like betrayal.",
+        image: "assets/self-reliance.jpg",
+        variant: ""
+      },
+      {
+        eyebrow: "Anti-elite drift",
+        title: "Suspicion replaces evidence",
+        subtitle: "Everyone is lying, all the time.",
+        narration: "Legitimate critique mutates into permanent suspicion. Every source is compromised. Every fact is a costume.",
+        image: "assets/anti-elite-drift.jpg",
+        variant: "alt"
+      },
+      {
+        eyebrow: "Wellness panic",
+        title: "Purity becomes panic",
+        subtitle: "Ingredient lists as prophecy.",
+        narration: "Ingredient panic offers a clean villain for messy life. Then the script expands: food, medicine, public systems, all folded into one long suspicion.",
+        image: "assets/wellness-panic.jpg",
+        variant: "soft"
+      },
+      {
+        eyebrow: "The acoustic pipeline",
+        title: "Style travels faster than ideology",
+        subtitle: "The soundtrack crosses the border first.",
+        narration: "This is where culture outruns caution. Mumford and Sons and \"hey bands\" like the Lumineers become atmosphere, then vocabulary, then permission.",
+        image: "assets/acoustic-pipeline.jpg",
+        variant: ""
+      },
+      {
+        eyebrow: "The irony economy",
+        title: "From Vice to grievance",
+        subtitle: "Snark opens the gate.",
+        narration: "Irony keeps everyone deniable. Richard Spencer smirks, the Joe Rogan translates, and the room pretends this was inevitable.",
+        image: "assets/irony-economy.jpg",
+        variant: "alt"
+      },
+      {
+        eyebrow: "Populism",
+        title: "From belonging to hierarchy",
+        subtitle: "The stage is set before the speech begins.",
+        narration: "By the time the Trump appears, the audience already knows the lines: insiders pure, outsiders corrupt, grievance eternal.",
+        image: "assets/populism.jpg",
+        variant: "soft"
+      },
+      {
+        eyebrow: "Closing",
+        title: "Authenticity without evidence is vulnerable",
+        subtitle: "Style first. Consequences later.",
+        narration: "None of this begins as destiny. It begins as taste. But taste can become identity, identity can become doctrine, and doctrine can become power.",
+        image: "assets/closing.jpg",
+        variant: ""
+      }
+    ];
+
+    const deck = document.getElementById('deck');
+    const template = document.getElementById('slide-template');
+    let current = 0;
+    const nodes = [];
+
+    function createSlide(data, index) {
+      const node = template.content.cloneNode(true);
+      const slide = node.querySelector('.slide');
+      const eyebrow = node.querySelector('.eyebrow');
+      const title = node.querySelector('h1');
+      const subtitle = node.querySelector('.deck-title');
+      const narration = node.querySelector('.narration');
+      const counter = node.querySelector('.counter');
+      const visual = node.querySelector('.kenburns');
+
+      eyebrow.textContent = data.eyebrow;
+      title.textContent = data.title;
+      subtitle.textContent = data.subtitle;
+      narration.textContent = data.narration;
+      counter.textContent = `${String(index + 1).padStart(2, '0')} / ${String(slides.length).padStart(2, '0')}`;
+      if (data.variant) {
+        visual.classList.add(data.variant);
+      }
+      visual.src = data.image;
+      const motionPresets = [
+        { fromX: '0%', fromY: '0%', toX: '-4%', toY: '-3%', fromScale: '1.04', toScale: '1.18' },
+        { fromX: '-2%', fromY: '-1%', toX: '3%', toY: '2%', fromScale: '1.05', toScale: '1.19' },
+        { fromX: '2%', fromY: '-2%', toX: '-3%', toY: '2%', fromScale: '1.03', toScale: '1.17' },
+        { fromX: '-1%', fromY: '1%', toX: '2%', toY: '-3%', fromScale: '1.04', toScale: '1.16' }
+      ];
+      const motion = motionPresets[index % motionPresets.length];
+      visual.style.setProperty('--from-x', motion.fromX);
+      visual.style.setProperty('--from-y', motion.fromY);
+      visual.style.setProperty('--to-x', motion.toX);
+      visual.style.setProperty('--to-y', motion.toY);
+      visual.style.setProperty('--from-scale', motion.fromScale);
+      visual.style.setProperty('--to-scale', motion.toScale);
+      visual.style.setProperty('--kenburns-duration', `${20 + (index % 4) * 2}s`);
+      slide.dataset.index = index;
+      return slide;
+    }
+
+    function render() {
+      deck.innerHTML = '';
+      slides.forEach((slide, index) => {
+        const node = createSlide(slide, index);
+        deck.appendChild(node);
+        nodes.push(node);
+      });
+      setActive(0, false);
+    }
+
+    function setActive(index, animate = true) {
+      current = Math.max(0, Math.min(index, slides.length - 1));
+      nodes.forEach((node, i) => node.classList.toggle('active', i === current));
+      if (!animate) {
+        nodes[current].style.transition = 'none';
+        requestAnimationFrame(() => {
+          nodes[current].style.transition = '';
+        });
+      }
+    }
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowRight' || event.key === 'PageDown' || event.key === ' ') {
+        event.preventDefault();
+        setActive(current + 1);
+      }
+      if (event.key === 'ArrowLeft' || event.key === 'PageUp') {
+        event.preventDefault();
+        setActive(current - 1);
+      }
+      if (event.key === 'Home') {
+        event.preventDefault();
+        setActive(0);
+      }
+      if (event.key === 'End') {
+        event.preventDefault();
+        setActive(slides.length - 1);
+      }
+    });
+
+    document.addEventListener('click', (event) => {
+      const rect = document.body.getBoundingClientRect();
+      if (event.clientX > rect.width * 0.5) {
+        setActive(current + 1);
+      } else {
+        setActive(current - 1);
+      }
+    });
+
+    render();
+  </script>
+</body>
+</html>
