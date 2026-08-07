@@ -724,19 +724,8 @@
     }
 
     function beginExperienceOnLoad() {
-      if (playbackStarted) {
-        return;
-      }
-
-      narrationUnlocked = true;
-      playBackgroundMusic();
-      playNarrationForCurrentSlide();
-      // Detect whether autoplay actually succeeded; if not, first user gesture will kick it.
-      setTimeout(() => {
-        if (!narrationAudio.paused || !backgroundAudio.paused) {
-          playbackStarted = true;
-        }
-      }, 400);
+      narrationUnlocked = false;
+      playbackStarted = false;
     }
 
     narrationAudio.addEventListener('ended', () => {
