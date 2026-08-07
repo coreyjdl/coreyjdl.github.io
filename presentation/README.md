@@ -38,7 +38,6 @@ You can mix voices, insert timed pauses, and stage tape-quote clips inside a sin
 | `{{amy}}` | Switch to Amy — `hfc_female`, archival tape treatment |
 | `{{ryan}}` | Switch to Ryan, archival tape treatment |
 | `{{norman}}` | Switch to Norman, archival tape treatment |
-| `{{quote}}` | Joe voice bandpassed and cracklier — for period quotes |
 | `{{pause 900}}` | Insert 900ms of silence |
 
 Rules:
@@ -63,5 +62,5 @@ Under the hood: each speech chunk is rendered separately by Piper with the corre
 Humanizing artifacts:
 
 - The generator applies subtle post-processing with `ffmpeg` (light room tone, tiny click texture, gentle dynamics) per segment.
-- Interview voices get an archival tape treatment; period quotes get a narrower bandpass with more crackle.
+- Interview voices get an archival tape treatment applied per segment.
 - If `ffmpeg` or `python3` is unavailable, the script exits with an error at startup.

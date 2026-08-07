@@ -8,7 +8,6 @@ set -euo pipefail
 #   {{amy}}        Interviewee A (Piper en_US-hfc_female-medium), archival tape treatment.
 #   {{ryan}}       Interviewee B (Piper en_US-ryan-medium), archival tape treatment.
 #   {{norman}}     Interviewee C (Piper en_US-norman-medium), archival tape treatment.
-#   {{quote}}      Period-quote treatment: Joe voice bandpassed with more crackle.
 #   {{pause 900}}  Insert 900ms of silence at that point.
 #
 # Default voice per slide is derived from the eyebrow:
@@ -53,7 +52,6 @@ declare -A VOICE_MODEL_PATH=(
   [amy]="$MODEL_DIR/en_US-hfc_female-medium.onnx"
   [ryan]="$MODEL_DIR/en_US-ryan-medium.onnx"
   [norman]="$MODEL_DIR/en_US-norman-medium.onnx"
-  [quote]="$MODEL_DIR/en_US-joe-medium.onnx"
 )
 
 download_if_missing() {
@@ -115,7 +113,6 @@ voice_profile() {
     amy)    printf "%s\t%s\t%s\t%s\n" "$model" "1.22" "0.42" "interview" ;;
     ryan)   printf "%s\t%s\t%s\t%s\n" "$model" "1.18" "0.38" "interview" ;;
     norman) printf "%s\t%s\t%s\t%s\n" "$model" "1.20" "0.40" "interview" ;;
-    quote)  printf "%s\t%s\t%s\t%s\n" "$model" "1.20" "0.44" "period" ;;
     *)      printf "%s\t%s\t%s\t%s\n" "$model" "1.16" "0.34" "clean" ;;
   esac
 }
@@ -142,13 +139,6 @@ apply_human_artifacts() {
     interview)
       noise_gain="0.026"; click_gain="0.044"; hiss_gain="0.012"; leading_pad_ms="200"
       filter="[0:a]adelay=${leading_pad_ms}|${leading_pad_ms},afade=t=in:st=0:d=0.03,highpass=f=90,lowpass=f=7600,compand=attacks=0.02:decays=0.25:points=-80/-80|-28/-22|0/-5,volume=1.03[voice];[1:a]highpass=f=220,lowpass=f=5800,volume=${noise_gain}[bed];[2:a]highpass=f=4200,lowpass=f=11000,volume=${hiss_gain}[hiss];[3:a]highpass=f=2600,lowpass=f=7600,volume=${click_gain}[clicks];[voice][bed][hiss][clicks]amix=inputs=4:duration=first:weights=1 1 1 1,alimiter=limit=0.93[out]"
-      ;;
-    period)
-      # 1930s radio / phonograph-ish quote: narrower band, more crackle.
-      # Bandpass eats a lot of perceived loudness, so push voice gain hard
-      # and pull the texture layers back a touch.
-      noise_gain="0.022"; click_gain="0.040"; hiss_gain="0.010"; leading_pad_ms="180"
-      filter="[0:a]adelay=${leading_pad_ms}|${leading_pad_ms},afade=t=in:st=0:d=0.04,highpass=f=340,lowpass=f=3400,compand=attacks=0.02:decays=0.28:points=-80/-80|-26/-14|0/-2,volume=2.1[voice];[1:a]highpass=f=260,lowpass=f=3800,volume=${noise_gain}[bed];[2:a]highpass=f=3800,lowpass=f=9000,volume=${hiss_gain}[hiss];[3:a]highpass=f=2400,lowpass=f=6800,volume=${click_gain}[clicks];[voice][bed][hiss][clicks]amix=inputs=4:duration=first:weights=3 1 1 1,alimiter=limit=0.96[out]"
       ;;
     clean|*)
       noise_gain="0.020"; click_gain="0.036"; hiss_gain="0.004"; leading_pad_ms="160"
@@ -185,7 +175,7 @@ import sys, re
 default_voice = sys.argv[1]
 text = sys.stdin.read()
 pattern = re.compile(
-    r'\{\{\s*(joe|amy|ryan|norman|quote|pause)(?:\s+(\d+))?\s*\}\}',
+    r'\{\{\s*(joe|amy|ryan|norman|pause)(?:\s+(\d+))?\s*\}\}',
     re.IGNORECASE,
 )
 pos = 0
