@@ -403,7 +403,7 @@
       {
         eyebrow: "",
         title: "From Folk Authenticity to Populist Politics",
-        subtitle: "An American story about style, music, and the systems that exploited them.",
+        subtitle: "An American story about style, music, and the system that exploited them.",
         narration: "",
         image: "assets/opening.jpg",
         variant: "alt",
@@ -422,7 +422,7 @@
         eyebrow: "The folk ideal",
         title: "The promise of sincerity",
         subtitle: "Wood, wire, and a room that sings in unison.",
-        narration: "After decades of over processed culture, people began searching for something authentic. Preferably something made from reclaimed wood, organic waxed cotton, all by a person who looked like they ate lentil soup. In two thousand nine, Obama begins his first term, change was in the air. It was the time of a generation rejecting the mid century commercialization, commodification of life, rhythmic anthems of handclaps and banjos became a soundtrack for a different way of life. Pure, but ultimately backwards looking. {{norman}} If you had some chickens, knew how to brew your own beer, and fix your own car, you didn't need anything from anyone else. It was the way it used to be.",
+        narration: "After decades of over processed culture, people began searching for something authentic. Preferably something made from reclaimed wood, organic waxed cotton, all by a person who looked like they ate lentil soup. In two thousand nine, Obama begins his first term, change was in the air. It was the time of a generation rejecting the mid century commercialization, and commodification of life, rhythmic anthems of handclaps and banjos became a soundtrack for a different way of life. Pure, but ultimately backwards looking. {{norman}} If you had some chickens, knew how to brew your own beer, and fix your own car, you didn't need anything from anyone else. It was the way it used to be.",
         image: "assets/folk-ideal.jpg",
         variant: "alt"
       },
@@ -486,7 +486,7 @@
         eyebrow: "The acoustic pipeline",
         title: "Style travels faster than ideology",
         subtitle: "The soundtrack crosses the border first.",
-        narration: "{{ryan}} It all felt like a call back to a better time, a better way of living, doing things. {{pause 900}} {{joe}} Years later, the early aesthetic reads like a preamble. The soundtrack entered the room before the argument, followed by nostalgia for European purity myths, dressed as tradition.",
+        narration: "{{ryan}} It all felt like a call back to a better time, a better way of living and doing things. {{pause 900}} {{joe}} Years later, the early aesthetic reads like a preamble. The soundtrack entered the room before the argument, followed by nostalgia for European purity myths, dressed as tradition.",
         image: "assets/acoustic-pipeline.jpg",
         variant: ""
       },
@@ -494,7 +494,7 @@
         eyebrow: "The feed",
         title: "Authenticity becomes inventory",
         subtitle: "The algorithm discovers a market.",
-        narration: "Corporations sell hand made, influencers sell independence, politicians sell outsider status, and algorithms reward outrage. Two product lines scale fastest: MAGA for national grievance, MAHA for biological grievances.",
+        narration: "Corporations sell hand made, influencers sell independence, politicians sell outsider status, and algorithms reward outrage. Two product lines scale fastest: MAGA as an avatar for nostlagia, MAHA a token for purity.",
         image: "assets/maga.jpg",
         variant: "alt"
       },
@@ -510,7 +510,7 @@
         eyebrow: "Populism",
         title: "From belonging to hierarchy",
         subtitle: "Then Trump, as acceleration not conclusion.",
-        narration: "Trump did not invent the desire for authenticity. He exploited it, with MAGA and MAHA running as twin rails: one about borders and belonging, the other about bodies and contamination. The point is not a single man, but what he represented, a system well tuned for grievance and distrust. {{amy}}  He said he could stand in the middle of fifth avenue and shoot somebody, he was infallible, and, we clapped, in unison.",
+        narration: "Trump did not invent the desire for authenticity. He exploited it, with MAGA and MAHA running as twin rails: one about borders and belonging, the other about bodies and contamination. The point is not a single man, but what he represented, a system well tuned for grievance and distrust. {{amy}}  He said he could stand in the middle of fifth avenue and shoot somebody, he was infallible, and {{pause 500}} we clapped, in unison.",
         image: "assets/irony-economy.jpg",
         variant: "soft"
       },
@@ -518,7 +518,7 @@
         eyebrow: "Consequences",
         title: "What fascist culture leaves behind",
         subtitle: "Pluralism thins out, then institutions do.",
-        narration: "Once grievance becomes a business model, fascist politics stop sounding fringe and start sounding normal. {{norman}} I don't really have anything against them, I just want to raise my kids my way, the old way. {{pause 900}} {{joe}} Damage moves from screens to systems: public-health trust collapses, school boards become proxy battlefields, and state power is aimed at local enemies instead of problems. The consequence is not only who wins office. It is a country that struggles to agree on what is real, and then loses the habit of sharing power.",
+        narration: "Once chasing authenticity and nostalgia become a business model, fascist politics stop sounding fringe and start sounding normal. {{norman}} I don't really have anything against them, I just want to raise my kids my way, the old way. {{pause 900}} {{joe}} Damage moves from screens to systems: public-health trust collapses, school boards become proxy battlefields, and state power is aimed at local enemies instead of problems. The consequence is not only who wins office. It is a country that struggles to agree on what is real, and then loses the habit of sharing power.",
         image: "assets/populism.jpg",
         variant: "alt"
       },
@@ -697,16 +697,24 @@
       }
     });
 
+    backgroundAudio.addEventListener('playing', () => {
+      playbackStarted = true;
+    });
+
+    narrationAudio.addEventListener('playing', () => {
+      playbackStarted = true;
+    });
+
     function unlockNarration() {
+      const currentNarrationText = (slides[current]?.narration || '').trim();
       const musicBlocked = backgroundMusicEnabled && backgroundAudio.paused;
-      const needsKick = !narrationUnlocked || !playbackStarted || musicBlocked;
+      const narrationBlocked = Boolean(currentNarrationText) && !interstitialTimer && narrationAudio.paused;
+      const needsKick = !narrationUnlocked || !playbackStarted || musicBlocked || narrationBlocked;
       narrationUnlocked = true;
       if (needsKick) {
-        const wasStarted = playbackStarted;
-        playbackStarted = true;
         playBackgroundMusic();
         playNarrationForCurrentSlide();
-        return !wasStarted;
+        return true;
       }
       return false;
     }
