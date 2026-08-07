@@ -71,6 +71,72 @@
       pointer-events: auto;
     }
 
+    .slide.title-screen {
+      grid-template-columns: 1fr;
+      background:
+        radial-gradient(circle at 50% 28%, rgba(255,255,255,0.08), transparent 44%),
+        linear-gradient(180deg, #090909 0%, #050505 100%);
+    }
+
+    .slide.title-screen .visual {
+      display: none;
+    }
+
+    .slide.title-screen .content {
+      min-height: 100vh;
+      padding: 7vh 8vw;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      background: transparent;
+      gap: 0.95rem;
+    }
+
+    .slide.title-screen .content > div:nth-of-type(2) {
+      width: min(60rem, 100%);
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .slide.title-screen .eyebrow {
+      display: none;
+    }
+
+    .slide.title-screen h1 {
+      max-width: 14ch;
+      font-size: clamp(2.4rem, 6.2vw, 6.2rem);
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      line-height: 0.92;
+      text-shadow: 0 10px 30px rgba(0,0,0,0.55);
+    }
+
+    .slide.title-screen .title-divider {
+      margin-left: auto;
+      margin-right: auto;
+      width: min(18rem, 62vw);
+    }
+
+    .slide.title-screen .deck-title {
+      max-width: 42rem;
+      margin-top: 1rem;
+      margin-left: auto;
+      margin-right: auto;
+      font-size: clamp(1rem, 1.55vw, 1.32rem);
+      line-height: 1.52;
+      text-wrap: balance;
+      text-align: center;
+      color: #d6d6d6;
+    }
+
+    .slide.title-screen .footer {
+      display: none;
+    }
+
     .visual {
       position: relative;
       overflow: hidden;
@@ -252,6 +318,19 @@
       .narration, .deck-title, .subline {
         max-width: none;
       }
+
+      .slide.title-screen {
+        grid-template-rows: 1fr;
+      }
+
+      .slide.title-screen .content {
+        min-height: 100vh;
+        padding: 6vh 8vw;
+      }
+
+      .slide.title-screen .deck-title {
+        max-width: 34rem;
+      }
     }
   </style>
 </head>
@@ -278,6 +357,16 @@
 
   <script>
     const slides = [
+      {
+        eyebrow: "",
+        title: "From Folk Authenticity to Populist Politics",
+        subtitle: "An American story about style, belonging, grievance, and the systems that absorbed them.",
+        narration: "",
+        image: "assets/opening.jpg",
+        variant: "alt",
+        holdMs: 7800,
+        layout: "title-screen"
+      },
       {
         eyebrow: "Opening",
         title: "Authenticity becomes political",
@@ -414,6 +503,14 @@
     const nodes = [];
     const narrationAudio = new Audio();
     narrationAudio.preload = 'auto';
+    let narratedTrackCount = 0;
+    const narrationTrackBySlide = slides.map((slide) => {
+      if (!(slide.narration || '').trim()) {
+        return null;
+      }
+      narratedTrackCount += 1;
+      return `assets/narration/slide-${String(narratedTrackCount).padStart(2, '0')}.wav`;
+    });
     const backgroundAudio = new Audio();
     backgroundAudio.preload = 'auto';
     backgroundAudio.loop = true;
@@ -428,11 +525,13 @@
     backgroundAudio.src = encodeURI(backgroundAudioSources[activeMusicSourceIndex]);
     let narrationEnabled = true;
     let narrationUnlocked = false;
+    let playbackStarted = false;
     let narrationTextVisible = false;
     let autoAdvanceEnabled = true;
     let backgroundMusicEnabled = true;
     let musicFadeTimer = null;
     let autoAdvanceTimer = null;
+    let silentSlideTimer = null;
     const autoAdvanceDelayMs = 3200;
 
     function setMusicVolume(targetVolume, durationMs = 260) {
@@ -481,7 +580,7 @@
     }
 
     function audioPathForSlide(index) {
-      return `assets/narration/slide-${String(index + 1).padStart(2, '0')}.wav`;
+      return narrationTrackBySlide[index];
     }
 
     function playNarrationForCurrentSlide() {
@@ -490,9 +589,30 @@
       }
 
       playBackgroundMusic();
+      const narrationText = (slides[current]?.narration || '').trim();
+
+      if (!narrationText) {
+        setMusicVolume(musicBaseVolume, 420);
+        if (autoAdvanceEnabled && current < slides.length - 1) {
+          const holdMs = slides[current]?.holdMs ?? 6500;
+          if (silentSlideTimer) {
+            clearTimeout(silentSlideTimer);
+            silentSlideTimer = null;
+          }
+          silentSlideTimer = setTimeout(() => {
+            silentSlideTimer = null;
+            setActive(current + 1);
+          }, holdMs);
+        }
+        return;
+      }
+
       setMusicVolume(musicDuckedVolume, 220);
 
       const nextSource = audioPathForSlide(current);
+      if (!nextSource) {
+        return;
+      }
       const existing = narrationAudio.getAttribute('src');
       if (existing !== nextSource) {
         narrationAudio.setAttribute('src', nextSource);
@@ -533,11 +653,33 @@
     });
 
     function unlockNarration() {
-      if (!narrationUnlocked) {
-        narrationUnlocked = true;
+      const musicBlocked = backgroundMusicEnabled && backgroundAudio.paused;
+      const needsKick = !narrationUnlocked || !playbackStarted || musicBlocked;
+      narrationUnlocked = true;
+      if (needsKick) {
+        const wasStarted = playbackStarted;
+        playbackStarted = true;
         playBackgroundMusic();
         playNarrationForCurrentSlide();
+        return !wasStarted;
       }
+      return false;
+    }
+
+    function beginExperienceOnLoad() {
+      if (playbackStarted) {
+        return;
+      }
+
+      narrationUnlocked = true;
+      playBackgroundMusic();
+      playNarrationForCurrentSlide();
+      // Detect whether autoplay actually succeeded; if not, first user gesture will kick it.
+      setTimeout(() => {
+        if (!narrationAudio.paused || !backgroundAudio.paused) {
+          playbackStarted = true;
+        }
+      }, 400);
     }
 
     narrationAudio.addEventListener('ended', () => {
@@ -579,6 +721,9 @@
       if (data.variant) {
         visual.classList.add(data.variant);
       }
+      if (data.layout) {
+        slide.classList.add(data.layout);
+      }
       visual.src = data.image;
       const motionPresets = [
         { fromX: '0%', fromY: '0%', toX: '-4%', toY: '-3%', fromScale: '1.04', toScale: '1.18' },
@@ -615,6 +760,10 @@
         clearTimeout(autoAdvanceTimer);
         autoAdvanceTimer = null;
       }
+      if (silentSlideTimer) {
+        clearTimeout(silentSlideTimer);
+        silentSlideTimer = null;
+      }
       current = Math.max(0, Math.min(index, slides.length - 1));
       nodes.forEach((node, i) => node.classList.toggle('active', i === current));
       if (!animate) {
@@ -627,7 +776,11 @@
     }
 
     document.addEventListener('keydown', (event) => {
-      unlockNarration();
+      const justStarted = unlockNarration();
+      if (justStarted) {
+        event.preventDefault();
+        return;
+      }
       if (event.key === 'ArrowRight' || event.key === 'PageDown' || event.key === ' ') {
         event.preventDefault();
         setActive(current + 1);
@@ -678,7 +831,10 @@
     });
 
     document.addEventListener('click', (event) => {
-      unlockNarration();
+      const justStarted = unlockNarration();
+      if (justStarted) {
+        return;
+      }
       const rect = document.body.getBoundingClientRect();
       if (event.clientX > rect.width * 0.5) {
         setActive(current + 1);
@@ -689,6 +845,7 @@
 
     initializeNarrationTextPreference();
     render();
+    beginExperienceOnLoad();
   </script>
 </body>
 </html>
