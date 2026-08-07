@@ -2,6 +2,19 @@
 set -euo pipefail
 
 # Generate slide narration audio with Piper voices from index.html.
+#
+# Inline markers supported inside each slide's `narration` string:
+#   {{joe}}        Documentary narrator (Piper en_US-joe-medium), clean treatment.
+#   {{amy}}        Interviewee A (Piper en_US-hfc_female-medium), archival tape treatment.
+#   {{ryan}}       Interviewee B (Piper en_US-ryan-medium), archival tape treatment.
+#   {{norman}}     Interviewee C (Piper en_US-norman-medium), archival tape treatment.
+#   {{quote}}      Period-quote treatment: Joe voice bandpassed with more crackle.
+#   {{pause 900}}  Insert 900ms of silence at that point.
+#
+# Default voice per slide is derived from the eyebrow:
+#   Interview -> amy, everything else -> joe.
+# Markers override the current voice until the next voice marker.
+
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 WORK_DIR="$ROOT_DIR/.tts"
 BIN_DIR="$WORK_DIR/bin"
@@ -12,21 +25,36 @@ TMP_DIR="$WORK_DIR/tmp"
 PIPER_VERSION="v1.2.0"
 PIPER_ARCHIVE_URL="https://github.com/rhasspy/piper/releases/download/${PIPER_VERSION}/piper_amd64.tar.gz"
 
-JOE_VOICE_BASE_URL="https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/joe/medium"
-JOE_VOICE_MODEL="en_US-joe-medium.onnx"
-JOE_VOICE_CONFIG="en_US-joe-medium.onnx.json"
+VOICES_BASE_URL="https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US"
 
-HFC_FEMALE_VOICE_BASE_URL="https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/hfc_female/medium"
-HFC_FEMALE_VOICE_MODEL="en_US-hfc_female-medium.onnx"
-HFC_FEMALE_VOICE_CONFIG="en_US-hfc_female-medium.onnx.json"
+# name : subdir/quality : filename base
+# All Piper voices we ship.
+VOICE_IDS=(joe hfc_female ryan norman)
+
+voice_hf_url() {
+  # $1 = base name (dir), $2 = quality
+  echo "$VOICES_BASE_URL/$1/$2"
+}
+
+voice_files() {
+  # Prints: <onnx_filename> <config_filename>
+  local name="$1"
+  local quality="$2"
+  printf "en_US-%s-%s.onnx\ten_US-%s-%s.onnx.json\n" "$name" "$quality" "$name" "$quality"
+}
 
 mkdir -p "$BIN_DIR" "$MODEL_DIR" "$OUTPUT_DIR" "$TMP_DIR"
 
 PIPER_BIN="$BIN_DIR/piper"
-JOE_MODEL_PATH="$MODEL_DIR/$JOE_VOICE_MODEL"
-JOE_MODEL_CONFIG_PATH="$MODEL_DIR/$JOE_VOICE_CONFIG"
-HFC_FEMALE_MODEL_PATH="$MODEL_DIR/$HFC_FEMALE_VOICE_MODEL"
-HFC_FEMALE_MODEL_CONFIG_PATH="$MODEL_DIR/$HFC_FEMALE_VOICE_CONFIG"
+
+# Map voice id -> model path on disk
+declare -A VOICE_MODEL_PATH=(
+  [joe]="$MODEL_DIR/en_US-joe-medium.onnx"
+  [amy]="$MODEL_DIR/en_US-hfc_female-medium.onnx"
+  [ryan]="$MODEL_DIR/en_US-ryan-medium.onnx"
+  [norman]="$MODEL_DIR/en_US-norman-medium.onnx"
+  [quote]="$MODEL_DIR/en_US-joe-medium.onnx"
+)
 
 download_if_missing() {
   local src="$1"
@@ -62,58 +90,133 @@ install_piper_if_needed() {
   chmod +x "$PIPER_BIN"
 }
 
+download_voice() {
+  local name="$1"
+  local quality="$2"
+  local onnx config
+  IFS=$'\t' read -r onnx config < <(voice_files "$name" "$quality")
+  download_if_missing "$(voice_hf_url "$name" "$quality")/$onnx"   "$MODEL_DIR/$onnx"
+  download_if_missing "$(voice_hf_url "$name" "$quality")/$config" "$MODEL_DIR/$config"
+}
+
 prepare_voice_if_needed() {
-  download_if_missing "$JOE_VOICE_BASE_URL/$JOE_VOICE_MODEL" "$JOE_MODEL_PATH"
-  download_if_missing "$JOE_VOICE_BASE_URL/$JOE_VOICE_CONFIG" "$JOE_MODEL_CONFIG_PATH"
-  download_if_missing "$HFC_FEMALE_VOICE_BASE_URL/$HFC_FEMALE_VOICE_MODEL" "$HFC_FEMALE_MODEL_PATH"
-  download_if_missing "$HFC_FEMALE_VOICE_BASE_URL/$HFC_FEMALE_VOICE_CONFIG" "$HFC_FEMALE_MODEL_CONFIG_PATH"
+  download_voice joe        medium
+  download_voice hfc_female medium
+  download_voice ryan       medium
+  download_voice norman     medium
+}
+
+# Returns: model_path <TAB> length_scale <TAB> sentence_silence <TAB> preset
+voice_profile() {
+  local voice="$1"
+  local model="${VOICE_MODEL_PATH[$voice]:-${VOICE_MODEL_PATH[joe]}}"
+  case "$voice" in
+    joe)    printf "%s\t%s\t%s\t%s\n" "$model" "1.16" "0.34" "clean" ;;
+    amy)    printf "%s\t%s\t%s\t%s\n" "$model" "1.22" "0.42" "interview" ;;
+    ryan)   printf "%s\t%s\t%s\t%s\n" "$model" "1.18" "0.38" "interview" ;;
+    norman) printf "%s\t%s\t%s\t%s\n" "$model" "1.20" "0.40" "interview" ;;
+    quote)  printf "%s\t%s\t%s\t%s\n" "$model" "1.20" "0.44" "period" ;;
+    *)      printf "%s\t%s\t%s\t%s\n" "$model" "1.16" "0.34" "clean" ;;
+  esac
+}
+
+default_voice_for_eyebrow() {
+  case "$1" in
+    Interview) echo "amy" ;;
+    *)         echo "joe" ;;
+  esac
 }
 
 apply_human_artifacts() {
   local input_file="$1"
   local output_file="$2"
-  local eyebrow="$3"
+  local preset="$3"
 
   if ! command -v ffmpeg >/dev/null 2>&1; then
     cp "$input_file" "$output_file"
     return 0
   fi
 
-  local noise_gain="0.020"
-  local click_gain="0.036"
-  local hiss_gain="0.004"
-  local leading_pad_ms="160"
-  if [[ "$eyebrow" == "Interview" ]]; then
-    # Slightly stronger texture for interview tape feel.
-    noise_gain="0.026"
-    click_gain="0.044"
-    hiss_gain="0.012"
-    leading_pad_ms="200"
-  fi
+  local noise_gain click_gain hiss_gain leading_pad_ms filter
+  case "$preset" in
+    interview)
+      noise_gain="0.026"; click_gain="0.044"; hiss_gain="0.012"; leading_pad_ms="200"
+      filter="[0:a]adelay=${leading_pad_ms}|${leading_pad_ms},afade=t=in:st=0:d=0.03,highpass=f=90,lowpass=f=7600,compand=attacks=0.02:decays=0.25:points=-80/-80|-28/-22|0/-5,volume=1.03[voice];[1:a]highpass=f=220,lowpass=f=5800,volume=${noise_gain}[bed];[2:a]highpass=f=4200,lowpass=f=11000,volume=${hiss_gain}[hiss];[3:a]highpass=f=2600,lowpass=f=7600,volume=${click_gain}[clicks];[voice][bed][hiss][clicks]amix=inputs=4:duration=first:weights=1 1 1 1,alimiter=limit=0.93[out]"
+      ;;
+    period)
+      # 1930s radio / phonograph-ish quote: narrower band, more crackle.
+      # Bandpass eats a lot of perceived loudness, so push voice gain hard
+      # and pull the texture layers back a touch.
+      noise_gain="0.022"; click_gain="0.040"; hiss_gain="0.010"; leading_pad_ms="180"
+      filter="[0:a]adelay=${leading_pad_ms}|${leading_pad_ms},afade=t=in:st=0:d=0.04,highpass=f=340,lowpass=f=3400,compand=attacks=0.02:decays=0.28:points=-80/-80|-26/-14|0/-2,volume=2.1[voice];[1:a]highpass=f=260,lowpass=f=3800,volume=${noise_gain}[bed];[2:a]highpass=f=3800,lowpass=f=9000,volume=${hiss_gain}[hiss];[3:a]highpass=f=2400,lowpass=f=6800,volume=${click_gain}[clicks];[voice][bed][hiss][clicks]amix=inputs=4:duration=first:weights=3 1 1 1,alimiter=limit=0.96[out]"
+      ;;
+    clean|*)
+      noise_gain="0.020"; click_gain="0.036"; hiss_gain="0.004"; leading_pad_ms="160"
+      filter="[0:a]adelay=${leading_pad_ms}|${leading_pad_ms},afade=t=in:st=0:d=0.03,highpass=f=90,lowpass=f=7600,compand=attacks=0.02:decays=0.25:points=-80/-80|-28/-22|0/-5,volume=1.03[voice];[1:a]highpass=f=220,lowpass=f=5800,volume=${noise_gain}[bed];[2:a]highpass=f=4200,lowpass=f=11000,volume=${hiss_gain}[hiss];[3:a]highpass=f=2600,lowpass=f=7600,volume=${click_gain}[clicks];[voice][bed][hiss][clicks]amix=inputs=4:duration=first:weights=1 1 1 1,alimiter=limit=0.93[out]"
+      ;;
+  esac
 
   if ! ffmpeg -nostdin -hide_banner -loglevel error -y \
     -i "$input_file" \
     -f lavfi -i "anoisesrc=color=pink:amplitude=0.0055:sample_rate=22050" \
     -f lavfi -i "anoisesrc=color=white:amplitude=0.0065:sample_rate=22050" \
     -f lavfi -i "aevalsrc=if(lt(mod(t\,7.3)\,0.0015)\,0.20\,0)+if(lt(mod(t\,11.7)\,0.0012)\,-0.16\,0):s=22050" \
-    -filter_complex "[0:a]adelay=${leading_pad_ms}|${leading_pad_ms},afade=t=in:st=0:d=0.03,highpass=f=90,lowpass=f=7600,compand=attacks=0.02:decays=0.25:points=-80/-80|-28/-22|0/-5,volume=1.03[voice];[1:a]highpass=f=220,lowpass=f=5800,volume=${noise_gain}[bed];[2:a]highpass=f=4200,lowpass=f=11000,volume=${hiss_gain}[hiss];[3:a]highpass=f=2600,lowpass=f=7600,volume=${click_gain}[clicks];[voice][bed][hiss][clicks]amix=inputs=4:duration=first:weights=1 1 1 1,alimiter=limit=0.93[out]" \
-    -map "[out]" "$output_file"; then
+    -filter_complex "$filter" \
+    -map "[out]" -ar 22050 -ac 1 -c:a pcm_s16le "$output_file"; then
     cp "$input_file" "$output_file"
   fi
 }
 
-voice_timing_for_slide() {
-  local eyebrow="$1"
-  local length_scale="1.16"
-  local sentence_silence="0.34"
+generate_silence() {
+  local ms="$1"
+  local out="$2"
+  local secs
+  secs=$(awk -v v="$ms" 'BEGIN{printf "%.3f", v/1000.0}')
+  ffmpeg -nostdin -hide_banner -loglevel error -y \
+    -f lavfi -i "anullsrc=r=22050:cl=mono" -t "$secs" \
+    -ar 22050 -ac 1 -c:a pcm_s16le "$out"
+}
 
-  if [[ "$eyebrow" == "Interview" ]]; then
-    # Give interview clips extra breathing room.
-    length_scale="1.22"
-    sentence_silence="0.42"
-  fi
+# Reads narration text on stdin. Emits ordered lines to stdout:
+#   SPEAK<TAB>voice<TAB>text
+#   PAUSE<TAB>ms
+NARRATION_PARSER_PY=$(cat <<'PY'
+import sys, re
+default_voice = sys.argv[1]
+text = sys.stdin.read()
+pattern = re.compile(
+    r'\{\{\s*(joe|amy|ryan|norman|quote|pause)(?:\s+(\d+))?\s*\}\}',
+    re.IGNORECASE,
+)
+pos = 0
+current = default_voice
+def emit_speak(v, t):
+    t = t.strip()
+    if not t:
+        return
+    t = re.sub(r'\s+', ' ', t)
+    print(f"SPEAK\t{v}\t{t}")
+for m in pattern.finditer(text):
+    before = text[pos:m.start()]
+    if before.strip():
+        emit_speak(current, before)
+    tag = m.group(1).lower()
+    arg = m.group(2)
+    if tag == 'pause':
+        ms = int(arg) if arg else 500
+        print(f"PAUSE\t{ms}")
+    else:
+        current = tag
+    pos = m.end()
+tail = text[pos:]
+if tail.strip():
+    emit_speak(current, tail)
+PY
+)
 
-  echo "$length_scale"$'\t'"$sentence_silence"
+parse_narration_segments() {
+  local default_voice="$1"
+  python3 -c "$NARRATION_PARSER_PY" "$default_voice"
 }
 
 extract_slide_audio_data() {
@@ -134,9 +237,63 @@ extract_slide_audio_data() {
   ' "$source_file"
 }
 
+render_slide() {
+  local slide_index="$1"
+  local eyebrow="$2"
+  local narration="$3"
+
+  local out_file concat_list default_voice seg
+  out_file=$(printf "%s/slide-%02d.wav" "$OUTPUT_DIR" "$slide_index")
+  concat_list=$(printf "%s/slide-%02d.concat" "$TMP_DIR" "$slide_index")
+  : > "$concat_list"
+  default_voice=$(default_voice_for_eyebrow "$eyebrow")
+  seg=0
+
+  while IFS=$'\t' read -r kind field_a field_b; do
+    seg=$((seg + 1))
+    local seg_file
+    seg_file=$(printf "%s/slide-%02d-seg-%03d.wav" "$TMP_DIR" "$slide_index" "$seg")
+
+    if [[ "$kind" == "PAUSE" ]]; then
+      generate_silence "$field_a" "$seg_file"
+    elif [[ "$kind" == "SPEAK" ]]; then
+      local voice="$field_a"
+      local text="$field_b"
+      local model length_scale sentence_silence preset
+      IFS=$'\t' read -r model length_scale sentence_silence preset < <(voice_profile "$voice")
+
+      local piper_wav
+      piper_wav=$(printf "%s/slide-%02d-piper-%03d.wav" "$TMP_DIR" "$slide_index" "$seg")
+      printf "%s\n" "$text" | LD_LIBRARY_PATH="$BIN_DIR:${LD_LIBRARY_PATH:-}" "$PIPER_BIN" \
+        --model "$model" \
+        --length_scale "$length_scale" \
+        --sentence_silence "$sentence_silence" \
+        --output_file "$piper_wav" >/dev/null
+
+      apply_human_artifacts "$piper_wav" "$seg_file" "$preset"
+    else
+      continue
+    fi
+
+    printf "file '%s'\n" "$seg_file" >> "$concat_list"
+  done < <(printf "%s\n" "$narration" | parse_narration_segments "$default_voice")
+
+  if [[ ! -s "$concat_list" ]]; then
+    echo "Warning: no segments produced for slide $slide_index" >&2
+    return 1
+  fi
+
+  ffmpeg -nostdin -hide_banner -loglevel error -y \
+    -f concat -safe 0 -i "$concat_list" \
+    -ar 22050 -ac 1 -c:a pcm_s16le "$out_file"
+  echo "Generated $out_file (${eyebrow:-Unknown})"
+}
+
 main() {
-  command -v curl >/dev/null 2>&1 || { echo "curl is required" >&2; exit 1; }
-  command -v tar >/dev/null 2>&1 || { echo "tar is required" >&2; exit 1; }
+  command -v curl    >/dev/null 2>&1 || { echo "curl is required" >&2; exit 1; }
+  command -v tar     >/dev/null 2>&1 || { echo "tar is required" >&2; exit 1; }
+  command -v python3 >/dev/null 2>&1 || { echo "python3 is required" >&2; exit 1; }
+  command -v ffmpeg  >/dev/null 2>&1 || { echo "ffmpeg is required (for silence + concat)" >&2; exit 1; }
 
   local source_file="$ROOT_DIR/index.html"
   if [[ ! -f "$source_file" ]]; then
@@ -149,30 +306,11 @@ main() {
 
   local i=0
   while IFS=$'\t' read -r eyebrow line; do
-    # Skip empty narration blocks.
     if [[ -z "${line// }" ]]; then
       continue
     fi
     i=$((i + 1))
-    local out_file
-    local raw_file
-    local model_path
-    local length_scale
-    local sentence_silence
-    out_file=$(printf "%s/slide-%02d.wav" "$OUTPUT_DIR" "$i")
-    raw_file=$(printf "%s/raw-slide-%02d.wav" "$TMP_DIR" "$i")
-
-    if [[ "$eyebrow" == "Interview" ]]; then
-      model_path="$HFC_FEMALE_MODEL_PATH"
-    else
-      model_path="$JOE_MODEL_PATH"
-    fi
-
-    IFS=$'\t' read -r length_scale sentence_silence < <(voice_timing_for_slide "$eyebrow")
-
-    printf "%s\n" "$line" | LD_LIBRARY_PATH="$BIN_DIR:${LD_LIBRARY_PATH:-}" "$PIPER_BIN" --model "$model_path" --length_scale "$length_scale" --sentence_silence "$sentence_silence" --output_file "$raw_file" >/dev/null
-    apply_human_artifacts "$raw_file" "$out_file" "$eyebrow"
-    echo "Generated $out_file (${eyebrow:-Unknown})"
+    render_slide "$i" "$eyebrow" "$line"
   done < <(extract_slide_audio_data "$source_file")
 
   if [[ "$i" -eq 0 ]]; then
