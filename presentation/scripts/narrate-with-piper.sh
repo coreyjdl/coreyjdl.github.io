@@ -109,11 +109,11 @@ voice_profile() {
   local voice="$1"
   local model="${VOICE_MODEL_PATH[$voice]:-${VOICE_MODEL_PATH[joe]}}"
   case "$voice" in
-    joe)    printf "%s\t%s\t%s\t%s\n" "$model" "1.16" "0.34" "clean" ;;
+    joe)    printf "%s\t%s\t%s\t%s\n" "$model" "1.22" "0.42" "clean" ;;
     amy)    printf "%s\t%s\t%s\t%s\n" "$model" "1.22" "0.42" "interview" ;;
     ryan)   printf "%s\t%s\t%s\t%s\n" "$model" "1.18" "0.38" "interview" ;;
     norman) printf "%s\t%s\t%s\t%s\n" "$model" "1.20" "0.40" "interview" ;;
-    *)      printf "%s\t%s\t%s\t%s\n" "$model" "1.16" "0.34" "clean" ;;
+    *)      printf "%s\t%s\t%s\t%s\n" "$model" "1.22" "0.42" "clean" ;;
   esac
 }
 

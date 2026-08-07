@@ -193,9 +193,9 @@
 
     .kenburns {
       position: absolute;
-      inset: -8%;
-      width: 116%;
-      height: 116%;
+      inset: -12%;
+      width: 124%;
+      height: 124%;
       object-fit: cover;
       filter: grayscale(1) contrast(1.18) brightness(0.92);
       transform-origin: center center;
@@ -203,6 +203,7 @@
       animation: kenburnsMove var(--kenburns-duration, 20s) ease-in-out infinite alternate;
       opacity: 0;
       transition: opacity 1100ms ease;
+      will-change: transform, opacity;
     }
 
     .kenburns.is-visible {
@@ -327,7 +328,7 @@
         transform: translate3d(var(--from-x, 0%), var(--from-y, 0%), 0) scale(var(--from-scale, 1.04));
       }
       100% {
-        transform: translate3d(var(--to-x, -4%), var(--to-y, -3%), 0) scale(var(--to-scale, 1.16));
+        transform: translate3d(var(--to-x, -6%), var(--to-y, -5%), 0) scale(var(--to-scale, 1.2));
       }
     }
 
@@ -414,7 +415,7 @@
         eyebrow: "Honest Beginnings",
         title: "Authenticity becomes political",
         subtitle: "It began with a playlist.",
-        narration: "No one knew that behind the banjos, the beards, and the folksy swagger, was a deeper question: who gets to decide what is real? Not quite a decade into the new century, a financial crisis had knocked the varnish off the American promise. {{ryan}} It was a different sound, something fresh, energetic. We Millennials were entranced by its honesty. {{pause 900}}  {{joe}} They could not have known where it would take the country.",
+        narration: "No one knew that behind the banjos, the beards, and the folksy swagger, was a deeper question: who gets to decide what is real? {{pause 900}} Not quite a decade into the new century, a financial crisis had knocked the varnish off the American promise. {{ryan}} It was a different sound, something fresh, energetic. We Millennials were entranced by its honesty. {{pause 500}} Dan Marshall {{pause 900}}  {{joe}} They could not have known the consequences for the country.",
         images: ["assets/opening.jpg", "assets/mill.jpg"],
         variant: ""
       },
@@ -422,7 +423,7 @@
         eyebrow: "The folk ideal",
         title: "The promise of sincerity",
         subtitle: "Wood, wire, and a room that sings in unison.",
-        narration: "After decades of over processed culture, people began searching for something authentic. Preferably something made from reclaimed wood, organic waxed cotton, all by a person who looked like they ate lentil soup. {{pause 900}} In two thousand nine, Obama begins his first term, change was in the air. It was the time of a generation rejecting the mid century commercialization, and commodification of life, rhythmic anthems of handclaps and banjos became a soundtrack for a different way of life. Pure, but ultimately backwards looking. {{norman}} If you had some chickens, knew how to brew your own beer, and fix your own car, you didn't need anything from anyone else. It was the way it used to be.",
+        narration: "After decades of over processed culture, people began searching for something authentic. Preferably something made from reclaimed wood, organic waxed cotton, all by a person who looked like they ate lentil soup. {{pause 900}} In two thousand nine, Obama begins his first term, change was in the air. It was the time of a generation rejecting the mid century commercialization, and commodification of life, rhythmic anthems of handclaps and banjos became a soundtrack for a different way of living. Pure, but ultimately backwards looking. {{norman}} If you had some chickens, knew how to brew your own beer, and fix your own car, you didn't need anything from anyone else. It was the way it used to be. Thomas Bennett",
         images: ["assets/folk-ideal.jpg", "assets/soup.jpg"],
         variant: "alt"
       },
@@ -430,7 +431,7 @@
         eyebrow: "The hey band bloom",
         title: "The earnest chorus arrives",
         subtitle: "Handclaps become social policy.",
-        narration: "Winter, twenty ten, Mummford an Sons releases Sigh No More, adding scale to the feeling. What was once a novel sound becomes arena ritual, and everyone learns to clap on command. The banjo returned not as an instrument, but as a movement. {{pause 900}} {{ryan}} Banjos are funny instruments. They can get pretty irritating. {{joe}} Recalls Winston Marshall, Banjo player.",
+        narration: "Winter, twenty ten, Mummford an Sons releases Sigh No More, adding scale to the feeling. What was once a novel sound becomes arena ritual, and everyone learns to clap on command. The banjo returned not as an instrument, but as a movement. {{pause 900}} {{ryan}} Banjos are funny instruments. They can get pretty irritating. {{pause 500}} Dan Marshall",
         images: ["assets/hey-band.jpg", "assets/banjo-guy.jpg"],
         variant: "soft"
       }, 
@@ -438,7 +439,7 @@
         eyebrow: "the Participation Trophy",
         title: "Back to roots, or so it felt",
         subtitle: "A voice from inside the vibe.",
-        narration: "{{joe}} Many fans were naively along for the ride, as Abby Monroe remembers {{amy}} I mean... I thought we were just getting back to something honest. You know, we were clapping and yelling, HEY!... because it felt alive, Not because we thought it meant anything bigger. And then... looking back now, that was kind of the point. It felt harmless, while it was also teaching us how to move together in unison.",
+        narration: "{{joe}} Many fans were naively along for the ride, {{amy}} I mean... I thought we were just getting back to something honest. You know, we were clapping and yelling, HEY!... because it felt alive, Not because we thought it meant anything bigger. And then... looking back now, that was kind of the point. It felt harmless, while it was also teaching us how to move together in unison. {{pause 500}} Abby Slate",
         images: ["assets/hipster-interview.jpg", "assets/clap.jpg"],
         variant: "alt"
       },
@@ -446,8 +447,8 @@
         eyebrow: "The Proof of Genuine",
         title: "Craft enters the republic",
         subtitle: "Measure, stir, repeat.",
-        narration: "Meanwhile, the pursuit of authenticity creeps into every aspect of life. At the bar, precision becomes morality. The right mix, the correct glass, the approved origin story. Technique stands in for truth. {{ryan}} I crafted my own cocktails with homemade bitters. I wanted something genuine, something challenging.",
-        image: "assets/cocktail.jpg",
+        narration: "Meanwhile, the pursuit of authenticity creeps into every aspect of life. At the bar, precision becomes morality. The right mix, the correct glass, the approved origin story. Technique stands in for truth. {{ryan}} I crafted my own cocktails with homemade bitters. I wanted something genuine, something challenging. {{pause 500}} Dan Marshall",
+        images: ["assets/cocktail.jpg"],
         variant: "soft"
       },
       {
@@ -455,23 +456,23 @@
         title: "The rejection gets repackaged",
         subtitle: "The market never misses a mood, or a membership signal.",
         narration: "The movement began as a rejection of consumer culture. Then it spread: from folk stages, to craft cocktail bars, bacon curing, and food scenes where authenticity became performance. Consumer culture did what it does best: it sold the rejection back at scale, with better branding, nicer packaging, and a higher margin. Taste became crucial social signalling.",
-        image: "assets/beard-corridor.jpg",
+        images: ["assets/beard-corridor.jpg"],
         variant: "alt"
       },
       {
         eyebrow: "Self-reliance",
         title: "Trust yourself, trust others less",
         subtitle: "Pantry, survival, and the politics of independence.",
-        narration: "Self-reliance is practical until it becomes theology. {{norman}} It started off by needing to save a few dollars, and it kind of evolved into a purity test, if you couldn't fix your own car, or build your own deck, what good are you? {{joe}} Knowing how to fix a sink is useful. Believing that no one else can fix anything, is politics.",
-        image: "assets/self-reliance.jpg",
+        narration: "Self-reliance is practical until it becomes theology. {{norman}} It started off by needing to save a few dollars, and it kind of evolved into a purity test, if you couldn't fix your own car, or build your own deck, what good are you? Thomas Bennett {{joe}} Knowing how to fix a sink is useful. Believing that no one else can fix anything, is politics.",
+        images: ["assets/self-reliance.jpg", "assets/tools.jpg"],
         variant: ""
       },
       {
         eyebrow: "Wellness panic",
         title: "Purity becomes panic",
         subtitle: "Ingredient lists as prophecy.",
-        narration: "A search for better ingredients becomes a search for hidden enemies. {{amy}} Its about what's going in my body, I mean, what even is an emulsifier? {{joe}} Distrust begins with words on labels people can't read or pronounce, then expands to medicine, public systems, and finally reality itself.",
-        image: "assets/wellness-panic.jpg",
+        narration: "A search for better ingredients becomes a search for hidden enemies. {{amy}} Its about what's going in my body, I mean, what even is an emulsifier? {{pause 500}} Abby Slate {{joe}} Distrust begins with words on labels people can't read or pronounce, then expands to medicine, public systems, and finally reality itself.",
+        images: ["assets/wellness-panic.jpg"],
         variant: "soft"
       },
       {
@@ -479,14 +480,14 @@
         title: "Suspicion replaces evidence",
         subtitle: "Everyone is lying, all the time.",
         narration: "Legitimate critique mutates into permanent suspicion. Distrust begins with corporations, then expands to universities, then medicine, then elections. Eventually, the only trustworthy source... is the person telling you not to trust anyone.",
-        image: "assets/anti-elite-drift.jpg",
+        images: ["assets/anti-elite-drift.jpg"],
         variant: "alt"
       },
       {
         eyebrow: "The acoustic pipeline",
         title: "Style travels faster than ideology",
         subtitle: "The soundtrack crosses the border first.",
-        narration: "{{ryan}} It all felt like a call back to a better time, a better way of living and doing things. {{pause 900}} {{joe}} Years later, the early aesthetic reads like a preamble. The soundtrack entered the room before the argument, followed by nostalgia for European purity myths, dressed as tradition.",
+        narration: "{{ryan}} It all felt like a call back to a better time, a better way of living and doing things. {{pause 500}} Dan Marshall {{pause 900}} {{joe}} Years later, the early aesthetic reads like a preamble. The soundtrack entered the room before the argument, followed by nostalgia for European purity myths, dressed as tradition.",
         images: ["assets/acoustic-pipeline.jpg", "assets/folksy.jpg"],
         variant: ""
       },
@@ -502,7 +503,7 @@
         eyebrow: "The irony economy",
         title: "From Vice to grievance",
         subtitle: "Snark opens the gate.",
-        narration: "{{joe}} In twenty sixteen, Vice founder and nazi hipster, Richard Spencer told a Washington crowd, 'Hail Trump. Hail our people. Hail victory.' {{pause 900}} Half the room laughed. The other half saluted. Irony offers plausible deniability: if challenged, it was just a joke; if rewarded, it was sincere.",
+        narration: "{{joe}} In twenty sixteen, Vice founder and nazi hipster, Richard Spencer told a Washington crowd, 'Hail Trump. Hail our people. Hail victory.' {{pause 900}} Half the room laughed. The other half saluted. Irony offers plausible deniability: if challenged, it was just a joke; if rewarded, it was sincere. This environment without accountablility, yields a wave of toxic populism.",
         images: ["assets/spencer.jpg", "assets/outrage.jpg"],
         variant: "alt"
       },
@@ -510,7 +511,7 @@
         eyebrow: "Populism",
         title: "From belonging to hierarchy",
         subtitle: "Then Trump, as acceleration not conclusion.",
-        narration: "Trump did not invent the desire for authenticity. He exploited it, with MAGA and MAHA running as twin rails: one about borders and belonging, the other about bodies and contamination. The point is not a single man, but what he represented, a system well tuned for grievance and distrust. {{amy}}  He said he could stand in the middle of fifth avenue and shoot somebody, he was infallible, and {{pause 500}} we clapped, in unison.",
+        narration: "Trump did not invent the desire for authenticity. He exploited it, with MAGA and MAHA running as twin rails: one about borders and belonging, the other about bodies and contamination. The point is not a single man, but what he represented, a system well tuned for grievance and distrust. {{amy}}  He said he could stand in the middle of fifth avenue and shoot somebody, he was infallible, and {{pause 500}} we clapped, in unison. {{pause 900}} {{pause 500}} Abby Slate",
         images: ["assets/irony-economy.jpg", "assets/trumpcrowd.jpg"],
         variant: "soft"
       },
@@ -518,7 +519,7 @@
         eyebrow: "Consequences",
         title: "What fascist culture leaves behind",
         subtitle: "Pluralism thins out, then institutions do.",
-        narration: "Once chasing authenticity and nostalgia become a business model, fascist politics stop sounding fringe and start sounding normal. {{norman}} I don't really have anything against them, I just want to raise my kids my way, the old way. {{pause 900}} {{joe}} Damage moves from screens to systems: public-health trust collapses, school boards become proxy battlefields, and state power is aimed at local enemies instead of problems. The consequence is not only who wins office. It is a country that struggles to agree on what is real, and then loses the habit of sharing power.",
+        narration: "Once chasing authenticity and nostalgia become a business model, fascist politics stop sounding fringe and start sounding normal. {{norman}} I don't really have anything against them, I just want to raise my kids my way, the old way. Thomas Bennett {{pause 900}} {{joe}} Damage moves from screens to systems: public-health trust collapses, school boards become proxy battlefields, and state power is aimed at local enemies instead of problems. The consequence is not only who wins office. It is a country that struggles to agree on what is real, and then loses the habit of sharing power.",
         images: ["assets/populism.jpg", "assets/massive.jpg"],
         variant: "alt"
       },
@@ -774,10 +775,12 @@
       }
 
       const motionPresets = [
-        { fromX: '0%', fromY: '0%', toX: '-4%', toY: '-3%', fromScale: '1.04', toScale: '1.18' },
-        { fromX: '-2%', fromY: '-1%', toX: '3%', toY: '2%', fromScale: '1.05', toScale: '1.19' },
-        { fromX: '2%', fromY: '-2%', toX: '-3%', toY: '2%', fromScale: '1.03', toScale: '1.17' },
-        { fromX: '-1%', fromY: '1%', toX: '2%', toY: '-3%', fromScale: '1.04', toScale: '1.16' }
+        { fromX: '3%', fromY: '2%', toX: '-7%', toY: '-6%', fromScale: '1.06', toScale: '1.22' },
+        { fromX: '-5%', fromY: '-2%', toX: '6%', toY: '4%', fromScale: '1.07', toScale: '1.23' },
+        { fromX: '6%', fromY: '-4%', toX: '-5%', toY: '5%', fromScale: '1.05', toScale: '1.21' },
+        { fromX: '-4%', fromY: '4%', toX: '5%', toY: '-6%', fromScale: '1.06', toScale: '1.2' },
+        { fromX: '2%', fromY: '-5%', toX: '-6%', toY: '3%', fromScale: '1.08', toScale: '1.24' },
+        { fromX: '-6%', fromY: '1%', toX: '4%', toY: '-4%', fromScale: '1.05', toScale: '1.22' }
       ];
       const wordCount = (data.narration || '').trim().split(/\s+/).filter(Boolean).length;
       const paceSeconds = Math.max(20, Math.min(28, Math.round(wordCount / 3) + 14));
@@ -800,13 +803,14 @@
           img.classList.add(data.variant);
         }
         const motion = motionPresets[(index + i) % motionPresets.length];
+        const durationSeconds = Math.max(18, paceSeconds + ((index + i) % 4) * 2 - 2);
         img.style.setProperty('--from-x', motion.fromX);
         img.style.setProperty('--from-y', motion.fromY);
         img.style.setProperty('--to-x', motion.toX);
         img.style.setProperty('--to-y', motion.toY);
         img.style.setProperty('--from-scale', motion.fromScale);
         img.style.setProperty('--to-scale', motion.toScale);
-        img.style.setProperty('--kenburns-duration', `${paceSeconds}s`);
+        img.style.setProperty('--kenburns-duration', `${durationSeconds}s`);
         if (i === 0) {
           img.classList.add('is-visible');
         }
