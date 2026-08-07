@@ -137,6 +137,45 @@
       display: none;
     }
 
+    .interstitial {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #000;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 520ms ease, visibility 0s linear 520ms;
+    }
+
+    .slide.previewing .interstitial {
+      opacity: 1;
+      visibility: visible;
+      transition: none;
+    }
+
+    .interstitial-label {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(2.4rem, 6vw, 5.4rem);
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: #ececec;
+      text-align: center;
+      padding: 0 6vw;
+      text-wrap: balance;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 520ms ease 120ms, transform 520ms ease 120ms;
+    }
+
+    .slide.previewing .interstitial-label {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
     .visual {
       position: relative;
       overflow: hidden;
@@ -184,11 +223,7 @@
     }
 
     .eyebrow {
-      font-family: Arial, Helvetica, sans-serif;
-      text-transform: uppercase;
-      letter-spacing: 0.23em;
-      font-size: 12px;
-      color: var(--soft);
+      display: none;
     }
 
     h1, h2 {
@@ -352,6 +387,9 @@
         <div class="narration" aria-hidden="true"></div>
         <div class="footer"></div>
       </div>
+      <div class="interstitial" aria-hidden="true">
+        <span class="interstitial-label"></span>
+      </div>
     </section>
   </template>
 
@@ -368,7 +406,7 @@
         layout: "title-screen"
       },
       {
-        eyebrow: "Opening",
+        eyebrow: "Honest Beginings",
         title: "Authenticity becomes political",
         subtitle: "It began with a playlist.",
         narration: "No one knew that behind the banjos, the beards, and the folksy swagger was a deeper question: who gets to decide what is real?",
@@ -532,7 +570,9 @@
     let musicFadeTimer = null;
     let autoAdvanceTimer = null;
     let silentSlideTimer = null;
+    let interstitialTimer = null;
     const autoAdvanceDelayMs = 3200;
+    const interstitialDurationMs = 2800;
 
     function setMusicVolume(targetVolume, durationMs = 260) {
       if (!backgroundMusicEnabled) {
@@ -710,6 +750,10 @@
       const narration = node.querySelector('.narration');
       const counter = node.querySelector('.counter');
       const visual = node.querySelector('.kenburns');
+      const interstitialLabel = node.querySelector('.interstitial-label');
+      if (interstitialLabel) {
+        interstitialLabel.textContent = data.eyebrow || '';
+      }
 
       eyebrow.textContent = data.eyebrow;
       title.textContent = data.title;
@@ -764,6 +808,11 @@
         clearTimeout(silentSlideTimer);
         silentSlideTimer = null;
       }
+      if (interstitialTimer) {
+        clearTimeout(interstitialTimer);
+        interstitialTimer = null;
+      }
+      nodes.forEach((node) => node.classList.remove('previewing'));
       current = Math.max(0, Math.min(index, slides.length - 1));
       nodes.forEach((node, i) => node.classList.toggle('active', i === current));
       if (!animate) {
@@ -772,7 +821,26 @@
           nodes[current].style.transition = '';
         });
       }
-      playNarrationForCurrentSlide();
+
+      const slideData = slides[current];
+      const showInterstitial =
+        slideData
+        && slideData.layout !== 'title-screen'
+        && (slideData.eyebrow || '').trim().length > 0;
+
+      if (showInterstitial) {
+        const activeNode = nodes[current];
+        activeNode.classList.add('previewing');
+        // Keep music playing under the interstitial, but hold narration until reveal.
+        playBackgroundMusic();
+        interstitialTimer = setTimeout(() => {
+          interstitialTimer = null;
+          activeNode.classList.remove('previewing');
+          playNarrationForCurrentSlide();
+        }, interstitialDurationMs);
+      } else {
+        playNarrationForCurrentSlide();
+      }
     }
 
     document.addEventListener('keydown', (event) => {
