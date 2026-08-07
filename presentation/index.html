@@ -259,7 +259,7 @@
         </div>
         <div class="narration"></div>
         <div class="footer">
-          <div class="hint">Left / right arrows to navigate</div>
+          <div class="hint">Left / right arrows to navigate • N toggles narration</div>
           <div class="counter"></div>
         </div>
       </div>
@@ -394,6 +394,39 @@
     const template = document.getElementById('slide-template');
     let current = 0;
     const nodes = [];
+    const narrationAudio = new Audio();
+    narrationAudio.preload = 'auto';
+    let narrationEnabled = true;
+    let narrationUnlocked = false;
+
+    function audioPathForSlide(index) {
+      return `assets/narration/slide-${String(index + 1).padStart(2, '0')}.wav`;
+    }
+
+    function playNarrationForCurrentSlide() {
+      if (!narrationEnabled || !narrationUnlocked) {
+        return;
+      }
+
+      const nextSource = audioPathForSlide(current);
+      const existing = narrationAudio.getAttribute('src');
+      if (existing !== nextSource) {
+        narrationAudio.setAttribute('src', nextSource);
+      } else {
+        narrationAudio.currentTime = 0;
+      }
+
+      narrationAudio.play().catch(() => {
+        // Browser may block autoplay before user interaction; this fails safely.
+      });
+    }
+
+    function unlockNarration() {
+      if (!narrationUnlocked) {
+        narrationUnlocked = true;
+        playNarrationForCurrentSlide();
+      }
+    }
 
     function createSlide(data, index) {
       const node = template.content.cloneNode(true);
@@ -453,9 +486,11 @@
           nodes[current].style.transition = '';
         });
       }
+      playNarrationForCurrentSlide();
     }
 
     document.addEventListener('keydown', (event) => {
+      unlockNarration();
       if (event.key === 'ArrowRight' || event.key === 'PageDown' || event.key === ' ') {
         event.preventDefault();
         setActive(current + 1);
@@ -472,9 +507,19 @@
         event.preventDefault();
         setActive(slides.length - 1);
       }
+      if (event.key.toLowerCase() === 'n') {
+        narrationEnabled = !narrationEnabled;
+        if (!narrationEnabled) {
+          narrationAudio.pause();
+          narrationAudio.currentTime = 0;
+        } else {
+          playNarrationForCurrentSlide();
+        }
+      }
     });
 
     document.addEventListener('click', (event) => {
+      unlockNarration();
       const rect = document.body.getBoundingClientRect();
       if (event.clientX > rect.width * 0.5) {
         setActive(current + 1);
