@@ -109,10 +109,10 @@ voice_profile() {
   local voice="$1"
   local model="${VOICE_MODEL_PATH[$voice]:-${VOICE_MODEL_PATH[joe]}}"
   case "$voice" in
-    joe)    printf "%s\t%s\t%s\t%s\n" "$model" "1.22" "0.42" "clean" ;;
-    amy)    printf "%s\t%s\t%s\t%s\n" "$model" "1.22" "0.42" "interview" ;;
-    ryan)   printf "%s\t%s\t%s\t%s\n" "$model" "1.18" "0.38" "interview" ;;
-    norman) printf "%s\t%s\t%s\t%s\n" "$model" "1.20" "0.40" "interview" ;;
+    joe)    printf "%s\t%s\t%s\t%s\n" "$model" "1.18" "0.42" "clean" ;;
+    amy)    printf "%s\t%s\t%s\t%s\n" "$model" "1.22" "0.42" "archival_tape" ;;
+    ryan)   printf "%s\t%s\t%s\t%s\n" "$model" "1.18" "0.38" "archival_tape" ;;
+    norman) printf "%s\t%s\t%s\t%s\n" "$model" "1.16" "0.40" "interview" ;;
     *)      printf "%s\t%s\t%s\t%s\n" "$model" "1.22" "0.42" "clean" ;;
   esac
 }
@@ -136,6 +136,10 @@ apply_human_artifacts() {
 
   local noise_gain click_gain hiss_gain leading_pad_ms filter
   case "$preset" in
+    archival_tape)
+      noise_gain="0.030"; click_gain="0.052"; hiss_gain="0.016"; leading_pad_ms="240"
+      filter="[0:a]adelay=${leading_pad_ms}|${leading_pad_ms},afade=t=in:st=0:d=0.03,highpass=f=90,lowpass=f=7200,compand=attacks=0.02:decays=0.25:points=-80/-80|-28/-22|0/-5,vibrato=f=4.7:d=0.010,volume=0.95[voice];[1:a]highpass=f=220,lowpass=f=5800,volume=${noise_gain}[bed];[2:a]highpass=f=4200,lowpass=f=11000,volume=${hiss_gain}[hiss];[3:a]highpass=f=2600,lowpass=f=7600,volume=${click_gain}[clicks];[voice][bed][hiss][clicks]amix=inputs=4:duration=first:weights=1 1 1 1,alimiter=limit=0.93[out]"
+      ;;
     interview)
       noise_gain="0.026"; click_gain="0.044"; hiss_gain="0.012"; leading_pad_ms="200"
       filter="[0:a]adelay=${leading_pad_ms}|${leading_pad_ms},afade=t=in:st=0:d=0.03,highpass=f=90,lowpass=f=7600,compand=attacks=0.02:decays=0.25:points=-80/-80|-28/-22|0/-5,volume=1.03[voice];[1:a]highpass=f=220,lowpass=f=5800,volume=${noise_gain}[bed];[2:a]highpass=f=4200,lowpass=f=11000,volume=${hiss_gain}[hiss];[3:a]highpass=f=2600,lowpass=f=7600,volume=${click_gain}[clicks];[voice][bed][hiss][clicks]amix=inputs=4:duration=first:weights=1 1 1 1,alimiter=limit=0.93[out]"

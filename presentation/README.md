@@ -22,8 +22,8 @@ The script generates WAV files into:
 Voices used (Piper models, all `medium` quality):
 
 - `en_US-joe-medium` — default narrator (clean documentary treatment)
-- `en_US-hfc_female-medium` — Amy (archival tape treatment); also the default for any slide whose eyebrow is `Interview`
-- `en_US-ryan-medium` — Ryan (archival tape treatment)
+- `en_US-hfc_female-medium` — Amy (slightly quieter archival tape treatment); also the default for any slide whose eyebrow is `Interview`
+- `en_US-ryan-medium` — Ryan (slightly quieter archival tape treatment)
 - `en_US-norman-medium` — Norman (archival tape treatment)
 
 Models are downloaded on first run into `.tts/models/` (ignored by git). Delete that folder to force a re-download.
@@ -62,5 +62,5 @@ Under the hood: each speech chunk is rendered separately by Piper with the corre
 Humanizing artifacts:
 
 - The generator applies subtle post-processing with `ffmpeg` (light room tone, tiny click texture, gentle dynamics) per segment.
-- Interview voices get an archival tape treatment applied per segment.
+- Amy and Ryan get a slightly quieter archival tape treatment applied per segment.
 - If `ffmpeg` or `python3` is unavailable, the script exits with an error at startup.
