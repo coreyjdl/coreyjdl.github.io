@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Generate slide narration audio with Piper (en_US-joe-medium) from index.html.
+# Generate slide narration audio with Piper voices from index.html.
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 WORK_DIR="$ROOT_DIR/.tts"
 BIN_DIR="$WORK_DIR/bin"
@@ -11,15 +11,22 @@ TMP_DIR="$WORK_DIR/tmp"
 
 PIPER_VERSION="v1.2.0"
 PIPER_ARCHIVE_URL="https://github.com/rhasspy/piper/releases/download/${PIPER_VERSION}/piper_amd64.tar.gz"
-VOICE_BASE_URL="https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/joe/medium"
-VOICE_MODEL="en_US-joe-medium.onnx"
-VOICE_CONFIG="en_US-joe-medium.onnx.json"
+
+JOE_VOICE_BASE_URL="https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/joe/medium"
+JOE_VOICE_MODEL="en_US-joe-medium.onnx"
+JOE_VOICE_CONFIG="en_US-joe-medium.onnx.json"
+
+HFC_FEMALE_VOICE_BASE_URL="https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/hfc_female/medium"
+HFC_FEMALE_VOICE_MODEL="en_US-hfc_female-medium.onnx"
+HFC_FEMALE_VOICE_CONFIG="en_US-hfc_female-medium.onnx.json"
 
 mkdir -p "$BIN_DIR" "$MODEL_DIR" "$OUTPUT_DIR" "$TMP_DIR"
 
 PIPER_BIN="$BIN_DIR/piper"
-MODEL_PATH="$MODEL_DIR/$VOICE_MODEL"
-MODEL_CONFIG_PATH="$MODEL_DIR/$VOICE_CONFIG"
+JOE_MODEL_PATH="$MODEL_DIR/$JOE_VOICE_MODEL"
+JOE_MODEL_CONFIG_PATH="$MODEL_DIR/$JOE_VOICE_CONFIG"
+HFC_FEMALE_MODEL_PATH="$MODEL_DIR/$HFC_FEMALE_VOICE_MODEL"
+HFC_FEMALE_MODEL_CONFIG_PATH="$MODEL_DIR/$HFC_FEMALE_VOICE_CONFIG"
 
 download_if_missing() {
   local src="$1"
@@ -56,14 +63,72 @@ install_piper_if_needed() {
 }
 
 prepare_voice_if_needed() {
-  download_if_missing "$VOICE_BASE_URL/$VOICE_MODEL" "$MODEL_PATH"
-  download_if_missing "$VOICE_BASE_URL/$VOICE_CONFIG" "$MODEL_CONFIG_PATH"
+  download_if_missing "$JOE_VOICE_BASE_URL/$JOE_VOICE_MODEL" "$JOE_MODEL_PATH"
+  download_if_missing "$JOE_VOICE_BASE_URL/$JOE_VOICE_CONFIG" "$JOE_MODEL_CONFIG_PATH"
+  download_if_missing "$HFC_FEMALE_VOICE_BASE_URL/$HFC_FEMALE_VOICE_MODEL" "$HFC_FEMALE_MODEL_PATH"
+  download_if_missing "$HFC_FEMALE_VOICE_BASE_URL/$HFC_FEMALE_VOICE_CONFIG" "$HFC_FEMALE_MODEL_CONFIG_PATH"
 }
 
-extract_narration_lines() {
+apply_human_artifacts() {
+  local input_file="$1"
+  local output_file="$2"
+  local eyebrow="$3"
+
+  if ! command -v ffmpeg >/dev/null 2>&1; then
+    cp "$input_file" "$output_file"
+    return 0
+  fi
+
+  local noise_gain="0.020"
+  local click_gain="0.036"
+  local leading_pad="0.16"
+  if [[ "$eyebrow" == "Interview" ]]; then
+    # Slightly stronger texture for interview tape feel.
+    noise_gain="0.026"
+    click_gain="0.044"
+    leading_pad="0.20"
+  fi
+
+  if ! ffmpeg -nostdin -hide_banner -loglevel error -y \
+    -i "$input_file" \
+    -f lavfi -i "anoisesrc=color=pink:amplitude=0.0055:sample_rate=22050" \
+    -f lavfi -i "aevalsrc=if(lt(mod(t\,7.3)\,0.0015)\,0.20\,0)+if(lt(mod(t\,11.7)\,0.0012)\,-0.16\,0):s=22050" \
+    -filter_complex "[0:a]tpad=start_duration=${leading_pad},afade=t=in:st=0:d=0.03,highpass=f=90,lowpass=f=7600,compand=attacks=0.02:decays=0.25:points=-80/-80|-28/-22|0/-5,volume=1.03[voice];[1:a]highpass=f=220,lowpass=f=5800,volume=${noise_gain}[bed];[2:a]highpass=f=2600,lowpass=f=7600,volume=${click_gain}[clicks];[voice][bed][clicks]amix=inputs=3:duration=first:weights=1 1 1,alimiter=limit=0.93[out]" \
+    -map "[out]" "$output_file"; then
+    cp "$input_file" "$output_file"
+  fi
+}
+
+voice_timing_for_slide() {
+  local eyebrow="$1"
+  local length_scale="1.16"
+  local sentence_silence="0.34"
+
+  if [[ "$eyebrow" == "Interview" ]]; then
+    # Give interview clips extra breathing room.
+    length_scale="1.22"
+    sentence_silence="0.42"
+  fi
+
+  echo "$length_scale"$'\t'"$sentence_silence"
+}
+
+extract_slide_audio_data() {
   local source_file="$1"
-  grep -E '^[[:space:]]*narration:' "$source_file" \
-    | sed -E 's/^[[:space:]]*narration:[[:space:]]*"(.*)",[[:space:]]*$/\1/'
+  awk '
+    /^[[:space:]]*eyebrow:[[:space:]]*".*",[[:space:]]*$/ {
+      eyebrow = $0
+      sub(/^[[:space:]]*eyebrow:[[:space:]]*"/, "", eyebrow)
+      sub(/",[[:space:]]*$/, "", eyebrow)
+      next
+    }
+    /^[[:space:]]*narration:[[:space:]]*".*",[[:space:]]*$/ {
+      narration = $0
+      sub(/^[[:space:]]*narration:[[:space:]]*"/, "", narration)
+      sub(/",[[:space:]]*$/, "", narration)
+      print eyebrow "\t" narration
+    }
+  ' "$source_file"
 }
 
 main() {
@@ -80,17 +145,32 @@ main() {
   prepare_voice_if_needed
 
   local i=0
-  while IFS= read -r line; do
+  while IFS=$'\t' read -r eyebrow line; do
     # Skip empty narration blocks.
     if [[ -z "${line// }" ]]; then
       continue
     fi
     i=$((i + 1))
     local out_file
+    local raw_file
+    local model_path
+    local length_scale
+    local sentence_silence
     out_file=$(printf "%s/slide-%02d.wav" "$OUTPUT_DIR" "$i")
-    printf "%s\n" "$line" | LD_LIBRARY_PATH="$BIN_DIR:${LD_LIBRARY_PATH:-}" "$PIPER_BIN" --model "$MODEL_PATH" --output_file "$out_file" >/dev/null
-    echo "Generated $out_file"
-  done < <(extract_narration_lines "$source_file")
+    raw_file=$(printf "%s/raw-slide-%02d.wav" "$TMP_DIR" "$i")
+
+    if [[ "$eyebrow" == "Interview" ]]; then
+      model_path="$HFC_FEMALE_MODEL_PATH"
+    else
+      model_path="$JOE_MODEL_PATH"
+    fi
+
+    IFS=$'\t' read -r length_scale sentence_silence < <(voice_timing_for_slide "$eyebrow")
+
+    printf "%s\n" "$line" | LD_LIBRARY_PATH="$BIN_DIR:${LD_LIBRARY_PATH:-}" "$PIPER_BIN" --model "$model_path" --length_scale "$length_scale" --sentence_silence "$sentence_silence" --output_file "$raw_file" >/dev/null
+    apply_human_artifacts "$raw_file" "$out_file" "$eyebrow"
+    echo "Generated $out_file (${eyebrow:-Unknown})"
+  done < <(extract_slide_audio_data "$source_file")
 
   if [[ "$i" -eq 0 ]]; then
     echo "No narration lines found in $source_file" >&2

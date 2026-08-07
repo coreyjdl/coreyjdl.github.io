@@ -1,0 +1,510 @@
++ set -euo pipefail
++++ dirname ./scripts/narrate-with-piper.sh
+++ cd ./scripts/..
+++ pwd
++ ROOT_DIR=/home/corey/coreyjdl.github.io/presentation
++ WORK_DIR=/home/corey/coreyjdl.github.io/presentation/.tts
++ BIN_DIR=/home/corey/coreyjdl.github.io/presentation/.tts/bin
++ MODEL_DIR=/home/corey/coreyjdl.github.io/presentation/.tts/models
++ OUTPUT_DIR=/home/corey/coreyjdl.github.io/presentation/assets/narration
++ TMP_DIR=/home/corey/coreyjdl.github.io/presentation/.tts/tmp
++ PIPER_VERSION=v1.2.0
++ PIPER_ARCHIVE_URL=https://github.com/rhasspy/piper/releases/download/v1.2.0/piper_amd64.tar.gz
++ JOE_VOICE_BASE_URL=https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/joe/medium
++ JOE_VOICE_MODEL=en_US-joe-medium.onnx
++ JOE_VOICE_CONFIG=en_US-joe-medium.onnx.json
++ HFC_FEMALE_VOICE_BASE_URL=https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/hfc_female/medium
++ HFC_FEMALE_VOICE_MODEL=en_US-hfc_female-medium.onnx
++ HFC_FEMALE_VOICE_CONFIG=en_US-hfc_female-medium.onnx.json
++ mkdir -p /home/corey/coreyjdl.github.io/presentation/.tts/bin /home/corey/coreyjdl.github.io/presentation/.tts/models /home/corey/coreyjdl.github.io/presentation/assets/narration /home/corey/coreyjdl.github.io/presentation/.tts/tmp
++ PIPER_BIN=/home/corey/coreyjdl.github.io/presentation/.tts/bin/piper
++ JOE_MODEL_PATH=/home/corey/coreyjdl.github.io/presentation/.tts/models/en_US-joe-medium.onnx
++ JOE_MODEL_CONFIG_PATH=/home/corey/coreyjdl.github.io/presentation/.tts/models/en_US-joe-medium.onnx.json
++ HFC_FEMALE_MODEL_PATH=/home/corey/coreyjdl.github.io/presentation/.tts/models/en_US-hfc_female-medium.onnx
++ HFC_FEMALE_MODEL_CONFIG_PATH=/home/corey/coreyjdl.github.io/presentation/.tts/models/en_US-hfc_female-medium.onnx.json
++ main
++ command -v curl
++ command -v tar
++ local source_file=/home/corey/coreyjdl.github.io/presentation/index.html
++ [[ ! -f /home/corey/coreyjdl.github.io/presentation/index.html ]]
++ install_piper_if_needed
++ [[ -x /home/corey/coreyjdl.github.io/presentation/.tts/bin/piper ]]
++ [[ -f /home/corey/coreyjdl.github.io/presentation/.tts/bin/libpiper_phonemize.so.1 ]]
++ return 0
++ prepare_voice_if_needed
++ download_if_missing https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/joe/medium/en_US-joe-medium.onnx /home/corey/coreyjdl.github.io/presentation/.tts/models/en_US-joe-medium.onnx
++ local src=https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/joe/medium/en_US-joe-medium.onnx
++ local dst=/home/corey/coreyjdl.github.io/presentation/.tts/models/en_US-joe-medium.onnx
++ [[ ! -f /home/corey/coreyjdl.github.io/presentation/.tts/models/en_US-joe-medium.onnx ]]
++ download_if_missing https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/joe/medium/en_US-joe-medium.onnx.json /home/corey/coreyjdl.github.io/presentation/.tts/models/en_US-joe-medium.onnx.json
++ local src=https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/joe/medium/en_US-joe-medium.onnx.json
++ local dst=/home/corey/coreyjdl.github.io/presentation/.tts/models/en_US-joe-medium.onnx.json
++ [[ ! -f /home/corey/coreyjdl.github.io/presentation/.tts/models/en_US-joe-medium.onnx.json ]]
++ download_if_missing https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/hfc_female/medium/en_US-hfc_female-medium.onnx /home/corey/coreyjdl.github.io/presentation/.tts/models/en_US-hfc_female-medium.onnx
++ local src=https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/hfc_female/medium/en_US-hfc_female-medium.onnx
++ local dst=/home/corey/coreyjdl.github.io/presentation/.tts/models/en_US-hfc_female-medium.onnx
++ [[ ! -f /home/corey/coreyjdl.github.io/presentation/.tts/models/en_US-hfc_female-medium.onnx ]]
++ download_if_missing https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/hfc_female/medium/en_US-hfc_female-medium.onnx.json /home/corey/coreyjdl.github.io/presentation/.tts/models/en_US-hfc_female-medium.onnx.json
++ local src=https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/hfc_female/medium/en_US-hfc_female-medium.onnx.json
++ local dst=/home/corey/coreyjdl.github.io/presentation/.tts/models/en_US-hfc_female-medium.onnx.json
++ [[ ! -f /home/corey/coreyjdl.github.io/presentation/.tts/models/en_US-hfc_female-medium.onnx.json ]]
++ local i=0
++ IFS='	'
++ read -r eyebrow line
+++ extract_slide_audio_data /home/corey/coreyjdl.github.io/presentation/index.html
+++ local source_file=/home/corey/coreyjdl.github.io/presentation/index.html
+++ awk '
+    /^[[:space:]]*eyebrow:[[:space:]]*".*",[[:space:]]*$/ {
+      eyebrow = $0
+      sub(/^[[:space:]]*eyebrow:[[:space:]]*"/, "", eyebrow)
+      sub(/",[[:space:]]*$/, "", eyebrow)
+      next
+    }
+    /^[[:space:]]*narration:[[:space:]]*".*",[[:space:]]*$/ {
+      narration = $0
+      sub(/^[[:space:]]*narration:[[:space:]]*"/, "", narration)
+      sub(/",[[:space:]]*$/, "", narration)
+      print eyebrow "\t" narration
+    }
+  ' /home/corey/coreyjdl.github.io/presentation/index.html
++ [[ -z Nooneknewthatbehindthebanjos,thebeards,andthefolksyswaggerwasadeeperquestion:whogetstodecidewhatisreal? ]]
++ i=1
++ local out_file
++ local raw_file
++ local model_path
+++ printf %s/slide-%02d.wav /home/corey/coreyjdl.github.io/presentation/assets/narration 1
++ out_file=/home/corey/coreyjdl.github.io/presentation/assets/narration/slide-01.wav
+++ printf %s/raw-slide-%02d.wav /home/corey/coreyjdl.github.io/presentation/.tts/tmp 1
++ raw_file=/home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-01.wav
++ [[ Opening == \I\n\t\e\r\v\i\e\w ]]
++ model_path=/home/corey/coreyjdl.github.io/presentation/.tts/models/en_US-joe-medium.onnx
++ printf '%s\n' 'No one knew that behind the banjos, the beards, and the folksy swagger was a deeper question: who gets to decide what is real?'
++ LD_LIBRARY_PATH=/home/corey/coreyjdl.github.io/presentation/.tts/bin:
++ /home/corey/coreyjdl.github.io/presentation/.tts/bin/piper --model /home/corey/coreyjdl.github.io/presentation/.tts/models/en_US-joe-medium.onnx --output_file /home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-01.wav
+[2026-08-06 20:17:01.165] [piper] [info] Loaded voice in 0.213384176 second(s)
+[2026-08-06 20:17:01.165] [piper] [info] Initialized piper
+[2026-08-06 20:17:01.614] [piper] [info] Real-time factor: 0.06150398615534856 (infer=0.445573368 sec, audio=7.244625850340136 sec)
+[2026-08-06 20:17:01.614] [piper] [info] Terminated piper
++ apply_human_artifacts /home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-01.wav /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-01.wav Opening
++ local input_file=/home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-01.wav
++ local output_file=/home/corey/coreyjdl.github.io/presentation/assets/narration/slide-01.wav
++ local eyebrow=Opening
++ command -v ffmpeg
++ local noise_gain=0.015
++ local click_gain=0.030
++ [[ Opening == \I\n\t\e\r\v\i\e\w ]]
++ ffmpeg -hide_banner -loglevel error -y -i /home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-01.wav -f lavfi -i anoisesrc=color=pink:amplitude=0.0045:sample_rate=22050 -f lavfi -i 'aevalsrc=if(lt(mod(t\,7.3)\,0.0015)\,0.20\,0)+if(lt(mod(t\,11.7)\,0.0012)\,-0.16\,0):s=22050' -filter_complex '[0:a]highpass=f=90,lowpass=f=7600,compand=attacks=0.02:decays=0.25:points=-80/-80|-28/-22|0/-5,volume=1.03[voice];[1:a]highpass=f=220,lowpass=f=5800,volume=0.015[bed];[2:a]highpass=f=2600,lowpass=f=7600,volume=0.030[clicks];[voice][bed][clicks]amix=inputs=3:duration=first:weights=1 1 1,alimiter=limit=0.93[out]' -map '[out]' /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-01.wav
++ echo 'Generated /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-01.wav (Opening)'
+Generated /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-01.wav (Opening)
++ IFS='	'
++ read -r eyebrow line
++ [[ -z Afterdecadesofoverprocessedculture,peoplebegansearchingforsomethingauthentic.Preferablysomethingmadefromreclaimedwood,organicwaxedcotton,andapersonwholookedliketheyatelentilsoup. ]]
++ i=2
++ local out_file
++ local raw_file
++ local model_path
+++ printf %s/slide-%02d.wav /home/corey/coreyjdl.github.io/presentation/assets/narration 2
++ out_file=/home/corey/coreyjdl.github.io/presentation/assets/narration/slide-02.wav
+++ printf %s/raw-slide-%02d.wav /home/corey/coreyjdl.github.io/presentation/.tts/tmp 2
++ raw_file=/home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-02.wav
++ [[ he folk ideal == \I\n\t\e\r\v\i\e\w ]]
++ model_path=/home/corey/coreyjdl.github.io/presentation/.tts/models/en_US-joe-medium.onnx
++ printf '%s\n' 'After decades of over processed culture, people began searching for something authentic. Preferably something made from reclaimed wood, organic waxed cotton, and a person who looked like they ate lentil soup.'
++ LD_LIBRARY_PATH=/home/corey/coreyjdl.github.io/presentation/.tts/bin:
++ /home/corey/coreyjdl.github.io/presentation/.tts/bin/piper --model /home/corey/coreyjdl.github.io/presentation/.tts/models/en_US-joe-medium.onnx --output_file /home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-02.wav
+[2026-08-06 20:17:01.936] [piper] [info] Loaded voice in 0.1722685 second(s)
+[2026-08-06 20:17:01.936] [piper] [info] Initialized piper
+[2026-08-06 20:17:02.526] [piper] [info] Real-time factor: 0.05240846671728821 (infer=0.5853395880000001 sec, audio=11.168798185941043 sec)
+[2026-08-06 20:17:02.526] [piper] [info] Terminated piper
++ apply_human_artifacts /home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-02.wav /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-02.wav 'he folk ideal'
++ local input_file=/home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-02.wav
++ local output_file=/home/corey/coreyjdl.github.io/presentation/assets/narration/slide-02.wav
++ local 'eyebrow=he folk ideal'
++ command -v ffmpeg
++ local noise_gain=0.015
++ local click_gain=0.030
++ [[ he folk ideal == \I\n\t\e\r\v\i\e\w ]]
++ ffmpeg -hide_banner -loglevel error -y -i /home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-02.wav -f lavfi -i anoisesrc=color=pink:amplitude=0.0045:sample_rate=22050 -f lavfi -i 'aevalsrc=if(lt(mod(t\,7.3)\,0.0015)\,0.20\,0)+if(lt(mod(t\,11.7)\,0.0012)\,-0.16\,0):s=22050' -filter_complex '[0:a]highpass=f=90,lowpass=f=7600,compand=attacks=0.02:decays=0.25:points=-80/-80|-28/-22|0/-5,volume=1.03[voice];[1:a]highpass=f=220,lowpass=f=5800,volume=0.015[bed];[2:a]highpass=f=2600,lowpass=f=7600,volume=0.030[clicks];[voice][bed][clicks]amix=inputs=3:duration=first:weights=1 1 1,alimiter=limit=0.93[out]' -map '[out]' /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-02.wav
++ echo 'Generated /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-02.wav (he folk ideal)'
+Generated /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-02.wav (he folk ideal)
++ IFS='	'
++ read -r eyebrow line
++ [[ -z ThenabandlikeMumfordanSonscomesalongandscalesthefeeling.Whatwasonceanovelsoundbecomesarenaritual,andeveryonelearnstoclaponcommand.Thebanjoreturnednotasaninstrument,butasamovement. ]]
++ i=3
++ local out_file
++ local raw_file
++ local model_path
+++ printf %s/slide-%02d.wav /home/corey/coreyjdl.github.io/presentation/assets/narration 3
++ out_file=/home/corey/coreyjdl.github.io/presentation/assets/narration/slide-03.wav
+++ printf %s/raw-slide-%02d.wav /home/corey/coreyjdl.github.io/presentation/.tts/tmp 3
++ raw_file=/home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-03.wav
++ [[ he hey band bloom == \I\n\t\e\r\v\i\e\w ]]
++ model_path=/home/corey/coreyjdl.github.io/presentation/.tts/models/en_US-joe-medium.onnx
++ printf '%s\n' 'Then a band like Mumford an Sons comes along and scales the feeling. What was once a novel sound becomes arena ritual, and everyone learns to clap on command. The banjo returned not as an instrument, but as a movement.'
++ LD_LIBRARY_PATH=/home/corey/coreyjdl.github.io/presentation/.tts/bin:
++ /home/corey/coreyjdl.github.io/presentation/.tts/bin/piper --model /home/corey/coreyjdl.github.io/presentation/.tts/models/en_US-joe-medium.onnx --output_file /home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-03.wav
+[2026-08-06 20:17:02.871] [piper] [info] Loaded voice in 0.176959402 second(s)
+[2026-08-06 20:17:02.871] [piper] [info] Initialized piper
+[2026-08-06 20:17:03.552] [piper] [info] Real-time factor: 0.0551915262085308 (infer=0.676014848 sec, audio=12.248526077097507 sec)
+[2026-08-06 20:17:03.552] [piper] [info] Terminated piper
++ apply_human_artifacts /home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-03.wav /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-03.wav 'he hey band bloom'
++ local input_file=/home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-03.wav
++ local output_file=/home/corey/coreyjdl.github.io/presentation/assets/narration/slide-03.wav
++ local 'eyebrow=he hey band bloom'
++ command -v ffmpeg
++ local noise_gain=0.015
++ local click_gain=0.030
++ [[ he hey band bloom == \I\n\t\e\r\v\i\e\w ]]
++ ffmpeg -hide_banner -loglevel error -y -i /home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-03.wav -f lavfi -i anoisesrc=color=pink:amplitude=0.0045:sample_rate=22050 -f lavfi -i 'aevalsrc=if(lt(mod(t\,7.3)\,0.0015)\,0.20\,0)+if(lt(mod(t\,11.7)\,0.0012)\,-0.16\,0):s=22050' -filter_complex '[0:a]highpass=f=90,lowpass=f=7600,compand=attacks=0.02:decays=0.25:points=-80/-80|-28/-22|0/-5,volume=1.03[voice];[1:a]highpass=f=220,lowpass=f=5800,volume=0.015[bed];[2:a]highpass=f=2600,lowpass=f=7600,volume=0.030[clicks];[voice][bed][clicks]amix=inputs=3:duration=first:weights=1 1 1,alimiter=limit=0.93[out]' -map '[out]' /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-03.wav
++ echo 'Generated /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-03.wav (he hey band bloom)'
+Generated /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-03.wav (he hey band bloom)
++ IFS='	'
++ read -r eyebrow line
++ [[ -z Ithoughtwewerejustgettingbacktosomethinghonest.Wewereclappingandyelling,HEY!,becauseitfeltalive,notbecausewethoughtitmeantanythinglarger.Lookingback,thatwasthepoint:itfeltharmlesswhileitwasteachingushowtomovetogetheroncue. ]]
++ i=4
++ local out_file
++ local raw_file
++ local model_path
+++ printf %s/slide-%02d.wav /home/corey/coreyjdl.github.io/presentation/assets/narration 4
++ out_file=/home/corey/coreyjdl.github.io/presentation/assets/narration/slide-04.wav
+++ printf %s/raw-slide-%02d.wav /home/corey/coreyjdl.github.io/presentation/.tts/tmp 4
++ raw_file=/home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-04.wav
++ [[ terview == \I\n\t\e\r\v\i\e\w ]]
++ model_path=/home/corey/coreyjdl.github.io/presentation/.tts/models/en_US-joe-medium.onnx
++ printf '%s\n' 'I thought we were just getting back to something honest. We were clapping and yelling, HEY!, because it felt alive, not because we thought it meant anything larger. Looking back, that was the point: it felt harmless while it was teaching us how to move together on cue.'
++ LD_LIBRARY_PATH=/home/corey/coreyjdl.github.io/presentation/.tts/bin:
++ /home/corey/coreyjdl.github.io/presentation/.tts/bin/piper --model /home/corey/coreyjdl.github.io/presentation/.tts/models/en_US-joe-medium.onnx --output_file /home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-04.wav
+[2026-08-06 20:17:03.904] [piper] [info] Loaded voice in 0.16753607 second(s)
+[2026-08-06 20:17:03.904] [piper] [info] Initialized piper
+[2026-08-06 20:17:04.707] [piper] [info] Real-time factor: 0.056131006921875 (infer=0.7983076539999999 sec, audio=14.222222222222221 sec)
+[2026-08-06 20:17:04.707] [piper] [info] Terminated piper
++ apply_human_artifacts /home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-04.wav /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-04.wav terview
++ local input_file=/home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-04.wav
++ local output_file=/home/corey/coreyjdl.github.io/presentation/assets/narration/slide-04.wav
++ local eyebrow=terview
++ command -v ffmpeg
++ local noise_gain=0.015
++ local click_gain=0.030
++ [[ terview == \I\n\t\e\r\v\i\e\w ]]
++ ffmpeg -hide_banner -loglevel error -y -i /home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-04.wav -f lavfi -i anoisesrc=color=pink:amplitude=0.0045:sample_rate=22050 -f lavfi -i 'aevalsrc=if(lt(mod(t\,7.3)\,0.0015)\,0.20\,0)+if(lt(mod(t\,11.7)\,0.0012)\,-0.16\,0):s=22050' -filter_complex '[0:a]highpass=f=90,lowpass=f=7600,compand=attacks=0.02:decays=0.25:points=-80/-80|-28/-22|0/-5,volume=1.03[voice];[1:a]highpass=f=220,lowpass=f=5800,volume=0.015[bed];[2:a]highpass=f=2600,lowpass=f=7600,volume=0.030[clicks];[voice][bed][clicks]amix=inputs=3:duration=first:weights=1 1 1,alimiter=limit=0.93[out]' -map '[out]' /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-04.wav
++ echo 'Generated /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-04.wav (terview)'
+Generated /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-04.wav (terview)
++ IFS='	'
++ read -r eyebrow line
++ [[ -z Meanwhile,thepursuitofauthenticitycreepsintoeveryaspectoflife.Atthebar,precisionbecomesmorality.Therightice,thecorrectglass,theapprovedoriginstory.Techniquestandsinfortruth. ]]
++ i=5
++ local out_file
++ local raw_file
++ local model_path
+++ printf %s/slide-%02d.wav /home/corey/coreyjdl.github.io/presentation/assets/narration 5
++ out_file=/home/corey/coreyjdl.github.io/presentation/assets/narration/slide-05.wav
+++ printf %s/raw-slide-%02d.wav /home/corey/coreyjdl.github.io/presentation/.tts/tmp 5
++ raw_file=/home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-05.wav
++ [[ e cocktail turn == \I\n\t\e\r\v\i\e\w ]]
++ model_path=/home/corey/coreyjdl.github.io/presentation/.tts/models/en_US-joe-medium.onnx
++ printf '%s\n' 'Meanwhile, the pursuit of authenticity creeps into every aspect of life. At the bar, precision becomes morality. The right ice, the correct glass, the approved origin story. Technique stands in for truth.'
++ LD_LIBRARY_PATH=/home/corey/coreyjdl.github.io/presentation/.tts/bin:
++ /home/corey/coreyjdl.github.io/presentation/.tts/bin/piper --model /home/corey/coreyjdl.github.io/presentation/.tts/models/en_US-joe-medium.onnx --output_file /home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-05.wav
+[2026-08-06 20:17:05.069] [piper] [info] Loaded voice in 0.169681221 second(s)
+[2026-08-06 20:17:05.070] [piper] [info] Initialized piper
+[2026-08-06 20:17:05.779] [piper] [info] Real-time factor: 0.055798639901859494 (infer=0.705477008 sec, audio=12.643265306122451 sec)
+[2026-08-06 20:17:05.780] [piper] [info] Terminated piper
++ apply_human_artifacts /home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-05.wav /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-05.wav 'e cocktail turn'
++ local input_file=/home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-05.wav
++ local output_file=/home/corey/coreyjdl.github.io/presentation/assets/narration/slide-05.wav
++ local 'eyebrow=e cocktail turn'
++ command -v ffmpeg
++ local noise_gain=0.015
++ local click_gain=0.030
++ [[ e cocktail turn == \I\n\t\e\r\v\i\e\w ]]
++ ffmpeg -hide_banner -loglevel error -y -i /home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-05.wav -f lavfi -i anoisesrc=color=pink:amplitude=0.0045:sample_rate=22050 -f lavfi -i 'aevalsrc=if(lt(mod(t\,7.3)\,0.0015)\,0.20\,0)+if(lt(mod(t\,11.7)\,0.0012)\,-0.16\,0):s=22050' -filter_complex '[0:a]highpass=f=90,lowpass=f=7600,compand=attacks=0.02:decays=0.25:points=-80/-80|-28/-22|0/-5,volume=1.03[voice];[1:a]highpass=f=220,lowpass=f=5800,volume=0.015[bed];[2:a]highpass=f=2600,lowpass=f=7600,volume=0.030[clicks];[voice][bed][clicks]amix=inputs=3:duration=first:weights=1 1 1,alimiter=limit=0.93[out]' -map '[out]' /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-05.wav
++ echo 'Generated /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-05.wav (e cocktail turn)'
+Generated /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-05.wav (e cocktail turn)
++ IFS='	'
++ read -r eyebrow line
++ [[ -z Themovementbeganasarejectionofconsumerculture.Thenitspread:fromfolkstagestocraftcocktailbars,baconcuring,andfoodsceneswhereauthenticitybecameperformance.Consumerculturedidwhatitdoesbest:itsoldtherejectionbackatscale,withbetterbranding,nicerpackaging,andahighermargin.Thebeardcorridorfollowed,wherelocalbecameacredentialandtastebecamesocialsorting. ]]
++ i=6
++ local out_file
++ local raw_file
++ local model_path
+++ printf %s/slide-%02d.wav /home/corey/coreyjdl.github.io/presentation/assets/narration 6
++ out_file=/home/corey/coreyjdl.github.io/presentation/assets/narration/slide-06.wav
+++ printf %s/raw-slide-%02d.wav /home/corey/coreyjdl.github.io/presentation/.tts/tmp 6
++ raw_file=/home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-06.wav
++ [[ e authenticity industrial complex == \I\n\t\e\r\v\i\e\w ]]
++ model_path=/home/corey/coreyjdl.github.io/presentation/.tts/models/en_US-joe-medium.onnx
++ printf '%s\n' 'The movement began as a rejection of consumer culture. Then it spread: from folk stages to craft cocktail bars, bacon curing, and food scenes where authenticity became performance. Consumer culture did what it does best: it sold the rejection back at scale, with better branding, nicer packaging, and a higher margin. The beard corridor followed, where local became a credential and taste became social sorting.'
++ LD_LIBRARY_PATH=/home/corey/coreyjdl.github.io/presentation/.tts/bin:
++ /home/corey/coreyjdl.github.io/presentation/.tts/bin/piper --model /home/corey/coreyjdl.github.io/presentation/.tts/models/en_US-joe-medium.onnx --output_file /home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-06.wav
+[2026-08-06 20:17:06.136] [piper] [info] Loaded voice in 0.164977384 second(s)
+[2026-08-06 20:17:06.136] [piper] [info] Initialized piper
+[2026-08-06 20:17:07.396] [piper] [info] Real-time factor: 0.05330451762014326 (infer=1.251343495 sec, audio=23.475374149659867 sec)
+[2026-08-06 20:17:07.396] [piper] [info] Terminated piper
++ apply_human_artifacts /home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-06.wav /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-06.wav 'e authenticity industrial complex'
++ local input_file=/home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-06.wav
++ local output_file=/home/corey/coreyjdl.github.io/presentation/assets/narration/slide-06.wav
++ local 'eyebrow=e authenticity industrial complex'
++ command -v ffmpeg
++ local noise_gain=0.015
++ local click_gain=0.030
++ [[ e authenticity industrial complex == \I\n\t\e\r\v\i\e\w ]]
++ ffmpeg -hide_banner -loglevel error -y -i /home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-06.wav -f lavfi -i anoisesrc=color=pink:amplitude=0.0045:sample_rate=22050 -f lavfi -i 'aevalsrc=if(lt(mod(t\,7.3)\,0.0015)\,0.20\,0)+if(lt(mod(t\,11.7)\,0.0012)\,-0.16\,0):s=22050' -filter_complex '[0:a]highpass=f=90,lowpass=f=7600,compand=attacks=0.02:decays=0.25:points=-80/-80|-28/-22|0/-5,volume=1.03[voice];[1:a]highpass=f=220,lowpass=f=5800,volume=0.015[bed];[2:a]highpass=f=2600,lowpass=f=7600,volume=0.030[clicks];[voice][bed][clicks]amix=inputs=3:duration=first:weights=1 1 1,alimiter=limit=0.93[out]' -map '[out]' /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-06.wav
++ echo 'Generated /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-06.wav (e authenticity industrial complex)'
+Generated /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-06.wav (e authenticity industrial complex)
++ IFS='	'
++ read -r eyebrow line
++ [[ -z Self-relianceispracticaluntilitbecomestheology.Knowinghowtofixasinkisuseful.Believingnobodyelsecanfixanythingispolitics. ]]
++ i=7
++ local out_file
++ local raw_file
++ local model_path
+++ printf %s/slide-%02d.wav /home/corey/coreyjdl.github.io/presentation/assets/narration 7
++ out_file=/home/corey/coreyjdl.github.io/presentation/assets/narration/slide-07.wav
+++ printf %s/raw-slide-%02d.wav /home/corey/coreyjdl.github.io/presentation/.tts/tmp 7
++ raw_file=/home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-07.wav
++ [[ lf-reliance == \I\n\t\e\r\v\i\e\w ]]
++ model_path=/home/corey/coreyjdl.github.io/presentation/.tts/models/en_US-joe-medium.onnx
++ printf '%s\n' 'Self-reliance is practical until it becomes theology. Knowing how to fix a sink is useful. Believing nobody else can fix anything is politics.'
++ LD_LIBRARY_PATH=/home/corey/coreyjdl.github.io/presentation/.tts/bin:
++ /home/corey/coreyjdl.github.io/presentation/.tts/bin/piper --model /home/corey/coreyjdl.github.io/presentation/.tts/models/en_US-joe-medium.onnx --output_file /home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-07.wav
+[2026-08-06 20:17:07.786] [piper] [info] Loaded voice in 0.173855054 second(s)
+[2026-08-06 20:17:07.786] [piper] [info] Initialized piper
+[2026-08-06 20:17:08.273] [piper] [info] Real-time factor: 0.05742141174407327 (infer=0.483329434 sec, audio=8.417233560090704 sec)
+[2026-08-06 20:17:08.273] [piper] [info] Terminated piper
++ apply_human_artifacts /home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-07.wav /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-07.wav lf-reliance
++ local input_file=/home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-07.wav
++ local output_file=/home/corey/coreyjdl.github.io/presentation/assets/narration/slide-07.wav
++ local eyebrow=lf-reliance
++ command -v ffmpeg
++ local noise_gain=0.015
++ local click_gain=0.030
++ [[ lf-reliance == \I\n\t\e\r\v\i\e\w ]]
++ ffmpeg -hide_banner -loglevel error -y -i /home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-07.wav -f lavfi -i anoisesrc=color=pink:amplitude=0.0045:sample_rate=22050 -f lavfi -i 'aevalsrc=if(lt(mod(t\,7.3)\,0.0015)\,0.20\,0)+if(lt(mod(t\,11.7)\,0.0012)\,-0.16\,0):s=22050' -filter_complex '[0:a]highpass=f=90,lowpass=f=7600,compand=attacks=0.02:decays=0.25:points=-80/-80|-28/-22|0/-5,volume=1.03[voice];[1:a]highpass=f=220,lowpass=f=5800,volume=0.015[bed];[2:a]highpass=f=2600,lowpass=f=7600,volume=0.030[clicks];[voice][bed][clicks]amix=inputs=3:duration=first:weights=1 1 1,alimiter=limit=0.93[out]' -map '[out]' /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-07.wav
++ echo 'Generated /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-07.wav (lf-reliance)'
+Generated /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-07.wav (lf-reliance)
++ IFS='	'
++ read -r eyebrow line
++ [[ -z Asearchforbetteringredientsbecomesasearchforhiddenenemies.Distrustbeginswithwordsonlabelspeoplecannotreadorpronounce,thenexpandstomedicine,publicsystems,andfinallyrealityitself. ]]
++ i=8
++ local out_file
++ local raw_file
++ local model_path
+++ printf %s/slide-%02d.wav /home/corey/coreyjdl.github.io/presentation/assets/narration 8
++ out_file=/home/corey/coreyjdl.github.io/presentation/assets/narration/slide-08.wav
+++ printf %s/raw-slide-%02d.wav /home/corey/coreyjdl.github.io/presentation/.tts/tmp 8
++ raw_file=/home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-08.wav
++ [[ ellness panic == \I\n\t\e\r\v\i\e\w ]]
++ model_path=/home/corey/coreyjdl.github.io/presentation/.tts/models/en_US-joe-medium.onnx
++ printf '%s\n' 'A search for better ingredients becomes a search for hidden enemies. Distrust begins with words on labels people cannot read or pronounce, then expands to medicine, public systems, and finally reality itself.'
++ LD_LIBRARY_PATH=/home/corey/coreyjdl.github.io/presentation/.tts/bin:
++ /home/corey/coreyjdl.github.io/presentation/.tts/bin/piper --model /home/corey/coreyjdl.github.io/presentation/.tts/models/en_US-joe-medium.onnx --output_file /home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-08.wav
+[2026-08-06 20:17:07.816] [piper] [info] Loaded voice in 0.185625673 second(s)
+[2026-08-06 20:17:07.817] [piper] [info] Initialized piper
+[2026-08-06 20:17:08.517] [piper] [info] Real-time factor: 0.05763010361403245 (infer=0.695847564 sec, audio=12.07437641723356 sec)
+[2026-08-06 20:17:08.517] [piper] [info] Terminated piper
++ apply_human_artifacts /home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-08.wav /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-08.wav 'ellness panic'
++ local input_file=/home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-08.wav
++ local output_file=/home/corey/coreyjdl.github.io/presentation/assets/narration/slide-08.wav
++ local 'eyebrow=ellness panic'
++ command -v ffmpeg
++ local noise_gain=0.015
++ local click_gain=0.030
++ [[ ellness panic == \I\n\t\e\r\v\i\e\w ]]
++ ffmpeg -hide_banner -loglevel error -y -i /home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-08.wav -f lavfi -i anoisesrc=color=pink:amplitude=0.0045:sample_rate=22050 -f lavfi -i 'aevalsrc=if(lt(mod(t\,7.3)\,0.0015)\,0.20\,0)+if(lt(mod(t\,11.7)\,0.0012)\,-0.16\,0):s=22050' -filter_complex '[0:a]highpass=f=90,lowpass=f=7600,compand=attacks=0.02:decays=0.25:points=-80/-80|-28/-22|0/-5,volume=1.03[voice];[1:a]highpass=f=220,lowpass=f=5800,volume=0.015[bed];[2:a]highpass=f=2600,lowpass=f=7600,volume=0.030[clicks];[voice][bed][clicks]amix=inputs=3:duration=first:weights=1 1 1,alimiter=limit=0.93[out]' -map '[out]' /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-08.wav
++ echo 'Generated /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-08.wav (ellness panic)'
+Generated /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-08.wav (ellness panic)
++ IFS='	'
++ read -r eyebrow line
++ [[ -z Legitimatecritiquemutatesintopermanentsuspicion.Distrustbeginswithcorporations,thenexpandstouniversities,thenmedicine,thenelections.Eventually,theonlytrustworthysourceisthepersontellingyounottotrustanyone. ]]
++ i=9
++ local out_file
++ local raw_file
++ local model_path
+++ printf %s/slide-%02d.wav /home/corey/coreyjdl.github.io/presentation/assets/narration 9
++ out_file=/home/corey/coreyjdl.github.io/presentation/assets/narration/slide-09.wav
+++ printf %s/raw-slide-%02d.wav /home/corey/coreyjdl.github.io/presentation/.tts/tmp 9
++ raw_file=/home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-09.wav
++ [[ ti-elite drift == \I\n\t\e\r\v\i\e\w ]]
++ model_path=/home/corey/coreyjdl.github.io/presentation/.tts/models/en_US-joe-medium.onnx
++ printf '%s\n' 'Legitimate critique mutates into permanent suspicion. Distrust begins with corporations, then expands to universities, then medicine, then elections. Eventually, the only trustworthy source is the person telling you not to trust anyone.'
++ LD_LIBRARY_PATH=/home/corey/coreyjdl.github.io/presentation/.tts/bin:
++ /home/corey/coreyjdl.github.io/presentation/.tts/bin/piper --model /home/corey/coreyjdl.github.io/presentation/.tts/models/en_US-joe-medium.onnx --output_file /home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-09.wav
+[2026-08-06 20:17:08.860] [piper] [info] Loaded voice in 0.171636585 second(s)
+[2026-08-06 20:17:08.860] [piper] [info] Initialized piper
+[2026-08-06 20:17:09.637] [piper] [info] Real-time factor: 0.055998429567282355 (infer=0.77106663 sec, audio=13.769433106575963 sec)
+[2026-08-06 20:17:09.637] [piper] [info] Terminated piper
++ apply_human_artifacts /home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-09.wav /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-09.wav 'ti-elite drift'
++ local input_file=/home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-09.wav
++ local output_file=/home/corey/coreyjdl.github.io/presentation/assets/narration/slide-09.wav
++ local 'eyebrow=ti-elite drift'
++ command -v ffmpeg
++ local noise_gain=0.015
++ local click_gain=0.030
++ [[ ti-elite drift == \I\n\t\e\r\v\i\e\w ]]
++ ffmpeg -hide_banner -loglevel error -y -i /home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-09.wav -f lavfi -i anoisesrc=color=pink:amplitude=0.0045:sample_rate=22050 -f lavfi -i 'aevalsrc=if(lt(mod(t\,7.3)\,0.0015)\,0.20\,0)+if(lt(mod(t\,11.7)\,0.0012)\,-0.16\,0):s=22050' -filter_complex '[0:a]highpass=f=90,lowpass=f=7600,compand=attacks=0.02:decays=0.25:points=-80/-80|-28/-22|0/-5,volume=1.03[voice];[1:a]highpass=f=220,lowpass=f=5800,volume=0.015[bed];[2:a]highpass=f=2600,lowpass=f=7600,volume=0.030[clicks];[voice][bed][clicks]amix=inputs=3:duration=first:weights=1 1 1,alimiter=limit=0.93[out]' -map '[out]' /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-09.wav
++ echo 'Generated /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-09.wav (ti-elite drift)'
+Generated /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-09.wav (ti-elite drift)
++ IFS='	'
++ read -r eyebrow line
++ [[ -z Yearslater,theearlyaestheticreadslikeapreamble.Thesoundtrackenteredtheroombeforetheargument,followedbynostalgiaforEuropeanpuritymythsdressedupastradition. ]]
++ i=10
++ local out_file
++ local raw_file
++ local model_path
+++ printf %s/slide-%02d.wav /home/corey/coreyjdl.github.io/presentation/assets/narration 10
++ out_file=/home/corey/coreyjdl.github.io/presentation/assets/narration/slide-10.wav
+++ printf %s/raw-slide-%02d.wav /home/corey/coreyjdl.github.io/presentation/.tts/tmp 10
++ raw_file=/home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-10.wav
++ [[ e acoustic pipeline == \I\n\t\e\r\v\i\e\w ]]
++ model_path=/home/corey/coreyjdl.github.io/presentation/.tts/models/en_US-joe-medium.onnx
++ printf '%s\n' 'Years later, the early aesthetic reads like a preamble. The soundtrack entered the room before the argument, followed by nostalgia for European purity myths dressed up as tradition.'
++ LD_LIBRARY_PATH=/home/corey/coreyjdl.github.io/presentation/.tts/bin:
++ /home/corey/coreyjdl.github.io/presentation/.tts/bin/piper --model /home/corey/coreyjdl.github.io/presentation/.tts/models/en_US-joe-medium.onnx --output_file /home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-10.wav
+[2026-08-06 20:17:09.980] [piper] [info] Loaded voice in 0.174655047 second(s)
+[2026-08-06 20:17:09.980] [piper] [info] Initialized piper
+[2026-08-06 20:17:10.538] [piper] [info] Real-time factor: 0.05810293054473132 (infer=0.5531504389999999 sec, audio=9.520181405895691 sec)
+[2026-08-06 20:17:10.538] [piper] [info] Terminated piper
++ apply_human_artifacts /home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-10.wav /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-10.wav 'e acoustic pipeline'
++ local input_file=/home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-10.wav
++ local output_file=/home/corey/coreyjdl.github.io/presentation/assets/narration/slide-10.wav
++ local 'eyebrow=e acoustic pipeline'
++ command -v ffmpeg
++ local noise_gain=0.015
++ local click_gain=0.030
++ [[ e acoustic pipeline == \I\n\t\e\r\v\i\e\w ]]
++ ffmpeg -hide_banner -loglevel error -y -i /home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-10.wav -f lavfi -i anoisesrc=color=pink:amplitude=0.0045:sample_rate=22050 -f lavfi -i 'aevalsrc=if(lt(mod(t\,7.3)\,0.0015)\,0.20\,0)+if(lt(mod(t\,11.7)\,0.0012)\,-0.16\,0):s=22050' -filter_complex '[0:a]highpass=f=90,lowpass=f=7600,compand=attacks=0.02:decays=0.25:points=-80/-80|-28/-22|0/-5,volume=1.03[voice];[1:a]highpass=f=220,lowpass=f=5800,volume=0.015[bed];[2:a]highpass=f=2600,lowpass=f=7600,volume=0.030[clicks];[voice][bed][clicks]amix=inputs=3:duration=first:weights=1 1 1,alimiter=limit=0.93[out]' -map '[out]' /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-10.wav
++ echo 'Generated /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-10.wav (e acoustic pipeline)'
+Generated /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-10.wav (e acoustic pipeline)
++ IFS='	'
++ read -r eyebrow line
++ [[ -z Corporationssellhandmade,influencerssellindependence,politiciansselloutsiderstatus,andalgorithmsrewardoutrage.Twoproductlinesscalefastest:MAGAfornationalgrievance,MAHAforbiological,grievance. ]]
++ i=11
++ local out_file
++ local raw_file
++ local model_path
+++ printf %s/slide-%02d.wav /home/corey/coreyjdl.github.io/presentation/assets/narration 11
++ out_file=/home/corey/coreyjdl.github.io/presentation/assets/narration/slide-11.wav
+++ printf %s/raw-slide-%02d.wav /home/corey/coreyjdl.github.io/presentation/.tts/tmp 11
++ raw_file=/home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-11.wav
++ [[ he feed == \I\n\t\e\r\v\i\e\w ]]
++ model_path=/home/corey/coreyjdl.github.io/presentation/.tts/models/en_US-joe-medium.onnx
++ printf '%s\n' 'Corporations sell hand made, influencers sell independence, politicians sell outsider status, and algorithms reward outrage. Two product lines scale fastest: MAGA for national grievance, MAHA for biological, grievance.'
++ LD_LIBRARY_PATH=/home/corey/coreyjdl.github.io/presentation/.tts/bin:
++ /home/corey/coreyjdl.github.io/presentation/.tts/bin/piper --model /home/corey/coreyjdl.github.io/presentation/.tts/models/en_US-joe-medium.onnx --output_file /home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-11.wav
+[2026-08-06 20:17:10.857] [piper] [info] Loaded voice in 0.165454053 second(s)
+[2026-08-06 20:17:10.857] [piper] [info] Initialized piper
+[2026-08-06 20:17:11.539] [piper] [info] Real-time factor: 0.04994058608792078 (infer=0.676057378 sec, audio=13.537233560090703 sec)
+[2026-08-06 20:17:11.539] [piper] [info] Terminated piper
++ apply_human_artifacts /home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-11.wav /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-11.wav 'he feed'
++ local input_file=/home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-11.wav
++ local output_file=/home/corey/coreyjdl.github.io/presentation/assets/narration/slide-11.wav
++ local 'eyebrow=he feed'
++ command -v ffmpeg
++ local noise_gain=0.015
++ local click_gain=0.030
++ [[ he feed == \I\n\t\e\r\v\i\e\w ]]
++ ffmpeg -hide_banner -loglevel error -y -i /home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-11.wav -f lavfi -i anoisesrc=color=pink:amplitude=0.0045:sample_rate=22050 -f lavfi -i 'aevalsrc=if(lt(mod(t\,7.3)\,0.0015)\,0.20\,0)+if(lt(mod(t\,11.7)\,0.0012)\,-0.16\,0):s=22050' -filter_complex '[0:a]highpass=f=90,lowpass=f=7600,compand=attacks=0.02:decays=0.25:points=-80/-80|-28/-22|0/-5,volume=1.03[voice];[1:a]highpass=f=220,lowpass=f=5800,volume=0.015[bed];[2:a]highpass=f=2600,lowpass=f=7600,volume=0.030[clicks];[voice][bed][clicks]amix=inputs=3:duration=first:weights=1 1 1,alimiter=limit=0.93[out]' -map '[out]' /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-11.wav
++ echo 'Generated /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-11.wav (he feed)'
+Generated /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-11.wav (he feed)
++ IFS='	'
++ read -r eyebrow line
++ [[ -z TheVICE-erainternetturnspoliticsintoposture.RichardSpencerbecomespartoftherecurringcast.Ironyoffersplausibledeniability:ifchallenged,itwasjustajoke;ifrewarded,itwassincere.Whatlookedlikecleverdistancebecamecover. ]]
++ i=12
++ local out_file
++ local raw_file
++ local model_path
+++ printf %s/slide-%02d.wav /home/corey/coreyjdl.github.io/presentation/assets/narration 12
++ out_file=/home/corey/coreyjdl.github.io/presentation/assets/narration/slide-12.wav
+++ printf %s/raw-slide-%02d.wav /home/corey/coreyjdl.github.io/presentation/.tts/tmp 12
++ raw_file=/home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-12.wav
++ [[ e irony economy == \I\n\t\e\r\v\i\e\w ]]
++ model_path=/home/corey/coreyjdl.github.io/presentation/.tts/models/en_US-joe-medium.onnx
++ printf '%s\n' 'The VICE-era internet turns politics into posture. Richard Spencer becomes part of the recurring cast. Irony offers plausible deniability: if challenged, it was just a joke; if rewarded, it was sincere. What looked like clever distance became cover.'
++ LD_LIBRARY_PATH=/home/corey/coreyjdl.github.io/presentation/.tts/bin:
++ /home/corey/coreyjdl.github.io/presentation/.tts/bin/piper --model /home/corey/coreyjdl.github.io/presentation/.tts/models/en_US-joe-medium.onnx --output_file /home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-12.wav
+[2026-08-06 20:17:11.889] [piper] [info] Loaded voice in 0.17553504 second(s)
+[2026-08-06 20:17:11.890] [piper] [info] Initialized piper
+[2026-08-06 20:17:12.951] [piper] [info] Real-time factor: 0.06956435591940224 (infer=1.056393898 sec, audio=15.185850340136055 sec)
+[2026-08-06 20:17:12.951] [piper] [info] Terminated piper
++ apply_human_artifacts /home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-12.wav /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-12.wav 'e irony economy'
++ local input_file=/home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-12.wav
++ local output_file=/home/corey/coreyjdl.github.io/presentation/assets/narration/slide-12.wav
++ local 'eyebrow=e irony economy'
++ command -v ffmpeg
++ local noise_gain=0.015
++ local click_gain=0.030
++ [[ e irony economy == \I\n\t\e\r\v\i\e\w ]]
++ ffmpeg -hide_banner -loglevel error -y -i /home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-12.wav -f lavfi -i anoisesrc=color=pink:amplitude=0.0045:sample_rate=22050 -f lavfi -i 'aevalsrc=if(lt(mod(t\,7.3)\,0.0015)\,0.20\,0)+if(lt(mod(t\,11.7)\,0.0012)\,-0.16\,0):s=22050' -filter_complex '[0:a]highpass=f=90,lowpass=f=7600,compand=attacks=0.02:decays=0.25:points=-80/-80|-28/-22|0/-5,volume=1.03[voice];[1:a]highpass=f=220,lowpass=f=5800,volume=0.015[bed];[2:a]highpass=f=2600,lowpass=f=7600,volume=0.030[clicks];[voice][bed][clicks]amix=inputs=3:duration=first:weights=1 1 1,alimiter=limit=0.93[out]' -map '[out]' /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-12.wav
++ echo 'Generated /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-12.wav (e irony economy)'
+Generated /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-12.wav (e irony economy)
++ IFS='	'
++ read -r eyebrow line
++ [[ -z Trumpdidnotinventthedesireforauthenticity.Heexploitedit,withMAGAandMAHArunningastwinrails:oneaboutbordersandbelonging,theotheraboutbodiesandcontamination,bothoptimizedforrepetition.Thepointisnotasingleman.Thepointisasystemnowtunedforgrievance. ]]
++ i=13
++ local out_file
++ local raw_file
++ local model_path
+++ printf %s/slide-%02d.wav /home/corey/coreyjdl.github.io/presentation/assets/narration 13
++ out_file=/home/corey/coreyjdl.github.io/presentation/assets/narration/slide-13.wav
+++ printf %s/raw-slide-%02d.wav /home/corey/coreyjdl.github.io/presentation/.tts/tmp 13
++ raw_file=/home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-13.wav
++ [[ pulism == \I\n\t\e\r\v\i\e\w ]]
++ model_path=/home/corey/coreyjdl.github.io/presentation/.tts/models/en_US-joe-medium.onnx
++ printf '%s\n' 'Trump did not invent the desire for authenticity. He exploited it, with MAGA and MAHA running as twin rails: one about borders and belonging, the other about bodies and contamination, both optimized for repetition. The point is not a single man. The point is a system now tuned for grievance.'
++ LD_LIBRARY_PATH=/home/corey/coreyjdl.github.io/presentation/.tts/bin:
++ /home/corey/coreyjdl.github.io/presentation/.tts/bin/piper --model /home/corey/coreyjdl.github.io/presentation/.tts/models/en_US-joe-medium.onnx --output_file /home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-13.wav
+[2026-08-06 20:17:13.302] [piper] [info] Loaded voice in 0.170467539 second(s)
+[2026-08-06 20:17:13.302] [piper] [info] Initialized piper
+[2026-08-06 20:17:14.236] [piper] [info] Real-time factor: 0.054292863686500166 (infer=0.925967868 sec, audio=17.055056689342404 sec)
+[2026-08-06 20:17:14.236] [piper] [info] Terminated piper
++ apply_human_artifacts /home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-13.wav /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-13.wav pulism
++ local input_file=/home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-13.wav
++ local output_file=/home/corey/coreyjdl.github.io/presentation/assets/narration/slide-13.wav
++ local eyebrow=pulism
++ command -v ffmpeg
++ local noise_gain=0.015
++ local click_gain=0.030
++ [[ pulism == \I\n\t\e\r\v\i\e\w ]]
++ ffmpeg -hide_banner -loglevel error -y -i /home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-13.wav -f lavfi -i anoisesrc=color=pink:amplitude=0.0045:sample_rate=22050 -f lavfi -i 'aevalsrc=if(lt(mod(t\,7.3)\,0.0015)\,0.20\,0)+if(lt(mod(t\,11.7)\,0.0012)\,-0.16\,0):s=22050' -filter_complex '[0:a]highpass=f=90,lowpass=f=7600,compand=attacks=0.02:decays=0.25:points=-80/-80|-28/-22|0/-5,volume=1.03[voice];[1:a]highpass=f=220,lowpass=f=5800,volume=0.015[bed];[2:a]highpass=f=2600,lowpass=f=7600,volume=0.030[clicks];[voice][bed][clicks]amix=inputs=3:duration=first:weights=1 1 1,alimiter=limit=0.93[out]' -map '[out]' /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-13.wav
+
+Enter command: <target>|all <time>|-1 <command>[ <argument>]
+
+Parse error, at least 3 arguments were expected, only 1 given in string 'onsequences	Once grievance becomes a business model, fascist politics stop sounding fringe and start sounding normal. Damage moves from screens to systems: public-health trust collapses, school boards become proxy battlefields, and state power is aimed at enemies instead of problems. The consequence is not only who wins office. It is a country that struggles to agree on what is real, and then loses the habit of sharing power.'
++ echo 'Generated /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-13.wav (pulism)'
+Generated /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-13.wav (pulism)
++ IFS='	'
++ read -r eyebrow line
++ [[ -z Thankyou.Thiswouldn'tbepossiblewithoutviewerslikeyou. ]]
++ i=14
++ local out_file
++ local raw_file
++ local model_path
+++ printf %s/slide-%02d.wav /home/corey/coreyjdl.github.io/presentation/assets/narration 14
++ out_file=/home/corey/coreyjdl.github.io/presentation/assets/narration/slide-14.wav
+++ printf %s/raw-slide-%02d.wav /home/corey/coreyjdl.github.io/presentation/.tts/tmp 14
++ raw_file=/home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-14.wav
++ [[ inale == \I\n\t\e\r\v\i\e\w ]]
++ model_path=/home/corey/coreyjdl.github.io/presentation/.tts/models/en_US-joe-medium.onnx
++ printf '%s\n' 'Thank you.   This wouldn'\''t be possible without viewers like you.'
++ LD_LIBRARY_PATH=/home/corey/coreyjdl.github.io/presentation/.tts/bin:
++ /home/corey/coreyjdl.github.io/presentation/.tts/bin/piper --model /home/corey/coreyjdl.github.io/presentation/.tts/models/en_US-joe-medium.onnx --output_file /home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-14.wav
+[2026-08-06 20:17:14.646] [piper] [info] Loaded voice in 0.174130486 second(s)
+[2026-08-06 20:17:14.647] [piper] [info] Initialized piper
+[2026-08-06 20:17:14.865] [piper] [info] Real-time factor: 0.06691822384081679 (infer=0.21520658 sec, audio=3.2159637188208614 sec)
+[2026-08-06 20:17:14.865] [piper] [info] Terminated piper
++ apply_human_artifacts /home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-14.wav /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-14.wav inale
++ local input_file=/home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-14.wav
++ local output_file=/home/corey/coreyjdl.github.io/presentation/assets/narration/slide-14.wav
++ local eyebrow=inale
++ command -v ffmpeg
++ local noise_gain=0.015
++ local click_gain=0.030
++ [[ inale == \I\n\t\e\r\v\i\e\w ]]
++ ffmpeg -hide_banner -loglevel error -y -i /home/corey/coreyjdl.github.io/presentation/.tts/tmp/raw-slide-14.wav -f lavfi -i anoisesrc=color=pink:amplitude=0.0045:sample_rate=22050 -f lavfi -i 'aevalsrc=if(lt(mod(t\,7.3)\,0.0015)\,0.20\,0)+if(lt(mod(t\,11.7)\,0.0012)\,-0.16\,0):s=22050' -filter_complex '[0:a]highpass=f=90,lowpass=f=7600,compand=attacks=0.02:decays=0.25:points=-80/-80|-28/-22|0/-5,volume=1.03[voice];[1:a]highpass=f=220,lowpass=f=5800,volume=0.015[bed];[2:a]highpass=f=2600,lowpass=f=7600,volume=0.030[clicks];[voice][bed][clicks]amix=inputs=3:duration=first:weights=1 1 1,alimiter=limit=0.93[out]' -map '[out]' /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-14.wav
++ echo 'Generated /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-14.wav (inale)'
+Generated /home/corey/coreyjdl.github.io/presentation/assets/narration/slide-14.wav (inale)
++ IFS='	'
++ read -r eyebrow line
++ [[ 14 -eq 0 ]]
++ echo 'Done. Generated 14 narration files in /home/corey/coreyjdl.github.io/presentation/assets/narration'
+Done. Generated 14 narration files in /home/corey/coreyjdl.github.io/presentation/assets/narration

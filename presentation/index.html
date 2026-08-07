@@ -166,6 +166,19 @@
       line-height: 1.7;
       color: var(--text);
       text-wrap: pretty;
+      display: none;
+      visibility: hidden;
+      height: 0;
+      margin: 0;
+      overflow: hidden;
+    }
+
+    body.show-narration-text .narration {
+      display: block;
+      visibility: visible;
+      height: auto;
+      margin: 0;
+      overflow: visible;
     }
 
 
@@ -179,7 +192,7 @@
     .footer {
       display: flex;
       align-items: end;
-      justify-content: space-between;
+      justify-content: flex-end;
       gap: 1rem;
       color: var(--soft);
       font-family: Arial, Helvetica, sans-serif;
@@ -257,11 +270,8 @@
           <div class="title-divider" aria-hidden="true"></div>
           <p class="deck-title"></p>
         </div>
-        <div class="narration"></div>
-        <div class="footer">
-          <div class="hint">Left / right arrows to navigate • N toggles narration</div>
-          <div class="counter"></div>
-        </div>
+        <div class="narration" aria-hidden="true"></div>
+        <div class="footer"></div>
       </div>
     </section>
   </template>
@@ -288,10 +298,18 @@
         eyebrow: "The hey band bloom",
         title: "The earnest chorus arrives",
         subtitle: "Handclaps become social policy.",
-        narration: "Then a band like Mumford and Sons comes along and scales the feeling. What was once a novel sound becomes arena ritual, and everyone learns to clap on command. The banjo returned not as an instrument, but as movement.",
+        narration: "Then a band like Mummford an Sons comes along and scales the feeling. What was once a novel sound becomes arena ritual, and everyone learns to clap on command. The banjo returned not as an instrument, but as a movement.",
         image: "assets/hey-band.jpg",
         variant: "soft"
       }, 
+      {
+        eyebrow: "Interview",
+        title: "Back to roots, or so it felt",
+        subtitle: "A voice from inside the vibe.",
+        narration: "I mean... I thought we were just getting back to something honest. You know, we were clapping and yelling, HEY!, because it felt alive. Not because we thought it meant anything bigger. And then... looking back now, that was kind of the point. It felt harmless, while it was teaching us how to move together on cue.",
+        image: "assets/hipster-interview.jpg",
+        variant: "alt"
+      },
       // {
       //   eyebrow: "Bacon becomes worldview",
       //   title: "When breakfast becomes a position",
@@ -304,7 +322,7 @@
         eyebrow: "The cocktail turn",
         title: "Craft cocktails enter the republic",
         subtitle: "Measure, stir, repeat.",
-        narration: "At the bar, precision becomes morality. The right ice, the correct glass, the approved origin story. Technique stands in for truth, and eventually even opinions require provenance.",
+        narration: "Meanwhile, the pursuit of authenticity creeps into every aspect of life. At the bar, precision becomes morality. The right ice, the correct glass, the approved origin story. Technique stands in for truth.",
         image: "assets/cocktail.jpg",
         variant: "soft"
       },
@@ -352,7 +370,7 @@
         eyebrow: "The feed",
         title: "Authenticity becomes inventory",
         subtitle: "The algorithm discovers a market.",
-        narration: "Corporations sell handmade, influencers sell independence, politicians sell outsider status, and algorithms reward outrage. Two product lines scale fastest: MAGA for national grievance, MAHA for biological grievance.",
+        narration: "Corporations sell hand made, influencers sell independence, politicians sell outsider status, and algorithms reward outrage. Two product lines scale fastest: MAGA for national grievance, MAHA for biological, grievance.",
         image: "assets/maga.jpg",
         variant: "alt"
       },
@@ -360,7 +378,7 @@
         eyebrow: "The irony economy",
         title: "From Vice to grievance",
         subtitle: "Snark opens the gate.",
-        narration: "The VICE-era internet turns politics into posture. Richard Spencer becomes part of the recurring cast. Irony offers plausible deniability: if challenged, it was just a joke; if rewarded, it was sincere. What looked like clever distance became cover. A culture that refuses to mean anything becomes vulnerable to people who mean everything.",
+        narration: "The VICE-era internet turns politics into posture. Richard Spencer becomes part of the recurring cast. Irony offers plausible deniability: if challenged, it was just a joke; if rewarded, it was sincere. What looked like clever distance became cover.",
         image: "assets/outrage.jpg",
         variant: "alt"
       },
@@ -368,7 +386,7 @@
         eyebrow: "Populism",
         title: "From belonging to hierarchy",
         subtitle: "Then Trump, as acceleration not conclusion.",
-        narration: "Trump did not invent the desire for authenticity. He industrialized it, with MAGA and MAHA running as twin rails: one about borders and belonging, the other about bodies and contamination, both optimized for repetition. The point is not a single man. The point is a system now tuned for grievance.",
+        narration: "Trump did not invent the desire for authenticity. He exploited it, with MAGA and MAHA running as twin rails: one about borders and belonging, the other about bodies and contamination, both optimized for repetition. The point is not a single man. The point is a system now tuned for grievance.",
         image: "assets/irony-economy.jpg",
         variant: "soft"
       },
@@ -384,7 +402,7 @@
         eyebrow: "Finale",
         title: "The empire burns",
         subtitle: "Mumford fiddles.",
-        narration: "Thank you, this wouldn't be possible without viewers like you.",
+        narration: "Thank you.   This wouldn't be possible without viewers like you.",
         image: "assets/empire-burns.jpg",
         variant: "alt"
       }
@@ -396,8 +414,71 @@
     const nodes = [];
     const narrationAudio = new Audio();
     narrationAudio.preload = 'auto';
+    const backgroundAudio = new Audio();
+    backgroundAudio.preload = 'auto';
+    backgroundAudio.loop = true;
+    const musicBaseVolume = 0.20;
+    const musicDuckedVolume = 0.13;
+    const backgroundAudioSources = [
+      'assets/bluegrass.mp3',
+      'assets/Mountain Melodies ｜ Bluegrass Music for a Peaceful Escape [C0kKLtuCtP8].mp3'
+    ];
+    let activeMusicSourceIndex = 0;
+    backgroundAudio.volume = musicBaseVolume;
+    backgroundAudio.src = encodeURI(backgroundAudioSources[activeMusicSourceIndex]);
     let narrationEnabled = true;
     let narrationUnlocked = false;
+    let narrationTextVisible = false;
+    let autoAdvanceEnabled = true;
+    let backgroundMusicEnabled = true;
+    let musicFadeTimer = null;
+    let autoAdvanceTimer = null;
+    const autoAdvanceDelayMs = 3200;
+
+    function setMusicVolume(targetVolume, durationMs = 260) {
+      if (!backgroundMusicEnabled) {
+        return;
+      }
+
+      const startVolume = backgroundAudio.volume;
+      const clampedTarget = Math.max(0, Math.min(1, targetVolume));
+
+      if (musicFadeTimer) {
+        clearInterval(musicFadeTimer);
+        musicFadeTimer = null;
+      }
+
+      if (Math.abs(startVolume - clampedTarget) < 0.002 || durationMs <= 0) {
+        backgroundAudio.volume = clampedTarget;
+        return;
+      }
+
+      const frameMs = 30;
+      const steps = Math.max(1, Math.round(durationMs / frameMs));
+      let step = 0;
+
+      musicFadeTimer = setInterval(() => {
+        step += 1;
+        const progress = Math.min(1, step / steps);
+        backgroundAudio.volume = startVolume + (clampedTarget - startVolume) * progress;
+        if (progress >= 1) {
+          clearInterval(musicFadeTimer);
+          musicFadeTimer = null;
+        }
+      }, frameMs);
+    }
+
+    function applyNarrationTextVisibility() {
+      document.body.classList.toggle('show-narration-text', narrationTextVisible);
+    }
+
+    function initializeNarrationTextPreference() {
+      const params = new URLSearchParams(window.location.search);
+      const queryPref = params.get('showNarration');
+      const storedPref = window.localStorage.getItem('showNarrationText');
+      narrationTextVisible = queryPref === '1' || storedPref === '1';
+      applyNarrationTextVisibility();
+    }
 
     function audioPathForSlide(index) {
       return `assets/narration/slide-${String(index + 1).padStart(2, '0')}.wav`;
@@ -407,6 +488,9 @@
       if (!narrationEnabled || !narrationUnlocked) {
         return;
       }
+
+      playBackgroundMusic();
+      setMusicVolume(musicDuckedVolume, 220);
 
       const nextSource = audioPathForSlide(current);
       const existing = narrationAudio.getAttribute('src');
@@ -421,12 +505,59 @@
       });
     }
 
+    function playBackgroundMusic() {
+      if (!backgroundMusicEnabled || !narrationUnlocked) {
+        return;
+      }
+
+      backgroundAudio.muted = false;
+      if (backgroundAudio.src === '') {
+        backgroundAudio.src = encodeURI(backgroundAudioSources[activeMusicSourceIndex]);
+      }
+
+      backgroundAudio.play().catch(() => {
+        // Browser may block autoplay before user interaction; this fails safely.
+      });
+    }
+
+    backgroundAudio.addEventListener('error', () => {
+      if (activeMusicSourceIndex >= backgroundAudioSources.length - 1) {
+        return;
+      }
+
+      activeMusicSourceIndex += 1;
+      backgroundAudio.src = encodeURI(backgroundAudioSources[activeMusicSourceIndex]);
+      if (narrationUnlocked && backgroundMusicEnabled) {
+        playBackgroundMusic();
+      }
+    });
+
     function unlockNarration() {
       if (!narrationUnlocked) {
         narrationUnlocked = true;
+        playBackgroundMusic();
         playNarrationForCurrentSlide();
       }
     }
+
+    narrationAudio.addEventListener('ended', () => {
+      if (!autoAdvanceEnabled) {
+        setMusicVolume(musicBaseVolume, 420);
+        return;
+      }
+      if (current < slides.length - 1) {
+        if (autoAdvanceTimer) {
+          clearTimeout(autoAdvanceTimer);
+          autoAdvanceTimer = null;
+        }
+        autoAdvanceTimer = setTimeout(() => {
+          autoAdvanceTimer = null;
+          setActive(current + 1);
+        }, autoAdvanceDelayMs);
+        return;
+      }
+      setMusicVolume(musicBaseVolume, 420);
+    });
 
     function createSlide(data, index) {
       const node = template.content.cloneNode(true);
@@ -442,7 +573,9 @@
       title.textContent = data.title;
       subtitle.textContent = data.subtitle;
       narration.textContent = data.narration;
-      counter.textContent = `${String(index + 1).padStart(2, '0')} / ${String(slides.length).padStart(2, '0')}`;
+      if (counter) {
+        counter.textContent = `${String(index + 1).padStart(2, '0')} / ${String(slides.length).padStart(2, '0')}`;
+      }
       if (data.variant) {
         visual.classList.add(data.variant);
       }
@@ -478,6 +611,10 @@
     }
 
     function setActive(index, animate = true) {
+      if (autoAdvanceTimer) {
+        clearTimeout(autoAdvanceTimer);
+        autoAdvanceTimer = null;
+      }
       current = Math.max(0, Math.min(index, slides.length - 1));
       nodes.forEach((node, i) => node.classList.toggle('active', i === current));
       if (!animate) {
@@ -512,9 +649,31 @@
         if (!narrationEnabled) {
           narrationAudio.pause();
           narrationAudio.currentTime = 0;
+          setMusicVolume(musicBaseVolume, 260);
         } else {
           playNarrationForCurrentSlide();
         }
+      }
+      if (event.key.toLowerCase() === 'a') {
+        autoAdvanceEnabled = !autoAdvanceEnabled;
+      }
+      if (event.key.toLowerCase() === 'm') {
+        backgroundMusicEnabled = !backgroundMusicEnabled;
+        if (!backgroundMusicEnabled) {
+          if (musicFadeTimer) {
+            clearInterval(musicFadeTimer);
+            musicFadeTimer = null;
+          }
+          backgroundAudio.pause();
+        } else {
+          backgroundAudio.volume = narrationEnabled ? musicDuckedVolume : musicBaseVolume;
+          playBackgroundMusic();
+        }
+      }
+      if (event.key.toLowerCase() === 't') {
+        narrationTextVisible = !narrationTextVisible;
+        window.localStorage.setItem('showNarrationText', narrationTextVisible ? '1' : '0');
+        applyNarrationTextVisibility();
       }
     });
 
@@ -528,6 +687,7 @@
       }
     });
 
+    initializeNarrationTextPreference();
     render();
   </script>
 </body>
