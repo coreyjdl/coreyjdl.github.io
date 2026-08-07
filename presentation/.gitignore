@@ -1,0 +1,5 @@
+# Local TTS toolchain and generated cache files
+.tts/
+
+# Keep only the presentation cut in git
+assets/bluegrass.mp3

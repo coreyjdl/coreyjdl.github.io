@@ -81,19 +81,22 @@ apply_human_artifacts() {
 
   local noise_gain="0.020"
   local click_gain="0.036"
-  local leading_pad="0.16"
+  local hiss_gain="0.004"
+  local leading_pad_ms="160"
   if [[ "$eyebrow" == "Interview" ]]; then
     # Slightly stronger texture for interview tape feel.
     noise_gain="0.026"
     click_gain="0.044"
-    leading_pad="0.20"
+    hiss_gain="0.012"
+    leading_pad_ms="200"
   fi
 
   if ! ffmpeg -nostdin -hide_banner -loglevel error -y \
     -i "$input_file" \
     -f lavfi -i "anoisesrc=color=pink:amplitude=0.0055:sample_rate=22050" \
+    -f lavfi -i "anoisesrc=color=white:amplitude=0.0065:sample_rate=22050" \
     -f lavfi -i "aevalsrc=if(lt(mod(t\,7.3)\,0.0015)\,0.20\,0)+if(lt(mod(t\,11.7)\,0.0012)\,-0.16\,0):s=22050" \
-    -filter_complex "[0:a]tpad=start_duration=${leading_pad},afade=t=in:st=0:d=0.03,highpass=f=90,lowpass=f=7600,compand=attacks=0.02:decays=0.25:points=-80/-80|-28/-22|0/-5,volume=1.03[voice];[1:a]highpass=f=220,lowpass=f=5800,volume=${noise_gain}[bed];[2:a]highpass=f=2600,lowpass=f=7600,volume=${click_gain}[clicks];[voice][bed][clicks]amix=inputs=3:duration=first:weights=1 1 1,alimiter=limit=0.93[out]" \
+    -filter_complex "[0:a]adelay=${leading_pad_ms}|${leading_pad_ms},afade=t=in:st=0:d=0.03,highpass=f=90,lowpass=f=7600,compand=attacks=0.02:decays=0.25:points=-80/-80|-28/-22|0/-5,volume=1.03[voice];[1:a]highpass=f=220,lowpass=f=5800,volume=${noise_gain}[bed];[2:a]highpass=f=4200,lowpass=f=11000,volume=${hiss_gain}[hiss];[3:a]highpass=f=2600,lowpass=f=7600,volume=${click_gain}[clicks];[voice][bed][hiss][clicks]amix=inputs=4:duration=first:weights=1 1 1 1,alimiter=limit=0.93[out]" \
     -map "[out]" "$output_file"; then
     cp "$input_file" "$output_file"
   fi
