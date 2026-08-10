@@ -52,6 +52,7 @@ declare -A VOICE_MODEL_PATH=(
   [amy]="$MODEL_DIR/en_US-hfc_female-medium.onnx"
   [ryan]="$MODEL_DIR/en_US-ryan-medium.onnx"
   [norman]="$MODEL_DIR/en_US-norman-medium.onnx"
+  [lessac]="$MODEL_DIR/en_US-lessac-high.onnx"
 )
 
 download_if_missing() {
@@ -102,6 +103,7 @@ prepare_voice_if_needed() {
   download_voice hfc_female medium
   download_voice ryan       medium
   download_voice norman     medium
+  download_voice lessac     high
 }
 
 # Returns: model_path <TAB> length_scale <TAB> sentence_silence <TAB> preset
@@ -109,10 +111,11 @@ voice_profile() {
   local voice="$1"
   local model="${VOICE_MODEL_PATH[$voice]:-${VOICE_MODEL_PATH[joe]}}"
   case "$voice" in
-    joe)    printf "%s\t%s\t%s\t%s\n" "$model" "1.18" "0.42" "clean" ;;
+    joe)    printf "%s\t%s\t%s\t%s\n" "$model" "1.24" "0.65" "clean" ;;
     amy)    printf "%s\t%s\t%s\t%s\n" "$model" "1.22" "0.42" "archival_tape" ;;
     ryan)   printf "%s\t%s\t%s\t%s\n" "$model" "1.18" "0.38" "archival_tape" ;;
     norman) printf "%s\t%s\t%s\t%s\n" "$model" "1.16" "0.40" "interview" ;;
+    lessac) printf "%s\t%s\t%s\t%s\n" "$model" "1.18" "0.50" "interview" ;;
     *)      printf "%s\t%s\t%s\t%s\n" "$model" "1.22" "0.42" "clean" ;;
   esac
 }
@@ -146,7 +149,7 @@ apply_human_artifacts() {
       ;;
     clean|*)
       noise_gain="0.020"; click_gain="0.036"; hiss_gain="0.004"; leading_pad_ms="160"
-      filter="[0:a]adelay=${leading_pad_ms}|${leading_pad_ms},afade=t=in:st=0:d=0.03,highpass=f=90,lowpass=f=7600,compand=attacks=0.02:decays=0.25:points=-80/-80|-28/-22|0/-5,volume=1.03[voice];[1:a]highpass=f=220,lowpass=f=5800,volume=${noise_gain}[bed];[2:a]highpass=f=4200,lowpass=f=11000,volume=${hiss_gain}[hiss];[3:a]highpass=f=2600,lowpass=f=7600,volume=${click_gain}[clicks];[voice][bed][hiss][clicks]amix=inputs=4:duration=first:weights=1 1 1 1,alimiter=limit=0.93[out]"
+      filter="[0:a]adelay=${leading_pad_ms}|${leading_pad_ms},afade=t=in:st=0:d=0.03,highpass=f=90,lowpass=f=7600,compand=attacks=0.02:decays=0.25:points=-80/-80|-28/-22|0/-5,vibrato=f=5.3:d=0.006,volume=1.03[voice];[1:a]highpass=f=220,lowpass=f=5800,volume=${noise_gain}[bed];[2:a]highpass=f=4200,lowpass=f=11000,volume=${hiss_gain}[hiss];[3:a]highpass=f=2600,lowpass=f=7600,volume=${click_gain}[clicks];[voice][bed][hiss][clicks]amix=inputs=4:duration=first:weights=1 1 1 1,alimiter=limit=0.93[out]"
       ;;
   esac
 
@@ -179,7 +182,7 @@ import sys, re
 default_voice = sys.argv[1]
 text = sys.stdin.read()
 pattern = re.compile(
-    r'\{\{\s*(joe|amy|ryan|norman|pause)(?:\s+(\d+))?\s*\}\}',
+    r'\{\{\s*(joe|amy|ryan|norman|lessac|pause)(?:\s+(\d+))?\s*\}\}',
     re.IGNORECASE,
 )
 pos = 0
