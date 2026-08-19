@@ -174,6 +174,23 @@ generate_silence() {
     -ar 22050 -ac 1 -c:a pcm_s16le "$out"
 }
 
+apply_vhs_tape() {
+  local input_file="$1"
+  local output_file="$2"
+  local filter
+
+  filter="[0:a]highpass=f=95,lowpass=f=6500,vibrato=f=0.32:d=0.010,acompressor=threshold=0.18:ratio=2.2:attack=20:release=220:makeup=1.10,volume='if(lt(mod(t,13.7),0.10),0.58,if(lt(mod(t+4.2,19.1),0.07),0.72,1))':eval=frame[voice];[1:a]highpass=f=3200,lowpass=f=9200,volume=0.024[hiss];[2:a]lowpass=f=120,volume=0.018[hum];[voice][hiss][hum]amix=inputs=3:duration=first:weights=1 1 1:normalize=0,alimiter=limit=0.91:level=false[out]"
+
+  if ! ffmpeg -nostdin -hide_banner -loglevel error -y \
+    -i "$input_file" \
+    -f lavfi -i "anoisesrc=color=white:amplitude=0.006:sample_rate=22050" \
+    -f lavfi -i "aevalsrc=0.008*sin(2*PI*60*t):s=22050" \
+    -filter_complex "$filter" \
+    -map "[out]" -ar 22050 -ac 1 -c:a pcm_s16le "$output_file"; then
+    cp "$input_file" "$output_file"
+  fi
+}
+
 # Reads narration text on stdin. Emits ordered lines to stdout:
 #   SPEAK<TAB>voice<TAB>text
 #   PAUSE<TAB>ms
@@ -239,8 +256,9 @@ render_slide() {
   local eyebrow="$2"
   local narration="$3"
 
-  local out_file concat_list default_voice seg
+  local out_file raw_file concat_list default_voice seg
   out_file=$(printf "%s/slide-%02d.wav" "$OUTPUT_DIR" "$slide_index")
+  raw_file=$(printf "%s/slide-%02d-raw.wav" "$TMP_DIR" "$slide_index")
   concat_list=$(printf "%s/slide-%02d.concat" "$TMP_DIR" "$slide_index")
   : > "$concat_list"
   default_voice=$(default_voice_for_eyebrow "$eyebrow")
@@ -282,7 +300,8 @@ render_slide() {
 
   ffmpeg -nostdin -hide_banner -loglevel error -y \
     -f concat -safe 0 -i "$concat_list" \
-    -ar 22050 -ac 1 -c:a pcm_s16le "$out_file"
+    -ar 22050 -ac 1 -c:a pcm_s16le "$raw_file"
+  apply_vhs_tape "$raw_file" "$out_file"
   echo "Generated $out_file (${eyebrow:-Unknown})"
 }
 
