@@ -117,7 +117,6 @@
     body.tracking-start .startup-tracking {
       visibility: visible;
       opacity: 0.58;
-      animation: trackingShutdown 3.1s steps(1, end) forwards;
     }
 
     .slide {
@@ -341,6 +340,10 @@
         -2px 2px 0 #000,
         0 2px 0 #000,
         2px 2px 0 #000;
+    }
+
+    .slide.previewing .deck-title {
+      visibility: hidden;
     }
 
     .title-divider {
@@ -892,11 +895,15 @@
     });
 
     function unlockNarration() {
+      const isInitialStart = !narrationUnlocked;
       const currentNarrationText = (slides[current]?.narration || '').trim();
       const musicBlocked = backgroundMusicEnabled && backgroundAudio.paused;
       const narrationBlocked = Boolean(currentNarrationText) && !interstitialTimer && narrationAudio.paused;
       const needsKick = !narrationUnlocked || !playbackStarted || musicBlocked || narrationBlocked;
       narrationUnlocked = true;
+      if (isInitialStart) {
+        stopTrackingNoise();
+      }
       if (needsKick) {
         playBackgroundMusic();
         playNarrationForCurrentSlide();
@@ -910,13 +917,14 @@
       playbackStarted = false;
       document.body.classList.add('tracking-start');
       startTrackingNoise();
-      window.setTimeout(() => {
-        document.body.classList.remove('tracking-start');
-        if (trackingAnimationFrame) {
-          window.cancelAnimationFrame(trackingAnimationFrame);
-          trackingAnimationFrame = null;
-        }
-      }, 3200);
+    }
+
+    function stopTrackingNoise() {
+      document.body.classList.remove('tracking-start');
+      if (trackingAnimationFrame) {
+        window.cancelAnimationFrame(trackingAnimationFrame);
+        trackingAnimationFrame = null;
+      }
     }
 
     function startTrackingNoise() {
