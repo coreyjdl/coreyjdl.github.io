@@ -174,12 +174,70 @@ generate_silence() {
     -ar 22050 -ac 1 -c:a pcm_s16le "$out"
 }
 
+TAPE_DRAG_FILTER_PY=$(cat <<'PY'
+import random
+import sys
+
+duration = float(sys.argv[1])
+random.seed(int(sys.argv[2]))
+events = []
+cursor = random.uniform(4.0, 8.0)
+
+while cursor < duration - 1.5:
+    drag_duration = min(random.uniform(0.35, 0.65), duration - cursor - 0.5)
+    if drag_duration > 0.3:
+        events.append((cursor, cursor + drag_duration, random.uniform(0.91, 0.95)))
+    cursor += drag_duration + random.uniform(9.0, 16.0)
+
+if not events and duration > 4.0:
+    start = duration * random.uniform(0.38, 0.62)
+    events.append((start, min(duration - 0.5, start + 0.45), random.uniform(0.91, 0.95)))
+
+boundaries = []
+position = 0.0
+for event in events:
+  start, end, speed = event
+  if start > position:
+    boundaries.append((position, start, 1.0))
+  ramp_duration = min(0.12, (end - start) * 0.25)
+  shoulder_speed = 1.0 - ((1.0 - speed) * 0.45)
+  boundaries.extend([
+    (start, start + ramp_duration, shoulder_speed),
+    (start + ramp_duration, end - ramp_duration, speed),
+    (end - ramp_duration, end, shoulder_speed),
+  ])
+  position = end
+if position < duration:
+    boundaries.append((position, duration, 1.0))
+
+labels = ''.join(f'[dragpart{i}]' for i in range(len(boundaries)))
+filters = [f'[base]asplit={len(boundaries)}{labels}']
+outputs = []
+for index, (start, end, speed) in enumerate(boundaries):
+    output = f'[dragout{index}]'
+    chain = f'[dragpart{index}]atrim=start={start:.4f}:end={end:.4f},asetpts=PTS-STARTPTS'
+    if speed < 1.0:
+        sample_rate = round(22050 * speed)
+        chain += f',asetrate={sample_rate},aresample=22050'
+    filters.append(chain + output)
+    outputs.append(output)
+
+filters.append(''.join(outputs) + f'concat=n={len(outputs)}:v=0:a=1[voice]')
+print(';'.join(filters))
+PY
+)
+
 apply_vhs_tape() {
   local input_file="$1"
   local output_file="$2"
-  local filter
+  local filter duration drag_filter wow_rate wow_depth
 
-  filter="[0:a]highpass=f=95,lowpass=f=6500,vibrato=f=0.32:d=0.010,acompressor=threshold=0.18:ratio=2.2:attack=20:release=220:makeup=1.10,volume='if(lt(mod(t,13.7),0.10),0.58,if(lt(mod(t+4.2,19.1),0.07),0.72,1))':eval=frame[voice];[1:a]highpass=f=3200,lowpass=f=9200,volume=0.024[hiss];[2:a]lowpass=f=120,volume=0.018[hum];[voice][hiss][hum]amix=inputs=3:duration=first:weights=1 1 1:normalize=0,alimiter=limit=0.91:level=false[out]"
+  wow_rate=$(awk -v seed="$RANDOM" 'BEGIN{srand(seed); printf "%.3f", 0.20 + rand() * 0.24}')
+  wow_depth=$(awk -v seed="$RANDOM" 'BEGIN{srand(seed); printf "%.4f", 0.006 + rand() * 0.004}')
+  duration=$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$input_file")
+  drag_filter=$(python3 -c "$TAPE_DRAG_FILTER_PY" "$duration" "$RANDOM")
+
+  filter="[0:a]highpass=f=95,lowpass=f=6500,vibrato=f=${wow_rate}:d=${wow_depth},acompressor=threshold=0.18:ratio=2.2:attack=20:release=220:makeup=1.10[base];${drag_filter};[1:a]highpass=f=3200,lowpass=f=9200,volume=0.024[hiss];[2:a]lowpass=f=120,volume=0.018[hum];[voice][hiss][hum]amix=inputs=3:duration=first:weights=1 1 1:normalize=0,alimiter=limit=0.91:level=false[out]"
 
   if ! ffmpeg -nostdin -hide_banner -loglevel error -y \
     -i "$input_file" \

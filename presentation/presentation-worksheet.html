@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Video Worksheet</title>
+  <style>
+    :root {
+      --ink: #111;
+      --rule: #777;
+      --paper: #fff;
+      --screen: #d9d7d1;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      color: var(--ink);
+      background: var(--screen);
+      font-family: Georgia, "Times New Roman", serif;
+    }
+
+    body {
+      padding: 24px;
+    }
+
+    .sheet {
+      width: 8.5in;
+      min-height: 11in;
+      margin: 0 auto;
+      padding: 0.42in 0.5in;
+      background: var(--paper);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+    }
+
+    header {
+      padding-bottom: 9px;
+      border-bottom: 1px solid var(--ink);
+    }
+
+    .course-label {
+      margin: 0 0 3px;
+      font: 700 9px/1.2 Arial, Helvetica, sans-serif;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 22px;
+      line-height: 1.05;
+    }
+
+    .student-info {
+      display: grid;
+      grid-template-columns: 1.6fr 0.8fr 0.8fr;
+      gap: 16px;
+      margin: 12px 0 10px;
+      font: 11px/1.2 Arial, Helvetica, sans-serif;
+    }
+
+    .field {
+      display: flex;
+      gap: 6px;
+      align-items: end;
+      white-space: nowrap;
+    }
+
+    .field-line {
+      width: 100%;
+      height: 15px;
+      border-bottom: 1px solid var(--ink);
+    }
+
+    .directions {
+      margin: 0 0 10px;
+      padding: 6px 8px;
+      border: 1px solid var(--ink);
+      font-size: 10.5px;
+      line-height: 1.3;
+    }
+
+    .questions {
+      margin: 0;
+      padding: 0;
+      counter-reset: question;
+      list-style: none;
+    }
+
+    .question {
+      position: relative;
+      break-inside: avoid;
+      min-height: 158px;
+      padding-left: 21px;
+      font-size: 13px;
+      line-height: 1.35;
+      counter-increment: question;
+    }
+
+    .question::before {
+      content: counter(question) ".";
+      position: absolute;
+      left: 0;
+      top: 0;
+      font: 700 13px/1.35 Arial, Helvetica, sans-serif;
+    }
+
+    .question p {
+      margin: 0;
+    }
+
+    .answer-lines {
+      height: 125px;
+      margin-top: 5px;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0,
+        transparent 23px,
+        var(--rule) 23px,
+        var(--rule) 24px
+      );
+    }
+
+    footer {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      font: 8px/1.2 Arial, Helvetica, sans-serif;
+      color: #555;
+    }
+
+    @page {
+      size: letter portrait;
+      margin: 0;
+    }
+
+    @media print {
+      html,
+      body {
+        width: 8.5in;
+        height: 11in;
+        background: #fff;
+      }
+
+      body {
+        padding: 0;
+      }
+
+      .sheet {
+        width: 8.5in;
+        height: 11in;
+        min-height: 0;
+        margin: 0;
+        box-shadow: none;
+        overflow: hidden;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="sheet">
+    <header>
+      <h1>Video Worksheet</h1>
+    </header>
+
+    <section class="student-info" aria-label="Student information">
+      <div class="field">Name <span class="field-line"></span></div>
+      <div class="field">Class <span class="field-line"></span></div>
+      <div class="field">Date <span class="field-line"></span></div>
+    </section>
+
+    <p class="directions"><strong>Directions:</strong> Respond to each question in complete sentences. Use examples from your own experience and from the presentation where appropriate.</p>
+
+    <ol class="questions">
+      <li class="question">
+        <p>How have Mumford &amp; Sons, folk music, or the culture surrounding that music affected you personally?</p>
+        <div class="answer-lines" aria-hidden="true"></div>
+      </li>
+      <li class="question">
+        <p>Describe a time when music, fashion, or another cultural trend made you feel that you belonged to a group. What made that feeling meaningful?</p>
+        <div class="answer-lines" aria-hidden="true"></div>
+      </li>
+      <li class="question">
+        <p>Do you think nostalgia changes how people understand the past? Explain using an example from your life, your family, or popular culture.</p>
+        <div class="answer-lines" aria-hidden="true"></div>
+      </li>
+      <li class="question">
+        <p>What idea from the presentation did you agree with, disagree with, or continue thinking about afterward? Explain your response.</p>
+        <div class="answer-lines" aria-hidden="true"></div>
+      </li>
+    </ol>
+
+  </main>
+</body>
+</html>
