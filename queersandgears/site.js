@@ -32,13 +32,13 @@ document.querySelector("[data-site-footer]").innerHTML = `
       <div class="footer-grid">
         <div>
           <h3>Queers &amp; Gears Motorcycle Alliance</h3>
-          <p>Rides, support, and community for LGBTQ+ motorcyclists and allies.</p>
+          <p>LGBTQ+ motorcycle group for rides, support, and community.</p>
         </div>
         <div>
           <h3>Explore</h3>
           <div class="footer-links">
-            <a href="about.html">About us</a>
-            <a href="mission.html">Our mission</a>
+            <a href="about.html">About</a>
+            <a href="mission.html">Mission</a>
             <a href="calendar.html">Upcoming events</a>
             <a href="join.html">How to join</a>
             <a href="contact.html">Contact us</a>
