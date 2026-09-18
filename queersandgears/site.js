@@ -16,6 +16,7 @@ document.querySelector("[data-site-header]").innerHTML = `
     <div class="container nav-wrap">
       <a class="brand" href="index.html" aria-label="Queers and Gears Motorcycle Alliance home">
         <span class="brand-mark"><img src="qag.jpg" alt=""></span>
+        <span>Queers &amp; Gears</span>
       </a>
       <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Open navigation">☰</button>
       <nav class="nav" id="site-nav" aria-label="Main navigation">
