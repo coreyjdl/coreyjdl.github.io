@@ -14,9 +14,8 @@ const pageLink = ([label, href]) =>
 document.querySelector("[data-site-header]").innerHTML = `
   <header class="site-header">
     <div class="container nav-wrap">
-      <a class="brand" href="index.html" aria-label="Queers and Gears home">
+      <a class="brand" href="index.html" aria-label="Queers and Gears Motorcycle Alliance home">
         <span class="brand-mark"><img src="qag.jpg" alt=""></span>
-        <span>Queers &amp; Gears Motorcycle Alliance</span>
       </a>
       <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Open navigation">☰</button>
       <nav class="nav" id="site-nav" aria-label="Main navigation">
