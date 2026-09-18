@@ -63,6 +63,11 @@ h1 {
   font-size: clamp(2.3rem, 5vw, 4.25rem);
 }
 
+.hero h1 {
+  max-width: 620px;
+  font-size: clamp(2rem, 4vw, 3.35rem);
+}
+
 h2 {
   margin-bottom: 16px;
   font-size: clamp(1.55rem, 3vw, 2.25rem);
@@ -122,9 +127,6 @@ h3 {
   object-fit: cover;
 }
 
-.brand span {
-  max-width: 190px;
-}
 
 .nav {
   display: flex;
@@ -567,11 +569,6 @@ span.social-link {
 @media (max-width: 680px) {
   .container {
     width: min(calc(100% - 28px), var(--max));
-  }
-
-  .brand span {
-    max-width: 150px;
-    font-size: .86rem;
   }
 
   .hero,
