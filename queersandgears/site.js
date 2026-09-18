@@ -21,7 +21,7 @@ document.querySelector("[data-site-header]").innerHTML = `
       <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Open navigation">☰</button>
       <nav class="nav" id="site-nav" aria-label="Main navigation">
         ${pages.map(pageLink).join("")}
-        <a class="nav-join" href="join.html"${currentPage === "join.html" ? ' aria-current="page"' : ""}>Join us</a>
+        <a href="join.html"${currentPage === "join.html" ? ' aria-current="page"' : ""}>Join</a>
       </nav>
     </div>
   </header>`;
@@ -29,28 +29,16 @@ document.querySelector("[data-site-header]").innerHTML = `
 document.querySelector("[data-site-footer]").innerHTML = `
   <footer class="site-footer">
     <div class="container">
-      <div class="footer-grid">
+      <div class="footer-simple">
         <div>
           <h3>Queers &amp; Gears Motorcycle Alliance</h3>
-          <p>LGBTQ+ motorcycle group for rides, support, and community.</p>
+          <p>LGBTQ+ riders, passengers, future riders, and allies.</p>
         </div>
-        <div>
-          <h3>Explore</h3>
-          <div class="footer-links">
-            <a href="about.html">About</a>
-            <a href="mission.html">Mission</a>
-            <a href="calendar.html">Upcoming events</a>
-            <a href="join.html">How to join</a>
-            <a href="contact.html">Contact us</a>
-          </div>
-        </div>
-        <div>
-          <h3>Contact</h3>
-          <div class="footer-links">
-            <a href="mailto:Queersandgearsmoto@gmail.com">Queersandgearsmoto@gmail.com</a>
-            <a href="https://www.instagram.com/queersandgearsmotorcycle/" target="_blank" rel="noreferrer">Instagram</a>
-            <a href="https://www.tiktok.com/@queersandgears" target="_blank" rel="noreferrer">TikTok</a>
-          </div>
+        <div class="footer-links">
+          <a href="mailto:Queersandgearsmoto@gmail.com">Email</a>
+          <a href="https://www.instagram.com/queersandgearsmotorcycle/" target="_blank" rel="noreferrer">Instagram</a>
+          <a href="https://www.tiktok.com/@queersandgears" target="_blank" rel="noreferrer">TikTok</a>
+          <a href="contact.html">More contact info</a>
         </div>
       </div>
       <p class="copyright">&copy; <span data-year></span> Queers &amp; Gears Motorcycle Alliance.</p>
@@ -60,11 +48,14 @@ document.querySelector("[data-site-footer]").innerHTML = `
 const toggle = document.querySelector(".nav-toggle");
 const nav = document.querySelector(".nav");
 
-toggle.addEventListener("click", () => {
-  const open = nav.classList.toggle("open");
-  toggle.setAttribute("aria-expanded", open);
-  toggle.setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
-  toggle.textContent = open ? "×" : "☰";
-});
+if (toggle && nav) {
+  toggle.addEventListener("click", () => {
+    const open = nav.classList.toggle("open");
+    toggle.setAttribute("aria-expanded", open);
+    toggle.setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
+    toggle.textContent = open ? "×" : "☰";
+  });
+}
 
-document.querySelector("[data-year]").textContent = new Date().getFullYear();
+const year = document.querySelector("[data-year]");
+if (year) year.textContent = new Date().getFullYear();
