@@ -83,32 +83,41 @@
     .nav-links a:focus { color: var(--accent); }
 
     .hero {
-      padding: 82px 0 64px;
+      padding: 96px 0 76px;
       border-bottom: 1px solid var(--line);
     }
 
     h1, h2, h3, p { margin-top: 0; }
 
+    .hero-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(280px, 0.7fr);
+      align-items: end;
+      gap: 56px;
+    }
+
+    .eyebrow {
+      margin-bottom: 18px;
+      color: var(--accent);
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
     h1 {
-      margin-bottom: 6px;
-      font-size: clamp(3.2rem, 8vw, 6.8rem);
-      line-height: 0.98;
-      letter-spacing: -0.055em;
+      max-width: 840px;
+      margin-bottom: 0;
+      font-size: clamp(3rem, 6.8vw, 6rem);
+      line-height: 0.96;
+      letter-spacing: -0.05em;
       font-weight: 800;
     }
 
-    .title {
-      margin-bottom: 30px;
-      color: var(--accent);
-      font-size: clamp(1.25rem, 2.4vw, 1.7rem);
-      font-weight: 750;
-    }
-
     .hero-copy {
-      max-width: 790px;
-      margin-bottom: 28px;
+      margin-bottom: 24px;
       color: #474c50;
-      font-size: clamp(1.05rem, 2vw, 1.25rem);
+      font-size: 1.05rem;
     }
 
     .actions {
@@ -155,25 +164,19 @@
     }
 
     .work-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
       border-top: 1px solid var(--line);
     }
 
     .work-card {
-      min-height: 360px;
-      padding: 28px 26px 26px 0;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .work-card + .work-card {
-      padding-left: 26px;
-      border-left: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: minmax(220px, 0.8fr) minmax(0, 1.7fr);
+      column-gap: 48px;
+      padding: 30px 0;
+      border-bottom: 1px solid var(--line);
     }
 
     .work-card h3 {
-      margin-bottom: 16px;
+      margin-bottom: 0;
       font-size: 1.35rem;
       line-height: 1.2;
       letter-spacing: -0.025em;
@@ -185,8 +188,8 @@
     }
 
     .stack {
-      margin-top: auto;
-      padding-top: 22px;
+      grid-column: 2;
+      margin-top: 14px;
       color: var(--muted);
       font-size: 0.82rem;
       font-weight: 700;
@@ -291,20 +294,19 @@
     }
 
     @media (max-width: 820px) {
-      .work-grid { grid-template-columns: 1fr; }
+      .hero-layout {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
 
       .work-card {
-        min-height: auto;
+        display: block;
         padding: 26px 0;
       }
 
-      .work-card + .work-card {
-        padding-left: 0;
-        border-left: 0;
-        border-top: 1px solid var(--line);
-      }
+      .work-card h3 { margin-bottom: 14px; }
 
-      .stack { margin-top: 18px; }
+      .stack { margin-top: 16px; }
 
       .job {
         grid-template-columns: 1fr 1fr;
@@ -351,18 +353,21 @@
 
   <main id="top">
     <section class="hero">
-      <div class="shell">
-        <h1>Corey Lloyd</h1>
-        <p class="title">Senior Platform Engineer</p>
-        <p class="hero-copy">
-          Backend and platform engineer with 11 years of experience in distributed systems, cloud infrastructure,
-          event-driven architecture, API platforms, and secure systems integration. Primary stack: C#/.NET,
-          Node.js, Python, Azure, AWS, Kubernetes, and Terraform.
-        </p>
-        <div class="actions">
-          <a class="button primary" href="mailto:coreyjdl@gmail.com">coreyjdl@gmail.com</a>
-          <a class="button" href="https://www.linkedin.com/in/corey-lloyd-396a41185/" target="_blank" rel="noreferrer">LinkedIn</a>
-          <a class="button" href="https://github.com/coreyjdl" target="_blank" rel="noreferrer">GitHub</a>
+      <div class="shell hero-layout">
+        <div>
+          <p class="eyebrow">Corey Lloyd · Senior Platform Engineer</p>
+          <h1>Backend systems and cloud infrastructure.</h1>
+        </div>
+        <div>
+          <p class="hero-copy">
+            For 11 years, I have built distributed services, API platforms, and the infrastructure that runs them.
+            I work primarily in C#/.NET, Node.js, Python, Azure, AWS, Kubernetes, and Terraform.
+          </p>
+          <div class="actions">
+            <a class="button primary" href="mailto:coreyjdl@gmail.com">Email</a>
+            <a class="button" href="https://www.linkedin.com/in/corey-lloyd-396a41185/" target="_blank" rel="noreferrer">LinkedIn</a>
+            <a class="button" href="https://github.com/coreyjdl" target="_blank" rel="noreferrer">GitHub</a>
+          </div>
         </div>
       </div>
     </section>
