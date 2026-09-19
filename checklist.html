@@ -1,0 +1,650 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Scooter Trash Garage Visit Sheet</title>
+  <style>
+    :root {
+      --ink: #171a18;
+      --soft-ink: #505650;
+      --line: #8d958e;
+      --wash: #edf0eb;
+      --accent: #a33c22;
+      --paper: #fff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: #d8dcd7;
+      font: 12px/1.25 Arial, Helvetica, sans-serif;
+    }
+
+    main {
+      width: min(8.5in, calc(100% - 20px));
+      min-height: 11in;
+      margin: 20px auto;
+      padding: 0.32in;
+      background: var(--paper);
+      box-shadow: 0 5px 24px rgb(0 0 0 / 18%);
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: 62px 1fr auto;
+      gap: 13px;
+      align-items: center;
+      padding-bottom: 9px;
+      border-bottom: 5px solid var(--ink);
+    }
+
+    .mark {
+      display: grid;
+      width: 58px;
+      height: 58px;
+      place-items: center;
+      border: 4px solid var(--ink);
+      border-radius: 50%;
+      color: var(--accent);
+      font-size: 25px;
+      font-weight: 900;
+      letter-spacing: -0.08em;
+      transform: rotate(-4deg);
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    .brand {
+      color: var(--accent);
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 2px 0 1px;
+      font-size: 25px;
+      line-height: 1;
+      letter-spacing: -0.035em;
+      text-transform: uppercase;
+    }
+
+    button {
+      padding: 8px 11px;
+      border: 0;
+      border-radius: 3px;
+      color: #fff;
+      background: var(--accent);
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    section {
+      margin-top: 10px;
+    }
+
+    h2 {
+      display: flex;
+      gap: 7px;
+      align-items: center;
+      margin-bottom: 5px;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    h2::after {
+      height: 1px;
+      background: var(--line);
+      content: "";
+      flex: 1;
+    }
+
+    label {
+      display: block;
+      color: var(--soft-ink);
+      font-size: 8px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    input[type="text"],
+    textarea {
+      width: 100%;
+      border: 0;
+      border-radius: 0;
+      color: var(--ink);
+      background: transparent;
+      font: 700 13px/1.2 Arial, Helvetica, sans-serif;
+    }
+
+    input[type="text"]:focus,
+    textarea:focus {
+      outline: 2px solid var(--accent);
+      outline-offset: -1px;
+    }
+
+    .visit {
+      display: grid;
+      grid-template-columns: 1.1fr 2fr 0.8fr 0.8fr;
+      border: 2px solid var(--ink);
+    }
+
+    .visit .field {
+      min-width: 0;
+      padding: 5px 7px 4px;
+      border-right: 1px solid var(--line);
+    }
+
+    .visit .field:last-child {
+      border-right: 0;
+    }
+
+    .visit input {
+      height: 24px;
+    }
+
+    .concern {
+      display: grid;
+      grid-template-columns: 115px 1fr;
+      align-items: center;
+      padding: 4px 7px;
+      border: 2px solid var(--ink);
+      border-top: 0;
+    }
+
+    .concern input {
+      height: 25px;
+    }
+
+    .service-grid,
+    .bottom-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .service-grid .specs,
+    .service-grid table {
+      height: 148px;
+    }
+
+    .specs {
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-template-rows: repeat(4, 1fr);
+      border: 2px solid var(--ink);
+    }
+
+    .specs .field {
+      padding: 4px 7px 1px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .specs .field:last-child {
+      border-bottom: 0;
+    }
+
+    .specs input {
+      height: 21px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+
+    th {
+      height: 20px;
+      padding: 3px 5px;
+      color: var(--soft-ink);
+      background: var(--wash);
+      font-size: 8px;
+      letter-spacing: 0.06em;
+      text-align: left;
+      text-transform: uppercase;
+    }
+
+    td {
+      height: 28px;
+      padding: 2px 5px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    table {
+      border: 2px solid var(--ink);
+    }
+
+    td input {
+      height: 23px;
+    }
+
+    .pause-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border: 2px solid var(--ink);
+    }
+
+    .pause {
+      display: grid;
+      grid-template-columns: 25px 1fr;
+      gap: 5px;
+      align-items: start;
+      min-height: 57px;
+      padding: 6px;
+      border-right: 1px solid var(--line);
+    }
+
+    .pause:last-child {
+      border-right: 0;
+    }
+
+    .pause strong {
+      display: block;
+      margin-bottom: 2px;
+      color: var(--accent);
+      font-size: 9px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    input[type="checkbox"] {
+      width: 21px;
+      height: 21px;
+      margin: 1px 0 0;
+      accent-color: var(--accent);
+    }
+
+    .tclocs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border: 2px solid var(--ink);
+    }
+
+    .t-item {
+      display: grid;
+      grid-template-columns: 35px 1fr 74px;
+      min-height: 50px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .t-item:nth-child(odd) {
+      border-right: 1px solid var(--line);
+    }
+
+    .t-item:nth-last-child(-n + 2) {
+      border-bottom: 0;
+    }
+
+    .t-letter {
+      display: grid;
+      place-items: center;
+      color: #fff;
+      background: var(--ink);
+      font-size: 21px;
+      font-weight: 900;
+    }
+
+    .t-copy {
+      padding: 5px 6px;
+    }
+
+    .t-copy h3 {
+      font-size: 10px;
+      text-transform: uppercase;
+    }
+
+    .t-copy p {
+      margin-top: 2px;
+      color: var(--soft-ink);
+      font-size: 9px;
+    }
+
+    .psi {
+      display: block;
+      margin-top: 2px;
+      color: var(--ink);
+      font-weight: 900;
+      letter-spacing: 0.03em;
+    }
+
+    .checks {
+      display: grid;
+      grid-template-columns: 1fr;
+      align-content: center;
+      gap: 3px;
+      padding: 4px 8px;
+      border-left: 1px solid var(--line);
+    }
+
+    .checks label {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+      color: var(--ink);
+      font-size: 8px;
+      letter-spacing: 0;
+      white-space: nowrap;
+    }
+
+    .checks input {
+      width: 16px;
+      height: 16px;
+      margin: 0;
+    }
+
+    .findings td {
+      height: 36px;
+    }
+
+    .when {
+      color: var(--soft-ink);
+      font-size: 8px;
+      font-weight: 800;
+      line-height: 1.5;
+      text-transform: uppercase;
+    }
+
+    .write-box {
+      min-height: 58px;
+      padding: 6px;
+      border: 2px solid var(--ink);
+      resize: none;
+    }
+
+    .notes {
+      min-height: 76px;
+    }
+
+    @media (max-width: 700px) {
+      main {
+        width: 100%;
+        margin: 0;
+        padding: 18px;
+      }
+
+      header {
+        grid-template-columns: 58px 1fr;
+      }
+
+      button {
+        grid-column: 1 / -1;
+      }
+
+      .service-grid,
+      .bottom-grid,
+      .pause-grid,
+      .tclocs {
+        grid-template-columns: 1fr;
+      }
+
+      .pause,
+      .t-item:nth-child(odd) {
+        border-right: 0;
+      }
+
+      .pause,
+      .t-item:nth-last-child(2) {
+        border-bottom: 1px solid var(--line);
+      }
+    }
+
+    @media print {
+      @page {
+        size: letter portrait;
+        margin: 0.25in;
+      }
+
+      body {
+        background: #fff;
+      }
+
+      main {
+        width: auto;
+        min-height: auto;
+        margin: 0;
+        padding: 0;
+        box-shadow: none;
+      }
+
+      button {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div class="mark" aria-hidden="true">ST</div>
+      <div>
+        <div class="brand">Scooter Trash Garage</div>
+        <h1>Service & Look-Over</h1>
+      </div>
+      <button type="button" onclick="window.print()">Print / Save PDF</button>
+    </header>
+
+    <section aria-label="Visit details">
+      <div class="visit">
+        <div class="field">
+          <label for="rider">Rider</label>
+          <input id="rider" type="text">
+        </div>
+        <div class="field">
+          <label for="bike">Bike / year</label>
+          <input id="bike" type="text">
+        </div>
+        <div class="field">
+          <label for="miles">Miles</label>
+          <input id="miles" type="text">
+        </div>
+        <div class="field">
+          <label for="date">Date</label>
+          <input id="date" type="text">
+        </div>
+      </div>
+      <div class="concern">
+        <label for="concern">Rider wants / says</label>
+        <input id="concern" type="text">
+      </div>
+      <div class="concern">
+        <label for="supplies">Parts / supplies</label>
+        <input id="supplies" type="text">
+      </div>
+    </section>
+
+    <section class="service-grid">
+      <div>
+        <h2>Oil Facts</h2>
+        <div class="specs">
+          <div class="field">
+            <label for="filter">Filter</label>
+            <input id="filter" type="text">
+          </div>
+          <div class="field">
+            <label for="oil">Oil / weight</label>
+            <input id="oil" type="text">
+          </div>
+          <div class="field">
+            <label for="volume">Volume</label>
+            <input id="volume" type="text">
+          </div>
+          <div class="field">
+            <label for="seal">Drain seal</label>
+            <input id="seal" type="text">
+          </div>
+        </div>
+      </div>
+      <div>
+        <h2>Bike-Specific Torque</h2>
+        <table aria-label="Torque values">
+          <thead>
+            <tr><th>Item / location</th><th style="width: 30%">Value</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><input type="text" aria-label="Torque item 1"></td><td><input type="text" aria-label="Torque value 1"></td></tr>
+            <tr><td><input type="text" aria-label="Torque item 2"></td><td><input type="text" aria-label="Torque value 2"></td></tr>
+            <tr><td><input type="text" aria-label="Torque item 3"></td><td><input type="text" aria-label="Torque value 3"></td></tr>
+            <tr><td><input type="text" aria-label="Torque item 4"></td><td><input type="text" aria-label="Torque value 4"></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <div class="pause-grid">
+        <label class="pause">
+          <input type="checkbox">
+          <span><strong>Before starting</strong>Right bike. Right oil, amount, filter, seals, and torque specs.</span>
+        </label>
+        <label class="pause">
+          <input type="checkbox">
+          <span><strong>Before firing</strong>All drain plugs / seals + filter secured. Oil in. Tools / rags / loose bits clear.</span>
+        </label>
+        <label class="pause">
+          <input type="checkbox">
+          <span><strong>Before handoff</strong>Level and leaks rechecked correctly. Controls checked. Friend briefed.</span>
+        </label>
+      </div>
+    </section>
+
+    <section>
+      <div class="tclocs">
+        <div class="t-item">
+          <div class="t-letter">T</div>
+          <div class="t-copy">
+            <h3>Tires & wheels</h3>
+            <p>
+              Wear, damage, valves, rims, spokes
+              <span class="psi">Cold PSI: F ______ &nbsp; R ______</span>
+            </p>
+          </div>
+          <div class="checks">
+            <label><input type="checkbox">OK</label>
+            <label><input type="checkbox">NOTE</label>
+          </div>
+        </div>
+        <div class="t-item">
+          <div class="t-letter">C</div>
+          <div class="t-copy">
+            <h3>Controls</h3>
+            <p>Brakes, clutch, throttle, steering, cables, hoses</p>
+          </div>
+          <div class="checks">
+            <label><input type="checkbox">OK</label>
+            <label><input type="checkbox">NOTE</label>
+          </div>
+        </div>
+        <div class="t-item">
+          <div class="t-letter">L</div>
+          <div class="t-copy">
+            <h3>Lights & electrics</h3>
+            <p>Head, tail, brake, signals, horn, battery</p>
+          </div>
+          <div class="checks">
+            <label><input type="checkbox">OK</label>
+            <label><input type="checkbox">NOTE</label>
+          </div>
+        </div>
+        <div class="t-item">
+          <div class="t-letter">O</div>
+          <div class="t-copy">
+            <h3>Oil & other fluids</h3>
+            <p>Levels, leaks: engine, brake, coolant, fuel, forks</p>
+          </div>
+          <div class="checks">
+            <label><input type="checkbox">OK</label>
+            <label><input type="checkbox">NOTE</label>
+          </div>
+        </div>
+        <div class="t-item">
+          <div class="t-letter">C</div>
+          <div class="t-copy">
+            <h3>Chassis & drive</h3>
+            <p>Frame, suspension, chain / belt, exhaust, fasteners</p>
+          </div>
+          <div class="checks">
+            <label><input type="checkbox">OK</label>
+            <label><input type="checkbox">NOTE</label>
+          </div>
+        </div>
+        <div class="t-item">
+          <div class="t-letter">S</div>
+          <div class="t-copy">
+            <h3>Stands</h3>
+            <p>Condition, springs, retention, and interlock if fitted</p>
+          </div>
+          <div class="checks">
+            <label><input type="checkbox">OK</label>
+            <label><input type="checkbox">NOTE</label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>What I Found / What You Need</h2>
+      <table class="findings" aria-label="Findings and recommendations">
+        <thead>
+          <tr>
+            <th style="width: 12%">When</th>
+            <th style="width: 34%">Finding</th>
+            <th style="width: 32%">What to do</th>
+            <th style="width: 22%">Brand / part no.</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="when">Now<br>Soon<br>Later</td>
+            <td><input type="text" aria-label="Finding 1"></td>
+            <td><input type="text" aria-label="Recommendation 1"></td>
+            <td><input type="text" aria-label="Part number 1"></td>
+          </tr>
+          <tr>
+            <td class="when">Now<br>Soon<br>Later</td>
+            <td><input type="text" aria-label="Finding 2"></td>
+            <td><input type="text" aria-label="Recommendation 2"></td>
+            <td><input type="text" aria-label="Part number 2"></td>
+          </tr>
+          <tr>
+            <td class="when">Now<br>Soon<br>Later</td>
+            <td><input type="text" aria-label="Finding 3"></td>
+            <td><input type="text" aria-label="Recommendation 3"></td>
+            <td><input type="text" aria-label="Part number 3"></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="bottom-grid">
+      <div>
+        <h2>Next Time - Bring / Buy</h2>
+        <textarea class="write-box" aria-label="What to bring or buy next time"></textarea>
+      </div>
+      <div>
+        <h2>Next Time - We Tackle</h2>
+        <textarea class="write-box" aria-label="What to tackle next time"></textarea>
+      </div>
+    </section>
+
+    <section>
+      <h2>Notes</h2>
+      <textarea class="write-box notes" aria-label="Notes"></textarea>
+    </section>
+  </main>
+</body>
+</html>
