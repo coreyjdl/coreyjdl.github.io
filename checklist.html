@@ -26,6 +26,8 @@
     }
 
     main {
+      display: flex;
+      flex-direction: column;
       width: min(8.5in, calc(100% - 20px));
       min-height: 11in;
       margin: 20px auto;
@@ -158,20 +160,24 @@
     }
 
     .concern {
-      display: grid;
-      grid-template-columns: 115px 1fr;
-      align-items: center;
-      padding: 4px 7px;
+      padding: 5px 7px 4px;
       border: 2px solid var(--ink);
       border-top: 0;
     }
 
-    .concern input {
-      height: 25px;
+    .concern textarea {
+      resize: none;
     }
 
-    .service-grid,
-    .bottom-grid {
+    #concern {
+      min-height: 34px;
+    }
+
+    #supplies {
+      min-height: 42px;
+    }
+
+    .service-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 10px;
@@ -241,12 +247,17 @@
 
     .pause {
       display: grid;
-      grid-template-columns: 25px 1fr;
-      gap: 5px;
+      grid-template-columns: 30px 1fr;
+      gap: 8px;
       align-items: start;
-      min-height: 57px;
-      padding: 6px;
+      min-height: 82px;
+      padding: 9px 8px;
       border-right: 1px solid var(--line);
+      color: var(--ink);
+      font-size: 10px;
+      line-height: 1.35;
+      letter-spacing: 0.01em;
+      text-transform: none;
     }
 
     .pause:last-child {
@@ -255,11 +266,16 @@
 
     .pause strong {
       display: block;
-      margin-bottom: 2px;
+      margin-bottom: 4px;
       color: var(--accent);
-      font-size: 9px;
+      font-size: 11px;
       letter-spacing: 0.08em;
       text-transform: uppercase;
+    }
+
+    .pause input[type="checkbox"] {
+      width: 26px;
+      height: 26px;
     }
 
     input[type="checkbox"] {
@@ -314,12 +330,27 @@
       font-size: 9px;
     }
 
-    .psi {
+    .spec-line {
       display: block;
       margin-top: 2px;
       color: var(--ink);
       font-weight: 900;
       letter-spacing: 0.03em;
+    }
+
+    .spec-line input {
+      width: 38px;
+      height: 14px;
+      margin: 0 3px 0 1px;
+      padding: 0 1px;
+      border-bottom: 1px solid var(--ink);
+      font-size: 10px;
+      line-height: 1;
+      text-align: center;
+    }
+
+    .spec-line .chain-slack {
+      width: 82px;
     }
 
     .checks {
@@ -347,18 +378,6 @@
       margin: 0;
     }
 
-    .findings td {
-      height: 36px;
-    }
-
-    .when {
-      color: var(--soft-ink);
-      font-size: 8px;
-      font-weight: 800;
-      line-height: 1.5;
-      text-transform: uppercase;
-    }
-
     .write-box {
       min-height: 58px;
       padding: 6px;
@@ -366,8 +385,15 @@
       resize: none;
     }
 
-    .notes {
-      min-height: 76px;
+    .notes-section {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      min-height: 160px;
+    }
+
+    .notes-section .notes {
+      flex: 1;
     }
 
     @media (max-width: 700px) {
@@ -386,7 +412,6 @@
       }
 
       .service-grid,
-      .bottom-grid,
       .pause-grid,
       .tclocs {
         grid-template-columns: 1fr;
@@ -415,7 +440,8 @@
 
       main {
         width: auto;
-        min-height: auto;
+        height: 10.5in;
+        min-height: 0;
         margin: 0;
         padding: 0;
         box-shadow: none;
@@ -459,11 +485,11 @@
       </div>
       <div class="concern">
         <label for="concern">Rider wants / says</label>
-        <input id="concern" type="text">
+        <textarea id="concern"></textarea>
       </div>
       <div class="concern">
         <label for="supplies">Parts / supplies</label>
-        <input id="supplies" type="text">
+        <textarea id="supplies"></textarea>
       </div>
     </section>
 
@@ -484,7 +510,7 @@
             <input id="volume" type="text">
           </div>
           <div class="field">
-            <label for="seal">Drain seal</label>
+            <label for="seal">Drain seal / washer</label>
             <input id="seal" type="text">
           </div>
         </div>
@@ -493,7 +519,7 @@
         <h2>Bike-Specific Torque</h2>
         <table aria-label="Torque values">
           <thead>
-            <tr><th>Item / location</th><th style="width: 30%">Value</th></tr>
+            <tr><th>Item / location</th><th style="width: 30%">Torque</th></tr>
           </thead>
           <tbody>
             <tr><td><input type="text" aria-label="Torque item 1"></td><td><input type="text" aria-label="Torque value 1"></td></tr>
@@ -509,11 +535,11 @@
       <div class="pause-grid">
         <label class="pause">
           <input type="checkbox">
-          <span><strong>Before starting</strong>Right bike. Right oil, amount, filter, seals, and torque specs.</span>
+          <span><strong>Before work</strong>Right bike. Right oil, amount, filter, seals, and torque specs.</span>
         </label>
         <label class="pause">
           <input type="checkbox">
-          <span><strong>Before firing</strong>All drain plugs / seals + filter secured. Oil in. Tools / rags / loose bits clear.</span>
+          <span><strong>Before start-up</strong>All drain plugs / seals + filter secured. Oil in. Tools / rags / loose bits clear.</span>
         </label>
         <label class="pause">
           <input type="checkbox">
@@ -530,7 +556,11 @@
             <h3>Tires & wheels</h3>
             <p>
               Wear, damage, valves, rims, spokes
-              <span class="psi">Cold PSI: F ______ &nbsp; R ______</span>
+              <span class="spec-line">
+                Recommended cold PSI:
+                F <input id="front-psi" type="text" aria-label="Recommended front cold tire pressure">
+                R <input id="rear-psi" type="text" aria-label="Recommended rear cold tire pressure">
+              </span>
             </p>
           </div>
           <div class="checks">
@@ -575,7 +605,13 @@
           <div class="t-letter">C</div>
           <div class="t-copy">
             <h3>Chassis & drive</h3>
-            <p>Frame, suspension, chain / belt, exhaust, fasteners</p>
+            <p>
+              Frame, suspension, chain / belt, exhaust, fasteners
+              <span class="spec-line">
+                Chain slack:
+                <input id="chain-slack" class="chain-slack" type="text" aria-label="Recommended chain slack">
+              </span>
+            </p>
           </div>
           <div class="checks">
             <label><input type="checkbox">OK</label>
@@ -596,52 +632,7 @@
       </div>
     </section>
 
-    <section>
-      <h2>What I Found / What You Need</h2>
-      <table class="findings" aria-label="Findings and recommendations">
-        <thead>
-          <tr>
-            <th style="width: 12%">When</th>
-            <th style="width: 34%">Finding</th>
-            <th style="width: 32%">What to do</th>
-            <th style="width: 22%">Brand / part no.</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="when">Now<br>Soon<br>Later</td>
-            <td><input type="text" aria-label="Finding 1"></td>
-            <td><input type="text" aria-label="Recommendation 1"></td>
-            <td><input type="text" aria-label="Part number 1"></td>
-          </tr>
-          <tr>
-            <td class="when">Now<br>Soon<br>Later</td>
-            <td><input type="text" aria-label="Finding 2"></td>
-            <td><input type="text" aria-label="Recommendation 2"></td>
-            <td><input type="text" aria-label="Part number 2"></td>
-          </tr>
-          <tr>
-            <td class="when">Now<br>Soon<br>Later</td>
-            <td><input type="text" aria-label="Finding 3"></td>
-            <td><input type="text" aria-label="Recommendation 3"></td>
-            <td><input type="text" aria-label="Part number 3"></td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
-
-    <section class="bottom-grid">
-      <div>
-        <h2>Next Time - Bring / Buy</h2>
-        <textarea class="write-box" aria-label="What to bring or buy next time"></textarea>
-      </div>
-      <div>
-        <h2>Next Time - We Tackle</h2>
-        <textarea class="write-box" aria-label="What to tackle next time"></textarea>
-      </div>
-    </section>
-
-    <section>
+    <section class="notes-section">
       <h2>Notes</h2>
       <textarea class="write-box notes" aria-label="Notes"></textarea>
     </section>
