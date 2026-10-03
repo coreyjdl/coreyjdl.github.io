@@ -13,11 +13,15 @@
 
   <style>
     :root {
-      --bg: #f3f1ec;
-      --ink: #151719;
-      --muted: #656a70;
-      --line: #d8d4cc;
-      --accent: #175f8f;
+      --bg: #f5f6f8;
+      --ink: #172033;
+      --muted: #667085;
+      --line: #d7dce5;
+      --accent: #2855a6;
+      --accent-dark: #17396f;
+      --accent-soft: #e4ebf7;
+      --pop: #2f86d6;
+      --spark: #287f8f;
       --max: 1080px;
       --reading: 860px;
     }
@@ -29,7 +33,10 @@
     body {
       margin: 0;
       color: var(--ink);
-      background: var(--bg);
+      background:
+        radial-gradient(circle at 92% 4%, rgba(47, 134, 214, 0.1), transparent 25rem),
+        radial-gradient(circle at 8% 44%, rgba(40, 127, 143, 0.07), transparent 24rem),
+        var(--bg);
       font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
       line-height: 1.55;
       -webkit-font-smoothing: antialiased;
@@ -38,6 +45,11 @@
     a {
       color: var(--accent);
       text-underline-offset: 3px;
+    }
+
+    a:hover,
+    a:focus {
+      color: var(--accent-dark);
     }
 
     h1, h2, h3, p { margin-top: 0; }
@@ -51,7 +63,7 @@
       position: sticky;
       top: 0;
       z-index: 20;
-      background: rgba(243, 241, 236, 0.96);
+      background: rgba(245, 246, 248, 0.94);
       border-bottom: 1px solid var(--line);
       backdrop-filter: blur(8px);
     }
@@ -84,13 +96,14 @@
 
     .nav-links a:hover,
     .nav-links a:focus {
-      color: var(--accent);
+      color: var(--accent-dark);
       text-decoration: underline;
     }
 
     .hero {
-      padding: 72px 0 62px;
+      padding: 44px 0 40px;
       border-bottom: 1px solid var(--line);
+      background: linear-gradient(120deg, rgba(40, 85, 166, 0.09), rgba(47, 134, 214, 0.055) 62%, transparent);
     }
 
     .hero-inner {
@@ -98,11 +111,12 @@
     }
 
     h1 {
-      margin-bottom: 20px;
-      font-size: clamp(2.25rem, 5vw, 4.25rem);
-      line-height: 1.02;
-      letter-spacing: -0.045em;
-      font-weight: 760;
+      margin-bottom: 14px;
+      color: var(--accent-dark);
+      font-size: clamp(3.3rem, 8vw, 6.3rem);
+      font-weight: 780;
+      letter-spacing: -0.065em;
+      line-height: 0.98;
     }
 
     .hero-copy {
@@ -127,9 +141,20 @@
 
     .section-title {
       margin-bottom: 26px;
+      color: var(--accent-dark);
       font-size: 1.4rem;
       line-height: 1.2;
       letter-spacing: -0.025em;
+    }
+
+    .section-title::after {
+      display: block;
+      width: 42px;
+      height: 3px;
+      margin-top: 9px;
+      border-radius: 999px;
+      background: var(--pop);
+      content: "";
     }
 
     .project-list {
@@ -148,6 +173,7 @@
 
     .project h3 {
       margin-bottom: 10px;
+      color: var(--accent-dark);
       font-size: 1.18rem;
       line-height: 1.25;
       letter-spacing: -0.015em;
@@ -160,7 +186,7 @@
     }
 
     .stack {
-      color: var(--muted);
+      color: var(--spark);
       font-size: 0.82rem;
       font-weight: 650;
       line-height: 1.6;
@@ -169,6 +195,32 @@
     .focus-list {
       max-width: var(--reading);
       border-top: 1px solid var(--line);
+    }
+
+    .tool-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(105px, 1fr));
+      max-width: var(--reading);
+      margin-bottom: 30px;
+      gap: 8px;
+    }
+
+    .tool {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 14px 10px;
+      color: var(--accent-dark);
+      background: rgba(228, 235, 247, 0.82);
+      border: 1px solid rgba(40, 85, 166, 0.14);
+      border-radius: 7px;
+      font-size: 0.82rem;
+      font-weight: 650;
+    }
+
+    .tool img {
+      width: 24px;
+      height: 24px;
     }
 
     .focus-row {
@@ -181,6 +233,7 @@
 
     .focus-row h3 {
       margin-bottom: 0;
+      color: var(--accent-dark);
       font-size: 0.98rem;
       line-height: 1.5;
     }
@@ -217,6 +270,16 @@
       letter-spacing: -0.015em;
     }
 
+    .company a {
+      color: inherit;
+      text-underline-offset: 3px;
+    }
+
+    .company a:hover,
+    .company a:focus {
+      color: var(--accent-dark);
+    }
+
     .role {
       color: #353a3e;
       font-weight: 650;
@@ -224,7 +287,7 @@
 
     .date {
       flex: 0 0 auto;
-      color: #7a7f83;
+      color: var(--pop);
       font-size: 0.84rem;
       font-weight: 600;
       white-space: nowrap;
@@ -238,6 +301,7 @@
 
     footer {
       padding: 42px 0 34px;
+      background: rgba(228, 235, 247, 0.48);
     }
 
     .footer-main {
@@ -270,7 +334,7 @@
 
     @media (max-width: 700px) {
       .hero {
-        padding: 58px 0 50px;
+        padding: 40px 0 36px;
       }
 
       section {
@@ -320,8 +384,9 @@
       }
 
       h1 {
-        font-size: 2.4rem;
+        margin-bottom: 18px;
       }
+
     }
   </style>
 </head>
@@ -404,6 +469,21 @@
       <div class="shell">
         <h2 class="section-title">Technical focus</h2>
 
+        <div class="tool-list" aria-label="Core technologies">
+          <div class="tool"><img src="https://cdn.simpleicons.org/dotnet/2855A6" alt="" width="24" height="24">.NET</div>
+          <div class="tool"><img src="https://cdn.simpleicons.org/nodedotjs/2855A6" alt="" width="24" height="24">Node.js</div>
+          <div class="tool"><img src="https://cdn.simpleicons.org/python/2855A6" alt="" width="24" height="24">Python</div>
+          <div class="tool"><img src="https://cdn.simpleicons.org/javascript/2855A6" alt="" width="24" height="24">JavaScript</div>
+          <div class="tool"><img src="https://cdn.simpleicons.org/graphql/2855A6" alt="" width="24" height="24">GraphQL</div>
+          <div class="tool"><img src="https://cdn.simpleicons.org/apachekafka/2855A6" alt="" width="24" height="24">Kafka</div>
+          <div class="tool"><img src="https://cdn.simpleicons.org/postgresql/2855A6" alt="" width="24" height="24">PostgreSQL</div>
+          <div class="tool"><img src="https://cdn.simpleicons.org/docker/2855A6" alt="" width="24" height="24">Docker</div>
+          <div class="tool"><img src="https://cdn.simpleicons.org/kubernetes/2855A6" alt="" width="24" height="24">Kubernetes</div>
+          <div class="tool"><img src="https://cdn.simpleicons.org/terraform/2855A6" alt="" width="24" height="24">Terraform</div>
+          <div class="tool"><img src="https://cdn.simpleicons.org/cloudflare/2855A6" alt="" width="24" height="24">Cloudflare</div>
+          <div class="tool"><img src="https://cdn.simpleicons.org/github/2855A6" alt="" width="24" height="24">GitHub</div>
+        </div>
+
         <div class="focus-list">
           <div class="focus-row">
             <h3>Distributed systems</h3>
@@ -437,7 +517,7 @@
             <article class="job">
               <div class="job-head">
                 <div>
-                  <div class="company">LexisNexis Risk Solutions</div>
+                  <div class="company"><a href="https://risk.lexisnexis.com/" target="_blank" rel="noreferrer">LexisNexis Risk Solutions</a></div>
                   <div class="role">Contract Senior Software Engineer</div>
                 </div>
                 <time class="date">2026 - Present</time>
@@ -459,7 +539,7 @@
             <article class="job">
               <div class="job-head">
                 <div>
-                  <div class="company">Palpabl</div>
+                  <div class="company"><a href="https://www.mandrytechnology.com/" target="_blank" rel="noreferrer">Palpabl</a></div>
                   <div class="role">Contract Platform Engineer / Full-Stack Software Engineer</div>
                 </div>
                 <time class="date">Dec 2025 - May 2026</time>
@@ -470,7 +550,7 @@
             <article class="job">
               <div class="job-head">
                 <div>
-                  <div class="company">TCP Software</div>
+                  <div class="company"><a href="https://tcpsoftware.com/" target="_blank" rel="noreferrer">TCP Software</a></div>
                   <div class="role">Platform Engineer</div>
                 </div>
                 <time class="date">Mar 2024 - Sep 2025</time>
@@ -481,7 +561,7 @@
             <article class="job">
               <div class="job-head">
                 <div>
-                  <div class="company">Heartland Payment Systems (Global Payments)</div>
+                  <div class="company"><a href="https://www.heartland.us/" target="_blank" rel="noreferrer">Heartland Payment Systems (Global Payments)</a></div>
                   <div class="role">Software Developer</div>
                 </div>
                 <time class="date">Sep 2022 - Mar 2024</time>
@@ -492,7 +572,7 @@
             <article class="job">
               <div class="job-head">
                 <div>
-                  <div class="company">CH Robinson</div>
+                  <div class="company"><a href="https://www.chrobinson.com/" target="_blank" rel="noreferrer">CH Robinson</a></div>
                   <div class="role">API Engineer</div>
                 </div>
                 <time class="date">Nov 2019 - Sep 2022</time>
@@ -503,7 +583,7 @@
             <article class="job">
               <div class="job-head">
                 <div>
-                  <div class="company">fjorge Digital</div>
+                  <div class="company"><a href="https://fjorge.com/" target="_blank" rel="noreferrer">fjorge</a></div>
                   <div class="role">Backend Developer</div>
                 </div>
                 <time class="date">Jan 2019 - Nov 2019</time>
@@ -514,7 +594,7 @@
             <article class="job">
               <div class="job-head">
                 <div>
-                  <div class="company">Motors Management Corp</div>
+                  <div class="company"><a href="https://www.lutherauto.com/" target="_blank" rel="noreferrer">Motors Management Corp</a></div>
                   <div class="role">.NET Developer</div>
                 </div>
                 <time class="date">Apr 2015 - Jan 2019</time>
